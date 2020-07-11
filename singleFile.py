@@ -78,9 +78,10 @@ class Notes(QMainWindow):
         self.listFrame = QFrame()
         self.stackFrame = QFrame() #maybe delete this
 
+        central_widget = QWidget()
 
-
-        self.splitter = QSplitter(Qt.Horizontal)
+        self.splitter = QSplitter(central_widget)
+        self.splitter.setOrientation(Qt.Horizontal)
         self.splitter.addWidget(self.listc)        
         self.splitter.addWidget(self.listFrame)        
         self.splitter.addWidget(self.stack)               
@@ -96,7 +97,7 @@ class Notes(QMainWindow):
 ####################################################################################################################
 
 
-        central_widget = QWidget()
+
         self.setCentralWidget(central_widget)
         self.boxlayout = QHBoxLayout()        
         central_widget.setLayout(self.boxlayout)
@@ -562,6 +563,7 @@ class Notes(QMainWindow):
 application = QApplication(sys.argv)
 
 # window
+
 window = Notes()
 window.setWindowTitle('Notes')
 window.resize(1280, 720)
