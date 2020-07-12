@@ -24,24 +24,25 @@ from dicttoxml import dicttoxml
 # here is a change made comment
 
 
-class Notes(QMainWindow):
-    def __init__(self, parent=None):
-        super(Notes, self).__init__(parent)
-        #QMainWindow.__init__(self)
+class Notes(object):
+    # def __init__(self):
+    #     super(Notes, self).__init__()
+    #     #QMainWindow.__init__(self)
 
 
-        self.list_icons_dict = {}
-        self.tabwidget_icons_dict = {}
+        # self.list_icons_dict = {}
+        # self.tabwidget_icons_dict = {}
 
         #self.init_ui()
         # self.initMenubar()
         # self.initToolbar()
 
 
+    def setupUi(self, MainWindow):
 
 
 
-        menubar = self.menuBar()
+        menubar = MainWindow.menuBar()
 
 
         menu_file = menubar.addMenu("File")
@@ -53,14 +54,28 @@ class Notes(QMainWindow):
 
 
 
-        self.toolbar = QToolBar()
-        self.addToolBar(self.toolbar)
-        self.addnew = QAction(self)
-        self.addnew.triggered.connect(self.itemMenu)        
-        self.toolbar.addAction(self.addnew)
+        # self.toolbar = QToolBar(MainWindow)
+        self.toolbar = QToolBar(MainWindow)
+        MainWindow.addToolBar(self.toolbar)
+        self.addnew = QAction()
+        self.toolbar.addAction(self.addnew)         
+        self.addnew.triggered.connect(self.itemMenu)         
 
 
-        self.listc = QListWidget()
+
+        
+        central_widget = QWidget()
+
+        self.splitter = QSplitter(central_widget)
+        self.splitter.setOrientation(Qt.Horizontal)
+        # self.splitter.addWidget(self.listc)        
+        # self.splitter.addWidget(self.listFrame)        
+        # self.splitter.addWidget(self.stack)               
+        #self.splitter.addWidget(self.stackFrame)
+
+        self.splitter.setMinimumWidth(10)
+
+        self.listc = QListWidget(self.splitter)
         self.listc.setObjectName("List")
         self.listc.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listc.setAcceptDrops(True)
@@ -70,7 +85,7 @@ class Notes(QMainWindow):
 
 
 
-        self.stack = QStackedWidget()
+        self.stack = QStackedWidget(self.splitter)
         self.stack.setObjectName("Stack")
         self.stack.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.stack.customContextMenuRequested.connect(self.tabMenu)
@@ -78,16 +93,7 @@ class Notes(QMainWindow):
         self.listFrame = QFrame()
         self.stackFrame = QFrame() #maybe delete this
 
-        central_widget = QWidget()
 
-        self.splitter = QSplitter(central_widget)
-        self.splitter.setOrientation(Qt.Horizontal)
-        self.splitter.addWidget(self.listc)        
-        self.splitter.addWidget(self.listFrame)        
-        self.splitter.addWidget(self.stack)               
-        #self.splitter.addWidget(self.stackFrame)
-
-        self.splitter.setMinimumWidth(10)
         #self.splitter.setSizes([100,500])
         #self.splitter.setStretchFactor(1,100)
         # self.splitter.setStretchFactor(0,9)
@@ -98,11 +104,14 @@ class Notes(QMainWindow):
 
 
 
-        self.setCentralWidget(central_widget)
+
         self.boxlayout = QHBoxLayout()        
         central_widget.setLayout(self.boxlayout)
+        MainWindow.setCentralWidget(central_widget)
 
         self.boxlayout.addWidget(self.splitter)
+
+
         #self.vlayout = QVBoxLayout()
 
 
@@ -558,18 +567,20 @@ class Notes(QMainWindow):
 
 
 
+if __name__ == "__main__":
 
+    application = QApplication(sys.argv)
 
-application = QApplication(sys.argv)
+    # window
+    MainWindow = QMainWindow()
+    ui = Notes()
+    ui.setupUi(MainWindow)
+    #ui.setWindowTitle('Notes')
+    #ui.resize(1280, 720)
+    #ui.show()
+    MainWindow.show()
 
-# window
-
-window = Notes()
-window.setWindowTitle('Notes')
-window.resize(1280, 720)
-window.show()
-
-sys.exit(application.exec_())
+    sys.exit(application.exec_())
 
 
 # def main():
