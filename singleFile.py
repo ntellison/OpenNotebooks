@@ -58,9 +58,8 @@ class Notes(object):
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
         self.addnew = QAction()
-        self.toolbar.addAction(self.addnew)         
         self.addnew.triggered.connect(self.itemMenu)         
-
+        self.toolbar.addAction(self.addnew) 
 
 
         
@@ -73,7 +72,8 @@ class Notes(object):
         # self.splitter.addWidget(self.stack)               
         #self.splitter.addWidget(self.stackFrame)
 
-        self.splitter.setMinimumWidth(10)
+        #self.splitter.setMinimumWidth(10)
+        self.splitter.setStretchFactor(1,0)
 
         self.listc = QListWidget(self.splitter)
         self.listc.setObjectName("List")
@@ -219,7 +219,7 @@ class Notes(object):
     def itemMenu(self):
         self.item_dialog = QDialog()
 
-        self.layout_item = QFormLayout(self)
+        self.layout_item = QFormLayout()
 
         inst_label = QLabel("Enter Your Category Item:")
 
@@ -397,7 +397,7 @@ class Notes(object):
 
 
     def tabMenu(self, event):
-        self.tabContextMenu = QMenu(self)
+        self.tabContextMenu = QMenu()
 
         addTab = self.tabContextMenu.addAction('Add New Tab')
         deleteTab = self.tabContextMenu.addAction('Delete Tab')
@@ -416,7 +416,7 @@ class Notes(object):
             tabRename, ok = QInputDialog.getText(self.tab_widget, 'Input Dialog', 'Enter new tab name')
             if ok:
                 self.item = self.listc.currentItem()
-                self.curr_tab_wid = self.stacked_widget.findChild(QTabWidget, self.item.text())
+                self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_tab = self.curr_tab_wid.currentIndex()
                 self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
 
