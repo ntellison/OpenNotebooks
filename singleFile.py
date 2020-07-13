@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (QApplication, QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
                             QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox)
 from PyQt5 import QtCore
-from PyQt5.QtCore import QEvent, Qt
+from PyQt5.QtCore import QEvent, Qt, QSize
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 import sip
@@ -25,13 +25,13 @@ from dicttoxml import dicttoxml
 
 
 class Notes(object):
-    # def __init__(self):
+    def __init__(self):
     #     super(Notes, self).__init__()
     #     #QMainWindow.__init__(self)
 
 
-        # self.list_icons_dict = {}
-        # self.tabwidget_icons_dict = {}
+        self.list_icons_dict = {}
+        self.tabwidget_icons_dict = {}
 
         #self.init_ui()
         # self.initMenubar()
@@ -73,11 +73,16 @@ class Notes(object):
         #self.splitter.addWidget(self.stackFrame)
 
         #self.splitter.setMinimumWidth(10)
-        self.splitter.setStretchFactor(1,0)
+        self.splitter.setStretchFactor(0,25)
+        self.splitter.setStretchFactor(1,75)
+
+
+
 
         self.listc = QListWidget(self.splitter)
         self.listc.setObjectName("List")
         self.listc.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listc.customContextMenuRequested.connect(self.listMenu)
         self.listc.setAcceptDrops(True)
         self.listc.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.listc.setDragEnabled(True)
@@ -93,12 +98,12 @@ class Notes(object):
         self.listFrame = QFrame()
         self.stackFrame = QFrame() #maybe delete this
 
+        self.splitter.addWidget(self.listc)
+        self.splitter.addWidget(self.stack)
 
-        #self.splitter.setSizes([100,500])
-        #self.splitter.setStretchFactor(1,100)
-        # self.splitter.setStretchFactor(0,9)
-
-
+        self.splitter.setSizes([50, 650])
+        # self.splitter.setStretchFactor(0,25)
+        # self.splitter.setStretchFactor(1,9)
 
 ####################################################################################################################
 
@@ -264,7 +269,7 @@ class Notes(object):
 
     def chooseListIcon(self):
 
-        fname = QFileDialog.getOpenFileName(self, 'Open File', 'images\icons')
+        fname = QFileDialog.getOpenFileName(MainWindow, 'Open File', 'images\icons')
         fname = str(fname[0])
         self.item_filename = fname
         #self.le_filename = fname
@@ -326,11 +331,11 @@ class Notes(object):
         self.item_dialog.close()
 
 
-    def checktoggle(self):
-        self.btn_icon.setEnabled(True)
+    # def checktoggle(self):
+    #     self.btn_icon.setEnabled(True)
 
     def chooseTabIcon(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open File', 'images\icons')
+        fname = QFileDialog.getOpenFileName(MainWindow, 'Open File', 'images\icons')
         fname = str(fname[0])
         self.tabicon_filename = fname
         self.le_tab_path.setText(fname)
@@ -427,29 +432,29 @@ class Notes(object):
 
 
 
-    def contextMenuEvent(self, event):
-        contextMenu = QMenu(self)
+    def listMenu(self, event):
+        self.contextMenu = QMenu()
 
-        addListItem = contextMenu.addAction('Add List Item')
-        deleteListItem = contextMenu.addAction('Delete List Item')
-        renameListItem = contextMenu.addAction('Rename List Item')
-        save = contextMenu.addAction('Save')
+        addListItem = self.contextMenu.addAction('Add List Item')
+        deleteListItem = self.contextMenu.addAction('Delete List Item')
+        renameListItem = self.contextMenu.addAction('Rename List Item')
+        save = self.contextMenu.addAction('Save')
 
 
-        action = contextMenu.exec_(self.listc.mapToGlobal(event.pos()))
+        action = self.contextMenu.exec_(self.listc.mapToGlobal(event))
 
         if action == addListItem:
             self.itemMenu()
         elif action == deleteListItem:
-            self.item = self.list.currentItem()
-            self.y = self.list.takeItem(self.lb.row(self.item))#pops the list item out
+            self.item = self.listc.currentItem()
+            self.y = self.listc.takeItem(self.listc.row(self.item))#pops the list item out
             #self.r = self.stacked_widget.removeWidget(self.tab_widget.currentWidget())
             self.r = self.stack.findChild(QTabWidget, self.item.text())
             sip.delete(self.r)
         elif action == renameListItem:
             newItemName, ok = QInputDialog.getText(self.lb, 'Input Dialog','List Item Name:')
             if ok:
-                self.item = self.list.currentItem()
+                self.item = self.listc.currentItem()
                 self.curr_item = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_item.setObjectName(newItemName)
                 self.item.setText(newItemName)
