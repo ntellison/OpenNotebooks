@@ -288,7 +288,11 @@ class Notes(object):
         self.checkInfo = self.check.isChecked()
 
         if self.checkInfo == False and self.le_item.text() != False:
+            self.ico = QIcon()
+            self.ico.addPixmap(QPixmap('icons/justify.png'))
+            
             item = QListWidgetItem()
+            item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
             self.listc.addItem(item)
@@ -317,7 +321,7 @@ class Notes(object):
             self.tab_widget.setObjectName(item_text)
             self.stack.addWidget(self.tab_widget)
 
-            self.list_icons_dict[item_text] = self.item_filename
+            self.list_icons_dict[str(item_text)] = str(self.item_filename)
             print(self.list_icons_dict)
             #self.tabwidget_icons_dict[self.tab_widget.objectName()] = #nested dict here (tabnames:filepath)
 
@@ -348,13 +352,18 @@ class Notes(object):
 
         if self.check_tab_icon == False and self.le_text.text() != False:
 
+            self.ico = QIcon()
+            self.ico.addPixmap(QPixmap('icons/folder.png'), QIcon.Normal, QIcon.On)
+
             self.newTabName = self.le_text.text()            
             self.item = self.listc.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
-            self.curr_tab_wid.addTab(QTextEdit(), self.newTabName)
+            # self.newtabname_textedit = QTextEdit().objectName(self.newTabName)
+            # self.curr_tab_wid.addTab(self.newtabname_textedit, self.newTabName)
+            self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
 
             self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            #self.tabwidget_icons_dict.update({self.newTabName:self.tab_ico})
+            self.tabwidget_icons_dict.update({self.newTabName:self.ico})
 
         elif self.check_tab_icon == True and self.le_text.text() != False:
 
@@ -459,8 +468,8 @@ class Notes(object):
                 self.curr_item.setObjectName(newItemName)
                 self.item.setText(newItemName)
         elif action == save:
-            print("okaaayyyyyyyydyfydfydfydfydfy")
-            # self.save()
+            print(self.list_icons_dict)
+            self.save()
             # self.print()
 
 
@@ -490,23 +499,24 @@ class Notes(object):
         tree = ElementTree(root)
 
 
-        for i in range(self.lb.count()):
-            self.x = self.lb.item(i).text()
+        for i in range(self.listc.count()):
+            self.x = self.listc.item(i).text()
             #self.y = self.lb.item(i).icon()
             listitem = ET.SubElement(root, 'listitem')
             print(self.list_icons_dict)
-            self.licon = self.list_icons_dict[self.x]
-            listitem.set('item_icon', self.licon)
+            licon = self.list_icons_dict[self.x]
+            listitem.set('item_icon', licon)
             listitem.text = self.x
-        for g in range(self.stacked_widget.count()):
-            self.q = self.stacked_widget.widget(g)
+        for g in range(self.stack.count()):
+            self.q = self.stack.widget(g)
             tabwidgetName = ET.SubElement(root, 'tabwid_name')
             tabwidgetName.text = self.q.objectName()
             for p in range(self.q.count()):
                 self.tabtext = self.q.tabText(p)
                 #self.tabicon = self.q.tabIcon(p)
                 self.ticon = self.tabwidget_icons_dict[self.tabtext]
-                self.tabcontents = type(self.q.widget(p))
+                self.tabcontents = self.q.widget(p).objectName()
+                #self.tabcontents = type(self.q.widget(p))
                 tabName = ET.SubElement(tabwidgetName, 'tabName')
                 tabName.set('content', str(self.tabcontents))
                 tabName.set('tabIcon', self.ticon)
