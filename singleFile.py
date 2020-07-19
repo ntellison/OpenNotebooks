@@ -36,6 +36,7 @@ class Notes(object):
         #self.init_ui()
         # self.initMenubar()
         # self.initToolbar()
+        
 
 
     def setupUi(self, MainWindow):
@@ -115,6 +116,10 @@ class Notes(object):
         MainWindow.setCentralWidget(central_widget)
 
         self.boxlayout.addWidget(self.splitter)
+
+
+        self.load()
+
 
 
         #self.vlayout = QVBoxLayout()
@@ -289,7 +294,8 @@ class Notes(object):
 
         if self.checkInfo == False and self.le_item.text() != False:
             self.ico = QIcon()
-            self.ico.addPixmap(QPixmap('icons/justify.png'))
+            self.defaultListIcon = 'icons/justify.png'
+            self.ico.addPixmap(QPixmap(self.defaultListIcon))
             
             item = QListWidgetItem()
             item.setIcon(self.ico)
@@ -300,6 +306,8 @@ class Notes(object):
             self.tab_widget.setMovable(True)
             self.tab_widget.setObjectName(item_text)
             self.stack.addWidget(self.tab_widget)
+
+            self.list_icons_dict[item_text] = self.defaultListIcon
 
 
         elif self.checkInfo == True and self.le_item.text() != False:
@@ -322,7 +330,7 @@ class Notes(object):
             self.stack.addWidget(self.tab_widget)
 
             self.list_icons_dict[str(item_text)] = str(self.item_filename)
-            print(self.list_icons_dict)
+            print("List Icon Dict :", self.list_icons_dict)
             #self.tabwidget_icons_dict[self.tab_widget.objectName()] = #nested dict here (tabnames:filepath)
 
             #print('list icons:','\n' ,self.list_icons_dict.items())
@@ -358,12 +366,13 @@ class Notes(object):
             self.newTabName = self.le_text.text()            
             self.item = self.listc.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
-            # self.newtabname_textedit = QTextEdit().objectName(self.newTabName)
-            # self.curr_tab_wid.addTab(self.newtabname_textedit, self.newTabName)
-            self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
+            self.newtabname_textedit = QTextEdit()
+            self.newtabname_textedit.setObjectName(str(self.newTabName))
+            self.curr_tab_wid.addTab(self.newtabname_textedit, self.ico ,self.newTabName)
+            #self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
 
             self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            self.tabwidget_icons_dict.update({self.newTabName:self.ico})
+            self.tabwidget_icons_dict.update({self.newTabName:'icons/folder.png'})
 
         elif self.check_tab_icon == True and self.le_text.text() != False:
 
@@ -549,7 +558,7 @@ class Notes(object):
             self.ico = QIcon(icon)
             item.setIcon(self.ico)
             item.setText(listitem.text)
-            self.lb.addItem(item)
+            self.listc.addItem(item)
 
             self.list_icons_dict[listitem.text] = icon
 
@@ -566,19 +575,22 @@ class Notes(object):
             self.tab_widget = QTabWidget()
             self.tab_widget.setObjectName(tabwidget.text)
             self.tab_widget.setMovable(True)
-            self.stacked_widget.addWidget(self.tab_widget)
+            self.stack.addWidget(self.tab_widget)
             for tabname in tabwidget.iter('tabName'):
-                self.id = self.stacked_widget.findChild(QTabWidget, tabwidget.text)
+                self.id = self.stack.findChild(QTabWidget, tabwidget.text)
                 self.tab_icon = tabname.get('tabIcon')
                 self.tabico = QIcon(self.tab_icon)
                 self.tabwidget_icons_dict[tabname.text] = self.tab_icon
                 content = tabname.get('content')
-                if 'QTextEdit' in str(content):
-                    self.id.addTab(QTextEdit(), self.tabico, tabname.text)
-                elif 'QGraphicsView' in str(content):
-                    self.id.addTab(QGraphicsView(), self.tabico, tabname.text)
-                elif 'QWidget' in str(content):
-                    self.id.addTab(QWidget(), self.tabico ,tabname.text)
+                tE = QTextEdit()
+                tE.setObjectName(content)
+                self.id.addTab(tE, self.tabico, tabname.text)
+                # if 'QTextEdit' in str(content):
+                #     self.id.addTab(QTextEdit(), self.tabico, tabname.text)
+                # elif 'QGraphicsView' in str(content):
+                #     self.id.addTab(QGraphicsView(), self.tabico, tabname.text)
+                # elif 'QWidget' in str(content):
+                #     self.id.addTab(QWidget(), self.tabico ,tabname.text)
 
 
 
