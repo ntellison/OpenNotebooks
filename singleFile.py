@@ -431,8 +431,8 @@ class Notes(object):
         if action == addTab:
             self.tabContents()
         if action == deleteTab:
-            self.item = self.lb.currentItem()
-            self.curr_tab_wid = self.stacked_widget.findChild(QTabWidget, self.item.text())
+            self.item = self.listc.currentItem()
+            self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab = self.curr_tab_wid.currentIndex()
             self.curr_tab_wid.removeTab(self.curr_tab)
         if action ==renameTab:
@@ -525,6 +525,15 @@ class Notes(object):
                 #self.tabicon = self.q.tabIcon(p)
                 self.ticon = self.tabwidget_icons_dict[self.tabtext]
                 self.tabcontents = self.q.widget(p).objectName()
+
+                if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(tabwidgetName.text)):
+                    os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(tabwidgetName.text))
+
+
+                with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
+                    file.write(self.q.widget(p).toHtml())
+                file.close()
+
                 #self.tabcontents = type(self.q.widget(p))
                 tabName = ET.SubElement(tabwidgetName, 'tabName')
                 tabName.set('content', str(self.tabcontents))
@@ -547,7 +556,7 @@ class Notes(object):
             filename = ET.parse('config.xml').getroot()
             #ico_fname = ET.parse('icons.xml').getroot()
         except:
-            msg_box = QMessageBox.question(self, 'Message', 'No existing file', QMessageBox.Ok)
+            msg_box = QMessageBox.question(MainWindow, 'Message', 'No existing file. Would you like to make a new Notes File?', QMessageBox.Ok)
             if msg_box == QMessageBox.Ok:
                 sys.exit()
 
@@ -582,9 +591,29 @@ class Notes(object):
                 self.tabico = QIcon(self.tab_icon)
                 self.tabwidget_icons_dict[tabname.text] = self.tab_icon
                 content = tabname.get('content')
-                tE = QTextEdit()
-                tE.setObjectName(content)
-                self.id.addTab(tE, self.tabico, tabname.text)
+
+                if os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(self.tab_widget.objectName())):
+                    
+
+
+                    tE = QTextEdit()
+                    tE.setObjectName(content)
+                    with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}\{}.html'.format(self.tab_widget.objectName(), content), 'r') as file:
+                        tE.setText(file.read())
+                    file.close()
+                    self.id.addTab(tE, self.tabico, tabname.text)
+
+                else:
+                    msg_box = QMessageBox()
+                    msg_box.setText("Error when loading file")
+                    msg_box.setWindowTitle("File Error")
+                    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                    msg_box.exec()
+
+
+
+
+                
                 # if 'QTextEdit' in str(content):
                 #     self.id.addTab(QTextEdit(), self.tabico, tabname.text)
                 # elif 'QGraphicsView' in str(content):
