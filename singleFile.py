@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
@@ -201,6 +202,7 @@ class Notes(object):
         self.filePass = QLineEdit()
 
         self.btn_newFileSave = QPushButton("Create File")
+        self.btn_newFileSave.triggered.connect(self.createFile)
 
         self.newFileDialog.setLayout(self.layout_newFile)
         self.layout_newFile.addRow(self.label_newFileDialog, self.le_newFileFilepath)
@@ -213,6 +215,9 @@ class Notes(object):
 
 
 
+    def createFile(self):
+
+        
 
 
 
