@@ -50,6 +50,11 @@ class Notes(object):
         menu_edit = menubar.addMenu("Edit")
         menu_view = menubar.addMenu("View")
         menu_view = menubar.addMenu("Export")
+
+        menu_file_action = QAction("New File", MainWindow)
+        menu_file.addAction(menu_file_action)
+        menu_file_action.triggered.connect(self.newFile)
+        #menu_file.addAction(self.newFile)
         
 
 
@@ -118,7 +123,7 @@ class Notes(object):
         self.boxlayout.addWidget(self.splitter)
 
 
-        self.load()
+        #self.load()
 
 
 
@@ -175,6 +180,41 @@ class Notes(object):
 
 
         #self.initMenubar()
+
+
+
+
+    def newFile(self):
+
+        self.newFileDialog = QDialog()
+
+        self.layout_newFile = QFormLayout()
+
+        self.label_newFileDialog = QLabel("File Save Location:")
+
+        self.le_newFileFilepath = QLineEdit()
+
+        self.btn_newFileDestination = QPushButton('Save Location')
+
+        self.label_filePass = QLabel("Password :")
+
+        self.filePass = QLineEdit()
+
+        self.btn_newFileSave = QPushButton("Create File")
+
+        self.newFileDialog.setLayout(self.layout_newFile)
+        self.layout_newFile.addRow(self.label_newFileDialog, self.le_newFileFilepath)
+        #self.layout_newFile.addRow(self.le_newFileFilepath)
+        self.layout_newFile.addRow(self.btn_newFileDestination)
+        self.layout_newFile.addRow(self.label_filePass, self.filePass)
+        self.layout_newFile.addRow(self.btn_newFileSave)
+
+        self.newFileDialog.show()
+
+
+
+
+
 
 
     def list_clicked(self):
