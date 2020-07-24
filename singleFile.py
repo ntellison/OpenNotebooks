@@ -13,6 +13,7 @@ from PyQt5.QtCore import QEvent, Qt, QSize, QSettings
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 import sip
+import shutil
 
 from xml.etree.ElementTree import ElementTree
 import xml.etree.ElementTree as ET
@@ -33,6 +34,9 @@ class Notes(object):
 
         self.list_icons_dict = {}
         self.tabwidget_icons_dict = {}
+
+        self.listchanges = []
+        self.tabchanges = []
 
 
         #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
@@ -484,6 +488,19 @@ class Notes(object):
 
 
 
+    def programcfg(self):
+        if os.path.exists('settings/programSettings.xml'):
+            xmlSettings_currpath = ET.parse('settings/programSettings.xml').getroot()
+            for p in xmlSettings_currpath.findall('recentFilePath'):
+                self.currfile = p.text
+
+        return self.currfile
+
+
+
+
+
+
     def tabMenu(self, event):
         self.tabContextMenu = QMenu()
 
@@ -500,6 +517,10 @@ class Notes(object):
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab = self.curr_tab_wid.currentIndex()
             self.curr_tab_wid.removeTab(self.curr_tab)
+
+            self.tabchanges.append(self.programcfg() + '/' + self.curr_tab.text)
+            print(self.programcfg() + '/' + self.curr_tab.text)
+
         if action ==renameTab:
             tabRename, ok = QInputDialog.getText(self.tab_widget, 'Input Dialog', 'Enter new tab name')
             if ok:
@@ -529,11 +550,19 @@ class Notes(object):
         if action == addListItem:
             self.itemMenu()
         elif action == deleteListItem:
+            
+            self.fpath = self.listc.currentItem().text()
+            print(self.programcfg() + self.fpath)
             self.item = self.listc.currentItem()
             self.y = self.listc.takeItem(self.listc.row(self.item))#pops the list item out
             #self.r = self.stacked_widget.removeWidget(self.tab_widget.currentWidget())
             self.r = self.stack.findChild(QTabWidget, self.item.text())
             sip.delete(self.r)
+
+            #add file to list [] to be deleted on the next Save?
+            self.listchanges.append(self.programcfg() + '/' + self.fpath)
+
+
         elif action == renameListItem:
             newItemName, ok = QInputDialog.getText(self.lb, 'Input Dialog','List Item Name:')
             if ok:
@@ -568,28 +597,38 @@ class Notes(object):
         print(self.tabwidget_icons_dict.items())
 
 
+    def uichanges(self):
+
+        # if the list is empty
+        if not self.listchanges:
+            pass
+        else:
+            for h in self.listchanges:
+                print(h)
+                shutil.rmtree(h)
+
+        if not self.tabchanges:
+            pass
+        else:
+            for g in self.tabchanges:
+                print(g)
+                os.remove(g)
+
+
+
+
+
     def save(self):
 
-
-        # if QSettings.contains('recentFilepath') Value has filepath for previous opened file :
-            # get that recentFilePath from QSettings 
-            # self.filepath = filepath
-        # Use the above filepath to feed into the file.write and of.path.exist code below
-
+        # if the list is empty
+        # if not self.listchanges:
+        #     pass
         # else:
-            # open to blank interface
-            # get save filename and filepath.
+        #     for h in self.changes:
+        #         print(h)
+        #         shutil.rmtree(h)
 
-
-        
-
-
-        # if self.noteSettings.contains('recentFilePath'):
-        #     self.saveFile = self.noteSettings.value('recentFilePath')
-
-        # else:
-        #     self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
-
+        self.uichanges()
 
 
         if os.path.exists('settings/programSettings.xml'):
@@ -605,15 +644,6 @@ class Notes(object):
         root = ET.Element('programElements')
         tree = ElementTree(root)
 
-
-
-        # this is probably not needed
-        # if not os.path.exists(r'Notes'):
-        #     os.makedirs(r'Notes')
-
-        #might not need this
-        # if not os.path.exists(self.saveFile):
-        #     os.makedirs(self.saveFile)
         
 
         for i in range(self.listc.count()):
