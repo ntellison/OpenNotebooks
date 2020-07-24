@@ -9,7 +9,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (QApplication, QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
                             QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox)
 from PyQt5 import QtCore
-from PyQt5.QtCore import QEvent, Qt, QSize
+from PyQt5.QtCore import QEvent, Qt, QSize, QSettings
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 import sip
@@ -34,6 +34,11 @@ class Notes(object):
         self.list_icons_dict = {}
         self.tabwidget_icons_dict = {}
 
+
+        #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
+
+
+
         #self.init_ui()
         # self.initMenubar()
         # self.initToolbar()
@@ -54,7 +59,7 @@ class Notes(object):
 
         menu_file_action = QAction("New File", MainWindow)
         menu_file.addAction(menu_file_action)
-        menu_file_action.triggered.connect(self.newFile)
+        #menu_file_action.triggered.connect(self.newFile)
         #menu_file.addAction(self.newFile)
         
 
@@ -124,7 +129,7 @@ class Notes(object):
         self.boxlayout.addWidget(self.splitter)
 
 
-        #self.load()
+        self.load()
 
 
 
@@ -183,43 +188,58 @@ class Notes(object):
         #self.initMenubar()
 
 
+#################################################################################################################################
+
+    # def newFile(self):
+
+    #     self.newFileDialog = QDialog()
+
+    #     self.layout_newFile = QFormLayout()
+
+    #     self.label_newFileDialog = QLabel("File Save Location:")
+
+    #     self.le_newFileFilepath = QLineEdit().setReadOnly(True)
+
+    #     self.btn_newFileDestination = QPushButton('Save Location')
+    #     self.btn_newFileDestination.clicked.connect(self.noteSave)
+
+    #     self.label_filePass = QLabel("Password :")
+
+    #     self.filePass = QLineEdit()
+    #     self.filePass.setEchoMode(QLineEdit.Password)
+
+    #     self.btn_newFileSave = QPushButton("Create File")
+    #     #self.btn_newFileSave.clicked.connect(self.createFile)
+
+    #     self.newFileDialog.setLayout(self.layout_newFile)
+    #     self.layout_newFile.addRow(self.label_newFileDialog, self.le_newFileFilepath)
+    #     #self.layout_newFile.addRow(self.le_newFileFilepath)
+    #     self.layout_newFile.addRow(self.btn_newFileDestination)
+    #     self.layout_newFile.addRow(self.label_filePass, self.filePass)
+    #     self.layout_newFile.addRow(self.btn_newFileSave)
+
+    #     self.newFileDialog.show()
 
 
-    def newFile(self):
-
-        self.newFileDialog = QDialog()
-
-        self.layout_newFile = QFormLayout()
-
-        self.label_newFileDialog = QLabel("File Save Location:")
-
-        self.le_newFileFilepath = QLineEdit()
-
-        self.btn_newFileDestination = QPushButton('Save Location')
-
-        self.label_filePass = QLabel("Password :")
-
-        self.filePass = QLineEdit()
-
-        self.btn_newFileSave = QPushButton("Create File")
-        self.btn_newFileSave.triggered.connect(self.createFile)
-
-        self.newFileDialog.setLayout(self.layout_newFile)
-        self.layout_newFile.addRow(self.label_newFileDialog, self.le_newFileFilepath)
-        #self.layout_newFile.addRow(self.le_newFileFilepath)
-        self.layout_newFile.addRow(self.btn_newFileDestination)
-        self.layout_newFile.addRow(self.label_filePass, self.filePass)
-        self.layout_newFile.addRow(self.btn_newFileSave)
-
-        self.newFileDialog.show()
 
 
 
-    def createFile(self):
 
-        
+    # def noteSave(self):
+
+    #     noteLocation = QFileDialog.getSaveFileName(self, 'Save File')[0]
+
+    #     self.le_newFileFilepath.setText(str(noteLocation))
 
 
+
+
+    # def createFile(self):
+
+    #     pass
+    
+
+#################################################################################################################################
 
 
     def list_clicked(self):
@@ -549,9 +569,52 @@ class Notes(object):
 
 
     def save(self):
+
+
+        # if QSettings.contains('recentFilepath') Value has filepath for previous opened file :
+            # get that recentFilePath from QSettings 
+            # self.filepath = filepath
+        # Use the above filepath to feed into the file.write and of.path.exist code below
+
+        # else:
+            # open to blank interface
+            # get save filename and filepath.
+
+
+        
+
+
+        # if self.noteSettings.contains('recentFilePath'):
+        #     self.saveFile = self.noteSettings.value('recentFilePath')
+
+        # else:
+        #     self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+
+
+
+        if os.path.exists('settings/programSettings.xml'):
+            self.xmlSettings_save = ET.parse('settings/programSettings.xml').getroot()
+            for p in self.xmlSettings_save.findall('recentFilePath'):
+                self.saveFile = p.text
+        else:
+            self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+            
+
+
+
         root = ET.Element('programElements')
         tree = ElementTree(root)
 
+
+
+        # this is probably not needed
+        # if not os.path.exists(r'Notes'):
+        #     os.makedirs(r'Notes')
+
+        #might not need this
+        # if not os.path.exists(self.saveFile):
+        #     os.makedirs(self.saveFile)
+        
 
         for i in range(self.listc.count()):
             self.x = self.listc.item(i).text()
@@ -571,13 +634,23 @@ class Notes(object):
                 self.ticon = self.tabwidget_icons_dict[self.tabtext]
                 self.tabcontents = self.q.widget(p).objectName()
 
-                if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(tabwidgetName.text)):
-                    os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(tabwidgetName.text))
+
+                if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
+                    os.makedirs(self.saveFile + '\{}'.format(tabwidgetName.text))
 
 
-                with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
+                # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
+                #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
+
+
+                with open(self.saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
                     file.write(self.q.widget(p).toHtml())
                 file.close()
+
+
+                # with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
+                #     file.write(self.q.widget(p).toHtml())
+                # file.close()
 
                 #self.tabcontents = type(self.q.widget(p))
                 tabName = ET.SubElement(tabwidgetName, 'tabName')
@@ -586,24 +659,101 @@ class Notes(object):
                 tabName.text = self.tabtext
                 #self.tabwidget_icons_dict[tabwidgetName.text] = self.tabtext, self.tabwidget_icons_dict[#nested dict here (tabnames:filepath)
                 #self.tabwidget_icons_dict[self.tabtext] =
-        tree.write(open('config.xml', 'wb'))
+        tree.write(open(self.saveFile + '\config.xml', 'wb'))
         
         list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
         tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
         #xml = xml.decode()
 
 
+        settings_root = ET.Element('programSettings')
+        settings_tree = ElementTree(settings_root)
+        recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
+        recentFilePath.text = self.saveFile
+        #settings_root.set('recentFilePath', self.saveFile)
+
+        if not os.path.exists('settings'):
+            os.makedirs('settings')
+
+        settings_tree.write(open('settings\programSettings.xml', 'wb'))
+
+
+
+
+
+        # self.noteSettings.beginGroup("programSettings")
+        # self.noteSettings.setValue('recentFilePath', self.saveFile.text())
+        # self.noteSettings.endGroup()
+        # self.noteSettings.sycn()
+        
+
+
+
+
 
 
 
     def load(self):
-        try:
-            filename = ET.parse('config.xml').getroot()
-            #ico_fname = ET.parse('icons.xml').getroot()
-        except:
-            msg_box = QMessageBox.question(MainWindow, 'Message', 'No existing file. Would you like to make a new Notes File?', QMessageBox.Ok)
-            if msg_box == QMessageBox.Ok:
-                sys.exit()
+
+        # check QSettings for last opened filepath
+        # if self.noteSettings.contains('recentFilepath'):
+        #     self.recent = self.noteSettings.recentFilePath
+        # else:
+        #     break
+
+        #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
+
+
+        
+        # if self.noteSettings.contains('recentFilePath'):
+        #     self.recent = self.noteSettings.value('recentFilePath')
+        # else:
+        #     MainWindow.show()
+        #     return
+
+        
+
+
+            
+        
+            
+
+
+        # else:
+        #     MainWindow.show()
+        #     return
+
+
+
+
+        # try:
+        #     filename = ET.parse('config.xml').getroot()
+        #     #ico_fname = ET.parse('icons.xml').getroot()
+        # except:
+        #     msg_box = QMessageBox.question(MainWindow, 'Message', 'No existing file. Would you like to make a new Notes File?', QMessageBox.Ok)
+        #     if msg_box == QMessageBox.Ok:
+        #         sys.exit()
+
+
+        if os.path.exists('settings/programSettings.xml'):
+            self.xmlSettings = ET.parse('settings/programSettings.xml').getroot()
+
+            for i in self.xmlSettings.findall('recentFilePath'):
+                self.recentLoad = i.text
+                print(self.recentLoad)
+
+        else:
+            MainWindow.show()
+            return
+            #self.xmlSettingsTree = ElementTree(self.xmlSettings)
+            #self.recentLoad = self.xmlSettingsTree.findtext('recentFilePath').text()
+
+
+
+
+
+        #replace 'config.xml' with the filepath from the programSettings.xml
+        filename = ET.parse(self.recentLoad + '/config.xml').getroot()
 
         for listitem in filename.findall('listitem'):
             #self.lb.addItem(listitem.text)
@@ -637,13 +787,13 @@ class Notes(object):
                 self.tabwidget_icons_dict[tabname.text] = self.tab_icon
                 content = tabname.get('content')
 
-                if os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}'.format(self.tab_widget.objectName())):
+                if os.path.exists(r'{}\{}'.format(self.recentLoad ,self.tab_widget.objectName())):
                     
 
 
                     tE = QTextEdit()
                     tE.setObjectName(content)
-                    with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\{}\{}.html'.format(self.tab_widget.objectName(), content), 'r') as file:
+                    with open(r'{}/{}/{}'.format(self.recentLoad , self.tab_widget.objectName(), content), 'r') as file:
                         tE.setText(file.read())
                     file.close()
                     self.id.addTab(tE, self.tabico, tabname.text)
@@ -656,9 +806,17 @@ class Notes(object):
                     msg_box.exec()
 
 
-
+        # self.noteSettings.beginGroup("programSettings")
+        # self.noteSettings.setValue('recentFilePath', str(self.recent))
+        # self.noteSettings.endGroup()
+        # self.noteSettings.sync()
 
                 
+
+
+
+
+
                 # if 'QTextEdit' in str(content):
                 #     self.id.addTab(QTextEdit(), self.tabico, tabname.text)
                 # elif 'QGraphicsView' in str(content):
