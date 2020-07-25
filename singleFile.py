@@ -23,7 +23,7 @@ from dicttoxml import dicttoxml
 
 
 
-# here is a change made comment
+
 
 
 class Notes(object):
@@ -76,6 +76,9 @@ class Notes(object):
         self.addnew = QAction()
         self.addnew.triggered.connect(self.itemMenu)         
         self.toolbar.addAction(self.addnew) 
+        self.printcfg = QAction()
+        self.printcfg.triggered.connect(self.print)
+        self.toolbar.addAction(self.printcfg)
 
 
         
@@ -579,22 +582,32 @@ class Notes(object):
 
 
     def print(self):
-        #self.tabwidget_icons_dict['tabwidget'] = self.curr_tab_wid.objectName() #nested dict here (tabnames:filepath)
-        for i in self.stacked_widget.findChildren(QTabWidget):
 
-            #self.tabwidget_icons_dict['tabwidget'] = i.objectName()
-            #self.tabwidget_icons_dict['tabwidget'] = {}
-            for j in range(i.count()):
-                self.tabname = i.tabText(j)
-                self.tabwidget_icons_dict[i.objectName()] = {}
-                #self.tabwidget_icons_dict['tabwidget'][i.objectName()] = self.dict
-                #self.tabwidget_icons_dict[i.objectName()] = self.dict
-                #self.tabwidget_icons_dict[i.objectName()][self.tabname] = self.tab_ico
-                #self.tabwidget_icons_dict[i.objectName()] = {self.tabname:self.tab_ico}
-                #self.tabwidget_icons_dict[i.objectName()] = self.widget[self.tabname] = self.tab_ico
-                #self.tabwidget_icons_dict[self.tabname] = self.tab_ico
-                #self.tabwidget_icons_dict[self.newTabName] = self.tab_ico
-        print(self.tabwidget_icons_dict.items())
+        lo = MainWindow.pos()
+        lem = lo.x()
+        lul = lo.y()
+        lol = self.listc.width()
+        lool = self.listc.height()
+
+        print(lo, lem, lul, lol, lool)
+
+
+        # #self.tabwidget_icons_dict['tabwidget'] = self.curr_tab_wid.objectName() #nested dict here (tabnames:filepath)
+        # for i in self.stacked_widget.findChildren(QTabWidget):
+
+        #     #self.tabwidget_icons_dict['tabwidget'] = i.objectName()
+        #     #self.tabwidget_icons_dict['tabwidget'] = {}
+        #     for j in range(i.count()):
+        #         self.tabname = i.tabText(j)
+        #         self.tabwidget_icons_dict[i.objectName()] = {}
+        #         #self.tabwidget_icons_dict['tabwidget'][i.objectName()] = self.dict
+        #         #self.tabwidget_icons_dict[i.objectName()] = self.dict
+        #         #self.tabwidget_icons_dict[i.objectName()][self.tabname] = self.tab_ico
+        #         #self.tabwidget_icons_dict[i.objectName()] = {self.tabname:self.tab_ico}
+        #         #self.tabwidget_icons_dict[i.objectName()] = self.widget[self.tabname] = self.tab_ico
+        #         #self.tabwidget_icons_dict[self.tabname] = self.tab_ico
+        #         #self.tabwidget_icons_dict[self.newTabName] = self.tab_ico
+        # print(self.tabwidget_icons_dict.items())
 
 
     def uichanges(self):
@@ -613,6 +626,41 @@ class Notes(object):
             for g in self.tabchanges:
                 print(g)
                 os.remove(g)
+
+
+
+    def programconfig(self):
+        if not os.path.exists('settings'):
+            os.makedirs('settings')
+
+        settings_root = ET.Element('programSettings')
+        settings_tree = ElementTree(settings_root)
+
+        recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
+        recentFilePath.text = self.saveFile
+
+        mainw = ET.SubElement(settings_root, 'mainwindowSize')
+        mainw.set('x', MainWindow.x())
+        mainw.set('y', MainWindow.y())
+        mainw.text = MainWindow.pos()
+
+        listsize = ET.SubElement(settings_root, 'listSize')
+        listsize.set('width', self.listc.width())
+        listsize.set('height', self.listc.height())
+        listsize.text = 'listcoords'
+
+        stacksize = ET.SubElement(settings_root, 'stackSize')
+        stacksize.set('width', self.stack.width())
+        stacksize.set('height', self.stack.height())
+        stacksize.text = 'stackcoords'
+
+
+        #settings_root.set('recentFilePath', self.saveFile)
+
+
+
+        settings_tree.write(open('settings/programSettings.xml', 'wb'))
+
 
 
 
@@ -689,23 +737,55 @@ class Notes(object):
                 tabName.text = self.tabtext
                 #self.tabwidget_icons_dict[tabwidgetName.text] = self.tabtext, self.tabwidget_icons_dict[#nested dict here (tabnames:filepath)
                 #self.tabwidget_icons_dict[self.tabtext] =
-        tree.write(open(self.saveFile + '\config.xml', 'wb'))
+
+        # if not os.path.exists(self.saveFile):
+        #     os.makedirs(self.saveFile)
+
+        tree.write(open(self.saveFile + '/config.xml', 'wb'))
         
         list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
         tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
         #xml = xml.decode()
 
 
-        settings_root = ET.Element('programSettings')
-        settings_tree = ElementTree(settings_root)
-        recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
-        recentFilePath.text = self.saveFile
-        #settings_root.set('recentFilePath', self.saveFile)
+        self.programconfig()
 
-        if not os.path.exists('settings'):
-            os.makedirs('settings')
 
-        settings_tree.write(open('settings\programSettings.xml', 'wb'))
+
+        # if not os.path.exists('settings'):
+        #     os.makedirs('settings')
+
+        # settings_root = ET.Element('programSettings')
+        # settings_tree = ElementTree(settings_root)
+
+        # recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
+        # recentFilePath.text = self.saveFile
+
+        # mainw = ET.SubElement(settings_root, 'mainwindowSize')
+        # mainw.set('x', MainWindow.x())
+        # mainw.set('y', MainWindow.y())
+        # mainw.text = MainWindow.pos()
+
+        # listsize = ET.SubElement(settings_root, 'listSize')
+        # listsize.set('width', self.listc.width())
+        # listsize.set('height', self.listc.height())
+        # listsize.text = 'listcoords'
+
+        # stacksize = ET.SubElement(settings_root, 'stackSize')
+        # stacksize.set('width', self.stack.width())
+        # stacksize.set('height', self.stack.height())
+        # stacksize.text = 'stackcoords'
+
+
+        # #settings_root.set('recentFilePath', self.saveFile)
+
+
+
+        # settings_tree.write(open('settings/programSettings.xml', 'wb'))
+
+
+
+
 
 
 
@@ -725,34 +805,6 @@ class Notes(object):
 
     def load(self):
 
-        # check QSettings for last opened filepath
-        # if self.noteSettings.contains('recentFilepath'):
-        #     self.recent = self.noteSettings.recentFilePath
-        # else:
-        #     break
-
-        #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
-
-
-        
-        # if self.noteSettings.contains('recentFilePath'):
-        #     self.recent = self.noteSettings.value('recentFilePath')
-        # else:
-        #     MainWindow.show()
-        #     return
-
-        
-
-
-            
-        
-            
-
-
-        # else:
-        #     MainWindow.show()
-        #     return
-
 
 
 
@@ -765,7 +817,7 @@ class Notes(object):
         #         sys.exit()
 
 
-        if os.path.exists('settings/programSettings.xml'):
+        if os.path.isfile('settings/programSettings.xml'):
             self.xmlSettings = ET.parse('settings/programSettings.xml').getroot()
 
             for i in self.xmlSettings.findall('recentFilePath'):
@@ -834,6 +886,14 @@ class Notes(object):
                     msg_box.setWindowTitle("File Error")
                     msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                     msg_box.exec()
+
+
+
+        self.programconfig()
+
+
+
+        #MainWindow.setFixedSize()
 
 
         # self.noteSettings.beginGroup("programSettings")
