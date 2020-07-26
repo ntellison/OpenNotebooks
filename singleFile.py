@@ -630,36 +630,37 @@ class Notes(object):
 
 
     def programconfig(self):
-        if not os.path.exists('settings'):
-            os.makedirs('settings')
+        
+
 
         settings_root = ET.Element('programSettings')
         settings_tree = ElementTree(settings_root)
 
-        recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
+        recentFilePath = ET.SubElement(settings_root, 'recentfilefath')
         recentFilePath.text = self.saveFile
 
-        mainw = ET.SubElement(settings_root, 'mainwindowSize')
+        mainw = ET.SubElement(settings_root, 'mainwindowsize')
         mainw.set('x', MainWindow.x())
         mainw.set('y', MainWindow.y())
-        mainw.text = MainWindow.pos()
+        mainw.text = str(MainWindow.pos())
 
-        listsize = ET.SubElement(settings_root, 'listSize')
+        listsize = ET.SubElement(settings_root, 'listsize')
         listsize.set('width', self.listc.width())
         listsize.set('height', self.listc.height())
         listsize.text = 'listcoords'
 
-        stacksize = ET.SubElement(settings_root, 'stackSize')
+        stacksize = ET.SubElement(settings_root, 'stacksize')
         stacksize.set('width', self.stack.width())
         stacksize.set('height', self.stack.height())
         stacksize.text = 'stackcoords'
 
 
-        #settings_root.set('recentFilePath', self.saveFile)
+            #settings_root.set('recentFilePath', self.saveFile)
 
+        if not os.path.exists('settings'):
+            os.makedirs('settings')
 
-
-        settings_tree.write(open('settings/programSettings.xml', 'wb'))
+            settings_tree.write(open('settings/programSettings.xml', 'wb'))
 
 
 
@@ -742,13 +743,13 @@ class Notes(object):
         #     os.makedirs(self.saveFile)
 
         tree.write(open(self.saveFile + '/config.xml', 'wb'))
-        
+        self.programconfig()        
         list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
         tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
         #xml = xml.decode()
 
 
-        self.programconfig()
+
 
 
 
