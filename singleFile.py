@@ -136,7 +136,7 @@ class Notes(object):
         self.boxlayout.addWidget(self.splitter)
 
 
-        self.load()
+        #self.load()
 
 
 
@@ -589,7 +589,7 @@ class Notes(object):
         lol = self.listc.width()
         lool = self.listc.height()
 
-        print(lo, lem, lul, lol, lool)
+        print(lo, type(str(lem)), lul, lol, lool)
 
 
         # #self.tabwidget_icons_dict['tabwidget'] = self.curr_tab_wid.objectName() #nested dict here (tabnames:filepath)
@@ -629,38 +629,43 @@ class Notes(object):
 
 
 
-    def programconfig(self):
-        
 
+    def programconfig(self, path):
+
+        self.mwx = MainWindow.x()
+        self.mwy = MainWindow.y()  
+        
+        if not os.path.exists('settings'):
+            os.makedirs('settings')
 
         settings_root = ET.Element('programSettings')
         settings_tree = ElementTree(settings_root)
 
         recentFilePath = ET.SubElement(settings_root, 'recentfilefath')
-        recentFilePath.text = self.saveFile
+        recentFilePath.text = path
 
         mainw = ET.SubElement(settings_root, 'mainwindowsize')
-        mainw.set('x', MainWindow.x())
-        mainw.set('y', MainWindow.y())
-        mainw.text = str(MainWindow.pos())
+        mainw.text = 'mainwindowsize'        
+        mainw.set('x', str(self.mwx))
+        mainw.set('y', str(self.mwy))
+
 
         listsize = ET.SubElement(settings_root, 'listsize')
-        listsize.set('width', self.listc.width())
-        listsize.set('height', self.listc.height())
-        listsize.text = 'listcoords'
+        listsize.text = 'listcoords'        
+        listsize.set('width', str(self.listc.width()))
+        listsize.set('height', str(self.listc.height()))
+
 
         stacksize = ET.SubElement(settings_root, 'stacksize')
-        stacksize.set('width', self.stack.width())
-        stacksize.set('height', self.stack.height())
-        stacksize.text = 'stackcoords'
+        stacksize.text = 'stackcoords'        
+        stacksize.set('width', str(self.stack.width()))
+        stacksize.set('height', str(self.stack.height()))
+
 
 
             #settings_root.set('recentFilePath', self.saveFile)
 
-        if not os.path.exists('settings'):
-            os.makedirs('settings')
-
-            settings_tree.write(open('settings/programSettings.xml', 'wb'))
+        settings_tree.write(open('settings/programSettings.xml', 'wb'))
 
 
 
@@ -681,7 +686,8 @@ class Notes(object):
 
 
         if os.path.exists('settings/programSettings.xml'):
-            self.xmlSettings_save = ET.parse('settings/programSettings.xml').getroot()
+            self.xmlSettings_save = ET.parse('settings/programSettings.xml')
+            self.xmlSettings_save.getroot()
             for p in self.xmlSettings_save.findall('recentFilePath'):
                 self.saveFile = p.text
         else:
@@ -743,9 +749,9 @@ class Notes(object):
         #     os.makedirs(self.saveFile)
 
         tree.write(open(self.saveFile + '/config.xml', 'wb'))
-        self.programconfig()        
-        list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
-        tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
+        self.programconfig(self.saveFile)        
+        #list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
+        #tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
         #xml = xml.decode()
 
 
@@ -890,7 +896,7 @@ class Notes(object):
 
 
 
-        self.programconfig()
+        #self.programconfig(self.recentLoad)
 
 
 
