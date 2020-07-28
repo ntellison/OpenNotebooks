@@ -136,7 +136,7 @@ class Notes(object):
         self.boxlayout.addWidget(self.splitter)
 
 
-        #self.load()
+        self.load()
 
 
 
@@ -641,7 +641,7 @@ class Notes(object):
         settings_root = ET.Element('programSettings')
         settings_tree = ElementTree(settings_root)
 
-        recentFilePath = ET.SubElement(settings_root, 'recentfilefath')
+        recentFilePath = ET.SubElement(settings_root, 'recentfilepath')
         recentFilePath.text = path
 
         mainw = ET.SubElement(settings_root, 'mainwindowsize')
@@ -749,7 +749,10 @@ class Notes(object):
         #     os.makedirs(self.saveFile)
 
         tree.write(open(self.saveFile + '/config.xml', 'wb'))
-        self.programconfig(self.saveFile)        
+
+        self.programconfig(self.saveFile)
+
+
         #list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
         #tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
         #xml = xml.decode()
@@ -824,16 +827,19 @@ class Notes(object):
         #         sys.exit()
 
 
-        if os.path.isfile('settings/programSettings.xml'):
-            self.xmlSettings = ET.parse('settings/programSettings.xml').getroot()
+        if os.path.exists('settings/programSettings.xml'):
+            self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
+            self.xmlSettingsLoad.getroot()
 
-            for i in self.xmlSettings.findall('recentFilePath'):
-                self.recentLoad = i.text
+            for o in self.xmlSettingsLoad.findall('recentfilepath'):
+                self.recentLoad = o.text
                 print(self.recentLoad)
 
         else:
             MainWindow.show()
             return
+
+
             #self.xmlSettingsTree = ElementTree(self.xmlSettings)
             #self.recentLoad = self.xmlSettingsTree.findtext('recentFilePath').text()
 
@@ -893,6 +899,19 @@ class Notes(object):
                     msg_box.setWindowTitle("File Error")
                     msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                     msg_box.exec()
+
+
+
+        if os.path.isfile('settings/programSettings.xml'):
+
+            self.recentconfig = ET.parse('settings/programSettings.xml').getroot()
+
+        for i in self.recentconfig.findall('mainwindowsize'):
+            self.mws_x = i.get('x')
+            self.mws_y = i.get('y')
+            print(self.mws_x, self.mws_y)
+
+        MainWindow.resize(int(self.mws_x), int(self.mws_y))
 
 
 
