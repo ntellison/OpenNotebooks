@@ -686,12 +686,13 @@ class Notes(object):
 
 
         if os.path.exists('settings/programSettings.xml'):
-            self.xmlSettings_save = ET.parse('settings/programSettings.xml')
-            self.xmlSettings_save.getroot()
-            for p in self.xmlSettings_save.findall('recentFilePath'):
-                self.saveFile = p.text
+            xmlSettings_save = ET.parse('settings/programSettings.xml')
+            xmlSettings_save.getroot()
+            for p in xmlSettings_save.findall('recentfilepath'):
+                saveFile = p.text
+                
         else:
-            self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+            saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
             
 
 
@@ -720,15 +721,15 @@ class Notes(object):
                 self.tabcontents = self.q.widget(p).objectName()
 
 
-                if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
-                    os.makedirs(self.saveFile + '\{}'.format(tabwidgetName.text))
+                if not os.path.exists(saveFile + '\{}'.format(tabwidgetName.text)):
+                    os.makedirs(saveFile + '\{}'.format(tabwidgetName.text))
 
 
                 # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
                 #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
 
 
-                with open(self.saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
+                with open(saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
                     file.write(self.q.widget(p).toHtml())
                 file.close()
 
@@ -748,9 +749,9 @@ class Notes(object):
         # if not os.path.exists(self.saveFile):
         #     os.makedirs(self.saveFile)
 
-        tree.write(open(self.saveFile + '/config.xml', 'wb'))
+        tree.write(open(saveFile + '/config.xml', 'wb'))
 
-        self.programconfig(self.saveFile)
+        self.programconfig(saveFile)
 
 
         #list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
