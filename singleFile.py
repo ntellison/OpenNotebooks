@@ -632,6 +632,8 @@ class Notes(object):
 
     def programconfig(self, path):
 
+        self.mww = MainWindow.width()
+        self.mwh = MainWindow.height()
         self.mwx = MainWindow.x()
         self.mwy = MainWindow.y()  
         
@@ -648,6 +650,9 @@ class Notes(object):
         mainw.text = 'mainwindowsize'        
         mainw.set('x', str(self.mwx))
         mainw.set('y', str(self.mwy))
+        mainw.set('width', str(self.mww))
+        mainw.set('height', str(self.mwh))
+        #mainw.set('position', str(self.mw))
 
 
         listsize = ET.SubElement(settings_root, 'listsize')
@@ -910,9 +915,11 @@ class Notes(object):
         for i in self.recentconfig.findall('mainwindowsize'):
             self.mws_x = i.get('x')
             self.mws_y = i.get('y')
+            self.mw_width = i.get('width')
+            self.mw_height = i.get('height')
             print(self.mws_x, self.mws_y)
 
-        MainWindow.resize(int(self.mws_x), int(self.mws_y))
+        MainWindow.setGeometry(int(self.mws_x), int(self.mws_y), int(self.mw_width), int(self.mw_height))
 
 
 
