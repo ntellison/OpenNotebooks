@@ -668,7 +668,6 @@ class Notes(object):
 
 
 
-            #settings_root.set('recentFilePath', self.saveFile)
 
         settings_tree.write(open('settings/programSettings.xml', 'wb'))
 
@@ -917,9 +916,27 @@ class Notes(object):
             self.mws_y = i.get('y')
             self.mw_width = i.get('width')
             self.mw_height = i.get('height')
+            
             print(self.mws_x, self.mws_y)
 
+
         MainWindow.setGeometry(int(self.mws_x), int(self.mws_y), int(self.mw_width), int(self.mw_height))
+
+        for ls in self.recentconfig.findall('listsize'):
+
+            self.list_width = ls.get('width')
+            
+
+        for ss in self.recentconfig.findall('stacksize'):
+
+            self.ssize = ss.get('width')
+
+
+        self.splitter.setSizes([int(self.list_width), int(self.ssize)])
+
+
+
+
 
 
 
