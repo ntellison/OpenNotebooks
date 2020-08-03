@@ -136,7 +136,7 @@ class Notes(object):
         self.boxlayout.addWidget(self.splitter)
 
 
-        self.load()
+        #self.load()
 
 
 
@@ -581,6 +581,49 @@ class Notes(object):
 
 
 
+
+    def passwordmenu(self):
+
+        self.passdialog = QDialog(MainWindow)
+
+        self.passlayout = QFormLayout()
+
+        self.passlbl = QLabel("Password :")
+
+        self.passle = QLineEdit()
+
+        self.passbtnbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+
+        self.passbtnbox.accepted.connect(self.passaccept)
+        self.passbtnbox.rejected.connect(self.passdialogclose)
+
+        self.passdialog.setLayout(self.passlayout)
+        self.passlayout.addRow(self.passlbl)
+        self.passlayout.addRow(self.passle)
+        self.passlayout.addRow(self.passbtnbox)
+
+        self.passdialog.show()
+
+
+    def passdialogclose(self):
+        self.passdialog.close()
+
+
+    def passaccept(self):
+
+        self.notepassword = self.passle.getText()
+
+        #
+        # self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0] 
+
+        return self.notepassword
+
+
+
+
+
+
+
     def print(self):
 
         lo = MainWindow.pos()
@@ -673,89 +716,122 @@ class Notes(object):
 
 
 
-
+# can have function that just checks for file and gets a save location if no recent file found.
+# or... can just wrap the content of the below save function in one big try/except block
 
 
     def save(self):
 
-        # if the list is empty
-        # if not self.listchanges:
-        #     pass
-        # else:
-        #     for h in self.changes:
-        #         print(h)
-        #         shutil.rmtree(h)
+
 
         self.uichanges()
 
 
-        if os.path.exists('settings/programSettings.xml'):
+        try:
+            #f = open('settings/programSettings.xml', 'r')
             xmlSettings_save = ET.parse('settings/programSettings.xml')
             xmlSettings_save.getroot()
             for p in xmlSettings_save.findall('recentfilepath'):
-                saveFile = p.text
+                self.saveFile = p.text
+
+
+
+            # except FileNotFoundError:
+            #     print("file not found")
+            #     self.passwordmenu()
+
+            # finally:
+            #     self.passwordmenu()            
+                #saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]            
+                #f.close()
+
+
+
+
+
+
+            # if os.path.exists('settings/programSettings.xml'):
+            #     xmlSettings_save = ET.parse('settings/programSettings.xml')
+            #     xmlSettings_save.getroot()
+            #     for p in xmlSettings_save.findall('recentfilepath'):
+            #         saveFile = p.text
+                    
+            # else:
+            #     ### need to add an additional dialog to see if the user wants to add a password ####
+            #     self.passwordmenu()
+            #     saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
                 
-        else:
-            saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+                
+
+
+
+            root = ET.Element('programElements')
+            tree = ElementTree(root)
+
             
 
+            for i in range(self.listc.count()):
+                self.x = self.listc.item(i).text()
+                #self.y = self.lb.item(i).icon()
+                listitem = ET.SubElement(root, 'listitem')
+                print(self.list_icons_dict)
+                licon = self.list_icons_dict[self.x]
+                listitem.set('item_icon', licon)
+                listitem.text = self.x
+            for g in range(self.stack.count()):
+                self.q = self.stack.widget(g)
+                tabwidgetName = ET.SubElement(root, 'tabwid_name')
+                tabwidgetName.text = self.q.objectName()
+                for p in range(self.q.count()):
+                    self.tabtext = self.q.tabText(p)
+                    #self.tabicon = self.q.tabIcon(p)
+                    self.ticon = self.tabwidget_icons_dict[self.tabtext]
+                    self.tabcontents = self.q.widget(p).objectName()
 
 
-        root = ET.Element('programElements')
-        tree = ElementTree(root)
-
-        
-
-        for i in range(self.listc.count()):
-            self.x = self.listc.item(i).text()
-            #self.y = self.lb.item(i).icon()
-            listitem = ET.SubElement(root, 'listitem')
-            print(self.list_icons_dict)
-            licon = self.list_icons_dict[self.x]
-            listitem.set('item_icon', licon)
-            listitem.text = self.x
-        for g in range(self.stack.count()):
-            self.q = self.stack.widget(g)
-            tabwidgetName = ET.SubElement(root, 'tabwid_name')
-            tabwidgetName.text = self.q.objectName()
-            for p in range(self.q.count()):
-                self.tabtext = self.q.tabText(p)
-                #self.tabicon = self.q.tabIcon(p)
-                self.ticon = self.tabwidget_icons_dict[self.tabtext]
-                self.tabcontents = self.q.widget(p).objectName()
+                    if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
+                        os.makedirs(self.saveFile + '\{}'.format(tabwidgetName.text))
 
 
-                if not os.path.exists(saveFile + '\{}'.format(tabwidgetName.text)):
-                    os.makedirs(saveFile + '\{}'.format(tabwidgetName.text))
+                    # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
+                    #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
 
 
-                # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
-                #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
+                    with open(self.saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
+                        file.write(self.q.widget(p).toHtml())
+                    file.close()
 
 
-                with open(saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
-                    file.write(self.q.widget(p).toHtml())
-                file.close()
+                    # with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
+                    #     file.write(self.q.widget(p).toHtml())
+                    # file.close()
+
+                    #self.tabcontents = type(self.q.widget(p))
+                    tabName = ET.SubElement(tabwidgetName, 'tabName')
+                    tabName.set('content', str(self.tabcontents))
+                    tabName.set('tabIcon', self.ticon)
+                    tabName.text = self.tabtext
+                    #self.tabwidget_icons_dict[tabwidgetName.text] = self.tabtext, self.tabwidget_icons_dict[#nested dict here (tabnames:filepath)
+                    #self.tabwidget_icons_dict[self.tabtext] =
+
+            # if not os.path.exists(self.saveFile):
+            #     os.makedirs(self.saveFile)
+
+            tree.write(open(self.saveFile + '/config.xml', 'wb'))
+
+            self.pw = passaccept()
+
+            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), 'mynotes'], shell=False)
 
 
-                # with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
-                #     file.write(self.q.widget(p).toHtml())
-                # file.close()
+            self.programconfig(self.saveFile)
 
-                #self.tabcontents = type(self.q.widget(p))
-                tabName = ET.SubElement(tabwidgetName, 'tabName')
-                tabName.set('content', str(self.tabcontents))
-                tabName.set('tabIcon', self.ticon)
-                tabName.text = self.tabtext
-                #self.tabwidget_icons_dict[tabwidgetName.text] = self.tabtext, self.tabwidget_icons_dict[#nested dict here (tabnames:filepath)
-                #self.tabwidget_icons_dict[self.tabtext] =
 
-        # if not os.path.exists(self.saveFile):
-        #     os.makedirs(self.saveFile)
 
-        tree.write(open(saveFile + '/config.xml', 'wb'))
+        except FileNotFoundError:
+            print("file not found")
+            self.passwordmenu()
 
-        self.programconfig(saveFile)
 
 
         #list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
