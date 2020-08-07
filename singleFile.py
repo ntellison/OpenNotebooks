@@ -611,12 +611,13 @@ class Notes(object):
 
     def passaccept(self):
 
-        self.notepassword = self.passle.getText()
-
+        self.notepassword = self.passle.text
+        self.pw = self.passle.text
+        self.passdialog.close()
         #
         # self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0] 
 
-        return self.notepassword
+        #return self.notepassword
 
 
 
@@ -716,6 +717,79 @@ class Notes(object):
 
 
 
+
+
+    def createFile(self):
+
+        self.creatediaglog = QDialog()
+
+        self.createfylelayy = QFormLayout()
+
+        self.createbtn = QPushButton('Choose File')
+        self.createbtn.clicked.connect(self.createclicked)
+
+        self.createle = QLineEdit()
+
+        self.cb_pass = QCheckBox()
+        self.cb_pass.stateChanged.connect(self.cbpasstoggle)
+
+        self.le_pass = QLineEdit()
+        self.le_pass.setReadOnly(True)
+
+        createfile_btnbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        createfile_btnbox.accepted.connect(self.createok)
+        createfile_btnbox.rejected.connect(self.createcancel)
+
+        self.creatediaglog.setLayout(self.createfylelayy)
+        self.createfylelayy.addRow(self.createbtn)
+        self.createfylelayy.addRow(self.createle)
+        self.createfylelayy.addRow(self.cb_pass, self.le_pass)
+        self.createfylelayy.addRow(createfile_btnbox)
+
+        self.creatediaglog.show()
+
+
+    def cbpasstoggle(self):
+
+        self.le_pass.setReadOnly(False)
+
+
+    def createclicked(self):
+
+        f = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+        
+        self.createle.setText(f)
+
+
+    def createok(self):
+
+        self.saveFile = self.createle.text()
+        self.pw = self.le_pass.text()
+
+        if not os.path.exists(self.saveFile):
+            os.makedirs(self.saveFile)
+
+        xml = ET.parse('settings/programSettings.xml')
+
+        y = xml.find('recentfilepath')
+        y.text = str(self.saveFile)
+
+        xml.write(open('settings/programSettings.xml', 'wb'))
+
+        self.save()
+
+        self.creatediaglog.close()
+
+
+
+
+    def createcancel(self):
+
+        self.creatediaglog.close()
+
+
+
+
 # can have function that just checks for file and gets a save location if no recent file found.
 # or... can just wrap the content of the below save function in one big try/except block
 
@@ -726,42 +800,72 @@ class Notes(object):
 
         self.uichanges()
 
-
-        try:
-            #f = open('settings/programSettings.xml', 'r')
-            xmlSettings_save = ET.parse('settings/programSettings.xml')
-            xmlSettings_save.getroot()
-            for p in xmlSettings_save.findall('recentfilepath'):
-                self.saveFile = p.text
-
-
-
-            # except FileNotFoundError:
-            #     print("file not found")
-            #     self.passwordmenu()
-
-            # finally:
-            #     self.passwordmenu()            
-                #saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]            
-                #f.close()
+                
+        xmlSettings_save = ET.parse('settings/programSettings.xml')
+        #xmlSettings_save.getroot()
+        for p in xmlSettings_save.findall('recentfilepath'):
+            rfp = p.text
+            print(rfp)
+        if 'none' in rfp:
+            self.createFile()
+            
+            
+            #self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+            #self.passwordmenu()
+            
+        else:
+            self.saveFile = p.text                
 
 
+                    
 
 
 
 
-            # if os.path.exists('settings/programSettings.xml'):
+            # try:
+            #     #f = open('settings/programSettings.xml', 'r')
             #     xmlSettings_save = ET.parse('settings/programSettings.xml')
             #     xmlSettings_save.getroot()
             #     for p in xmlSettings_save.findall('recentfilepath'):
-            #         saveFile = p.text
+            #         rfp = p.text
+            #         print(rfp)
+            #     if 'none' in rfp:
+            #         self.createFile()
+            #         continue
+            #         #self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
+            #         #self.passwordmenu()
+            #     else:
+            #         self.saveFile = p.text
+            # except FileNotFoundError:
+            #     print("file not found")
+
+
+                # except FileNotFoundError:
+                #     print("file not found")
+                #     self.passwordmenu()
+
+                # finally:
+                #     self.passwordmenu()            
+                    #saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]            
+                    #f.close()
+
+
+
+
+
+
+                # if os.path.exists('settings/programSettings.xml'):
+                #     xmlSettings_save = ET.parse('settings/programSettings.xml')
+                #     xmlSettings_save.getroot()
+                #     for p in xmlSettings_save.findall('recentfilepath'):
+                #         saveFile = p.text
+                        
+                # else:
+                #     ### need to add an additional dialog to see if the user wants to add a password ####
+                #     self.passwordmenu()
+                #     saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
                     
-            # else:
-            #     ### need to add an additional dialog to see if the user wants to add a password ####
-            #     self.passwordmenu()
-            #     saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
-                
-                
+                    
 
 
 
@@ -819,18 +923,25 @@ class Notes(object):
 
             tree.write(open(self.saveFile + '/config.xml', 'wb'))
 
-            self.pw = passaccept()
+            #self.pw = self.passwordmenu()
 
-            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), 'mynotes'], shell=False)
+            if self.pw != "":
+
+                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
+
+            else:
+                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
 
 
             self.programconfig(self.saveFile)
+            
 
 
 
-        except FileNotFoundError:
-            print("file not found")
-            self.passwordmenu()
+
+            #self.passwordmenu()
+
+            #self.createFile()
 
 
 
@@ -914,11 +1025,13 @@ class Notes(object):
 
             for o in self.xmlSettingsLoad.findall('recentfilepath'):
                 self.recentLoad = o.text
+                if self.recentLoad == 'none':
+                    MainWindow.show()
                 print(self.recentLoad)
 
         else:
             MainWindow.show()
-            return
+            
 
 
             #self.xmlSettingsTree = ElementTree(self.xmlSettings)
@@ -1069,3 +1182,5 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     main()
+
+
