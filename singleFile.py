@@ -766,8 +766,23 @@ class Notes(object):
         self.saveFile = self.createle.text()
         self.pw = self.le_pass.text()
 
-        if not os.path.exists(self.saveFile):
-            os.makedirs(self.saveFile)
+        if self.pw != "":
+
+            if not os.path.exists(self.saveFile):
+                
+                self.savefile_fn = os.path.split(self.saveFile)
+                self.savefile_fnh = self.savefile_fn[0]
+                self.savefile_fnt = self.savefile_fn[1]
+                #self.savefile_fn = '_{}'.format(self.savefile_fn[1])
+                os.makedirs(self.savefile_fnh + '/_{}'.format(self.savefile_fnt))
+                self.saveFile = self.savefile_fnh + '/_{}'.format(self.savefile_fnt)
+
+                print(self.saveFile)
+
+        else:
+            if not os.path.exists(self.saveFile):
+                os.makedirs(self.saveFile)
+                
 
         xml = ET.parse('settings/programSettings.xml')
 
@@ -892,16 +907,22 @@ class Notes(object):
                     self.ticon = self.tabwidget_icons_dict[self.tabtext]
                     self.tabcontents = self.q.widget(p).objectName()
 
+                    # self.savefile_fn = os.path.split(self.saveFile)
+                    # self.savefile_fn = '_{}'.format(self.savefile_fn[1])
+                    # self.saveFile = self.saveFile + '\{}'.format(self.savefile_fn)
 
-                    if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
-                        os.makedirs(self.saveFile + '\{}'.format(tabwidgetName.text))
+                    # if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
+                    #     os.makedirs(self.saveFile + '\{}'.format(self.savefile_fn) + '\{}'.format(tabwidgetName.text))
 
 
                     # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
                     #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
 
+                    if not os.path.exists(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
+                        os.makedirs(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
+                        print(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
 
-                    with open(self.saveFile + '\{}'.format(tabwidgetName.text) + '\{}'.format(self.tabcontents), 'w') as file:
+                    with open(r'{}'.format(self.saveFile) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
                         file.write(self.q.widget(p).toHtml())
                     file.close()
 
@@ -925,12 +946,31 @@ class Notes(object):
 
             #self.pw = self.passwordmenu()
 
-            if self.pw != "":
+            # self.savefile_fn = os.path.split(self.saveFile)
+            # self.savefile_fn = '_{}'.format(self.savefile_fn[1])
+            # print('filename :', self.savefile_fn)
+            print('savefilepath :', self.saveFile)
+
+
+            if '_' in self.saveFile:
+
+                print(self.pw)
+                print(self.savefile_fnt)
 
                 subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
 
             else:
                 subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
+
+
+            # if self.pw != "":
+
+            #     print(self.pw)
+
+            #     subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '-o{}'.format(self.savefile_fn)], shell=False)
+
+            # else:
+            #     subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
 
 
             self.programconfig(self.saveFile)
@@ -1001,6 +1041,41 @@ class Notes(object):
 
 
 
+    def loadpass(self):
+
+        self.enterpass = QDialog()
+
+        self.loadpass_layout = QFormLayout()
+
+        self.lp_lbl = QLabel('Enter Password :')
+
+        self.lp_le = QLineEdit()
+
+        lp_btnbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        lp_btnbox.accepted.connect()
+        lp_btnbox.rejected.connect()
+
+        self.enterpass.setLayout(self.loadpass_layout)
+        self.loadpass_layout.addRow(self.lp_lbl)
+        self.loadpass_layout.addRow(self.lp_le)
+        self.loadpass_layout.addRow(lp_btnbox)
+
+        self.enterpass.show()
+
+
+
+
+    def lp_ok(self):
+
+        self.lp_pass = self.lp_le.text()
+
+        self.enterpass.close()
+
+
+    def lp_cancel(self):
+
+        self.enterpass.close()
+
 
 
 
@@ -1037,6 +1112,19 @@ class Notes(object):
             #self.xmlSettingsTree = ElementTree(self.xmlSettings)
             #self.recentLoad = self.xmlSettingsTree.findtext('recentFilePath').text()
 
+
+
+        #could put a symbol or underscore in the filename of the 7z file to indicate it does have encryption
+
+
+        if r'_' in r'{}'.format(self.recentLoad):
+            # need a window here for user to enter password and feed string into the 7z subprocess below
+            print('Encrypted 7z')
+            self.loadpass()
+            subprocess.run([r'7z\7-Zip\7z.exe', 'e', '-p{}'.format(self.le_pass), '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
+        else:
+            print('file is regular 7z')
+            subprocess.run([r'7z\7-Zip\7z.exe', 'e', '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
 
 
 
