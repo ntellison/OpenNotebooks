@@ -6,14 +6,15 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import (QApplication, QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
-                            QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
+                            QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox)
 from PyQt5 import QtCore
 from PyQt5.QtCore import QEvent, Qt, QSize, QSettings
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 import sip
 import shutil
+
 
 from xml.etree.ElementTree import ElementTree
 import xml.etree.ElementTree as ET
@@ -28,6 +29,8 @@ from dicttoxml import dicttoxml
 
 class Notes(object):
     def __init__(self):
+        super(Notes).__init__()
+        
     #     super(Notes, self).__init__()
     #     #QMainWindow.__init__(self)
 
@@ -51,8 +54,8 @@ class Notes(object):
 
     def setupUi(self, MainWindow):
 
-
-
+        
+        
         menubar = MainWindow.menuBar()
 
 
@@ -82,7 +85,7 @@ class Notes(object):
 
 
         
-        central_widget = QWidget()
+        central_widget = QWidget(MainWindow)
 
         self.splitter = QSplitter(central_widget)
         self.splitter.setOrientation(Qt.Horizontal)
@@ -135,8 +138,13 @@ class Notes(object):
 
         self.boxlayout.addWidget(self.splitter)
 
+        
+        #application.aboutToQuit.connect(self.closeEvent)
 
-        #self.load()
+
+
+
+        self.load()
 
 
 
@@ -247,6 +255,60 @@ class Notes(object):
     
 
 #################################################################################################################################
+
+    # def closeEvent(self):
+    #     #Your desired functionality here
+    #     print('Close button pressed')
+    #     import sys
+    #     sys.exit(0)
+
+
+
+
+    def closeEvent(self):
+
+        
+        
+        print('fuuuucccckkkkk')
+
+        reply = QMessageBox.question(self, 'Message',
+                                     "Are you sure to quit?", QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print('okeh')
+            shutil.rmtree(self.recentLoad)
+            sys.exit()
+            event.accept()
+
+        else:
+            print('cancelled')
+            # maybesave function?
+            
+            #self.save()
+            event.ignore()
+        
+        
+
+        
+
+
+    # def closeEvent(self, event):
+    #     print("JFC")
+    #     # this actually needs to be in a on close method
+    #     mssg = QMessageBox.question(MainWindow, 'Close Window', 'Are you sure you want to exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+
+    #     if mssg == QMessageBox.Yes:
+    #         event.accept()            
+    #         print('CLOSE EVENT TRIGGERED')
+    #         shutil.rmtree(self.saveFile)        
+
+    #     else:
+    #         event.ignore()
+
+
+
 
 
     def list_clicked(self):
@@ -957,10 +1019,13 @@ class Notes(object):
                 print(self.pw)
                 print(self.savefile_fnt)
 
-                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
+                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '-o{}'.format(self.saveFile)], shell=False)
 
             else:
                 subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
+
+
+
 
 
             # if self.pw != "":
@@ -1041,6 +1106,19 @@ class Notes(object):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     def loadpass(self):
 
         self.enterpass = QDialog()
@@ -1052,22 +1130,22 @@ class Notes(object):
         self.lp_le = QLineEdit()
 
         lp_btnbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        lp_btnbox.accepted.connect()
-        lp_btnbox.rejected.connect()
+        lp_btnbox.accepted.connect(self.lp_ok)
+        lp_btnbox.rejected.connect(self.lp_cancel)
 
         self.enterpass.setLayout(self.loadpass_layout)
         self.loadpass_layout.addRow(self.lp_lbl)
         self.loadpass_layout.addRow(self.lp_le)
         self.loadpass_layout.addRow(lp_btnbox)
 
-        self.enterpass.show()
+        self.enterpass.exec()
 
 
 
 
     def lp_ok(self):
 
-        self.lp_pass = self.lp_le.text()
+        self.user_pass = self.lp_le.text()
 
         self.enterpass.close()
 
@@ -1096,16 +1174,20 @@ class Notes(object):
 
         if os.path.exists('settings/programSettings.xml'):
             self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
-            self.xmlSettingsLoad.getroot()
+            #self.xmlSettingsLoad.getroot()
 
             for o in self.xmlSettingsLoad.findall('recentfilepath'):
-                self.recentLoad = o.text
-                if self.recentLoad == 'none':
+                recent = o.text
+                
+                if 'none' in recent:
                     MainWindow.show()
-                print(self.recentLoad)
+                    return
+                    
 
-        else:
-            MainWindow.show()
+                else:
+                    self.recentLoad = o.text
+                    print('recentload :',self.recentLoad)
+                        #MainWindow.show()
             
 
 
@@ -1116,21 +1198,29 @@ class Notes(object):
 
         #could put a symbol or underscore in the filename of the 7z file to indicate it does have encryption
 
+        self.rl_head = os.path.split(self.recentLoad)
 
-        if r'_' in r'{}'.format(self.recentLoad):
+        if '_' in '{}'.format(self.recentLoad):
             # need a window here for user to enter password and feed string into the 7z subprocess below
             print('Encrypted 7z')
             self.loadpass()
-            subprocess.run([r'7z\7-Zip\7z.exe', 'e', '-p{}'.format(self.le_pass), '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
+            print(self.user_pass)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
         else:
             print('file is regular 7z')
-            subprocess.run([r'7z\7-Zip\7z.exe', 'e', '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.recentLoad), '-o{}'.format(self.rl_head[0])], shell=False)
 
 
-
+        if not os.path.exists(r'{}{}'.format(self.recentLoad, r'/config.xml')):
+            #os.makedirs(r'{}'.format(self.recentLoad))
+            print('NO EXIST')
+            
+        else:
+            print('THIS PATH EXISTS')
 
         #replace 'config.xml' with the filepath from the programSettings.xml
-        filename = ET.parse(self.recentLoad + '/config.xml').getroot()
+        # filename = ET.parse(self.recentLoad + '/config.xml').getroot()
+        filename = ET.parse(r'{}{}'.format(self.recentLoad, r'/config.xml')).getroot()
 
         for listitem in filename.findall('listitem'):
             #self.lb.addItem(listitem.text)
@@ -1170,7 +1260,7 @@ class Notes(object):
 
                     tE = QTextEdit()
                     tE.setObjectName(content)
-                    with open(r'{}/{}/{}'.format(self.recentLoad , self.tab_widget.objectName(), content), 'r') as file:
+                    with open(r'{}/{}/{}/{}.html'.format(self.recentLoad , self.tab_widget.objectName(), content, content), 'r') as file:
                         tE.setText(file.read())
                     file.close()
                     self.id.addTab(tE, self.tabico, tabname.text)
@@ -1256,7 +1346,8 @@ if __name__ == "__main__":
     #ui.resize(1280, 720)
     #ui.show()
     MainWindow.show()
-
+    
+    
     sys.exit(application.exec_())
 
 
