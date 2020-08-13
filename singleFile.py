@@ -76,12 +76,46 @@ class Notes(object):
         # self.toolbar = QToolBar(MainWindow)
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
-        self.addnew = QAction()
-        self.addnew.triggered.connect(self.itemMenu)         
-        self.toolbar.addAction(self.addnew) 
-        self.printcfg = QAction()
-        self.printcfg.triggered.connect(self.print)
+
+        self.addnew = QAction(QIcon("icons/new.png"), "add new", MainWindow)
+        #self.addnew.triggered.connect(self.itemMenu)         
+        self.toolbar.addAction(self.addnew)
+
+        self.printcfg = QAction(QIcon("icons/print.png"), "print", MainWindow)
+        #self.printcfg.triggered.connect(self.print)
         self.toolbar.addAction(self.printcfg)
+
+        self.openAction = QAction(QIcon("icons/open.png"), "open notes file", MainWindow)
+        #self.openAction.triggered.connect(self.open)
+        self.toolbar.addAction(self.openAction)
+
+        self.copyAction = QAction(QIcon("icons/copy.png"), "copy text", MainWindow)
+        #self.copyAction.triggered.connect(self.copy)
+        self.toolbar.addAction(self.copyAction)
+
+        self.pasteAction = QAction(QIcon("icons/paste.png"), "paste text", MainWindow)
+        #self.pasteAction.triggered.connect(self.paste)
+        self.toolbar.addAction(self.pasteAction)
+
+        self.undoAction = QAction(QIcon("icons/undo.png"), "undo", MainWindow)
+        #self.undoAction.triggered.connect(self.undo)
+        self.toolbar.addAction(self.undoAction)
+
+        self.redoAction = QAction(QIcon("icons/redo.png"), "redo", MainWindow)
+        #self.redoAction.triggered.connect(self.redo)
+        self.toolbar.addAction(self.redoAction)
+
+        self.datetimeAction = QAction(QIcon("icons/calender.png"), "insert date/time", MainWindow)
+        #self.datetimeAction.triggered.connect(self.datetime)
+        self.toolbar.addAction(self.datetimeAction)
+
+        self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
+        #self.tableAction.triggered.connect(self.table)
+        self.toolbar.addAction(self.tableAction)
+
+        self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
+        #self.imageAction.triggered.connect(self.insertimage)
+        self.toolbar.addAction(self.imageAction)
 
 
         
