@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
-                            QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox)
+                            QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
 from PyQt5 import QtCore
 from PyQt5.QtCore import QEvent, Qt, QSize, QSettings
 from PyQt5 import QtGui, QtWidgets, QtCore
@@ -106,7 +106,7 @@ class Notes(object):
         self.toolbar.addAction(self.redoAction)
 
         self.datetimeAction = QAction(QIcon("icons/calender.png"), "insert date/time", MainWindow)
-        #self.datetimeAction.triggered.connect(self.datetime)
+        #self.datetimeAction.triggered.connect()
         self.toolbar.addAction(self.datetimeAction)
 
         self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
@@ -116,6 +116,10 @@ class Notes(object):
         self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
         #self.imageAction.triggered.connect(self.insertimage)
         self.toolbar.addAction(self.imageAction)
+
+        self.fontcolorAction = QAction(QIcon("icons/font-color.png"), "Select font color", MainWindow)
+        self.fontcolorAction.triggered.connect(self.fontColorSelect)
+        self.toolbar.addAction(self.fontcolorAction)
 
 
         
@@ -340,6 +344,50 @@ class Notes(object):
 
     #     else:
     #         event.ignore()
+
+
+
+
+
+
+    # for g in range(self.stack.count()):
+    # self.q = self.stack.widget(g)
+    # tabwidgetName = ET.SubElement(root, 'tabwid_name')
+    # tabwidgetName.text = self.q.objectName()
+    # for p in range(self.q.count()):
+    #     self.tabtext = self.q.tabText(p)
+    #     #self.tabicon = self.q.tabIcon(p)
+    #     self.ticon = self.tabwidget_icons_dict[self.tabtext]
+    #     self.tabcontents = self.q.widget(p).objectName()+
+
+
+    # self.item = self.listc.currentItem()
+    # self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
+    # self.curr_tab = self.curr_tab_wid.currentIndex()
+    # self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
+
+
+    def currentEdit(self):
+
+        self.stack_currWid = self.stack.currentWidget()
+        self.tab_currWid = self.stack_currWid.currentWidget()
+        self.tab_currWid = self.tab_currWid
+        #self.activeEdit = self.tab_currWid.findChild(QTabWidget, self.tab_currWid.text())
+        self.activeEdit = self.tab_currWid
+        print(self.activeEdit)
+        return self.activeEdit
+
+        # for t in range(self.stack.count()):
+        #     self.activeTE = self.stack.widget(t)
+
+        
+
+
+    def fontColorSelect(self):
+        color = QColorDialog.getColor()
+
+        self.currentEdit().setTextColor(color)
+
 
 
 
@@ -730,6 +778,8 @@ class Notes(object):
         lool = self.listc.height()
 
         print(lo, type(str(lem)), lul, lol, lool)
+
+        print(self.activeTE)
 
 
         # #self.tabwidget_icons_dict['tabwidget'] = self.curr_tab_wid.objectName() #nested dict here (tabnames:filepath)
@@ -1395,5 +1445,7 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     main()
+
+
 
 
