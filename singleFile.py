@@ -5,11 +5,11 @@ import subprocess
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
-                            QLabel, QVBoxLayout, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
+                            QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
 from PyQt5 import QtCore
-from PyQt5.QtCore import QEvent, Qt, QSize, QSettings
+from PyQt5.QtCore import QEvent, Qt, QSize, QSettings, QDate, QTime
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 import sip
@@ -33,7 +33,8 @@ class Notes(object):
         
     #     super(Notes, self).__init__()
     #     #QMainWindow.__init__(self)
-
+        #MainWindow.installEventFilter(MainWindow)
+              
 
         self.list_icons_dict = {}
         self.tabwidget_icons_dict = {}
@@ -52,7 +53,16 @@ class Notes(object):
         
 
 
+
+
+
+
+
+
+
     def setupUi(self, MainWindow):
+
+
 
         
         
@@ -90,31 +100,39 @@ class Notes(object):
         self.toolbar.addAction(self.openAction)
 
         self.copyAction = QAction(QIcon("icons/copy.png"), "copy text", MainWindow)
-        #self.copyAction.triggered.connect(self.copy)
+        self.copyAction.triggered.connect(self.copy)
         self.toolbar.addAction(self.copyAction)
 
         self.pasteAction = QAction(QIcon("icons/paste.png"), "paste text", MainWindow)
-        #self.pasteAction.triggered.connect(self.paste)
+        self.pasteAction.triggered.connect(self.paste)
         self.toolbar.addAction(self.pasteAction)
 
+        self.cutAction = QAction(QIcon("icons/paste.png"), "paste text", MainWindow)
+        self.cutAction.triggered.connect(self.cut)
+        self.toolbar.addAction(self.cutAction)
+
         self.undoAction = QAction(QIcon("icons/undo.png"), "undo", MainWindow)
-        #self.undoAction.triggered.connect(self.undo)
+        self.undoAction.triggered.connect(self.undo)
         self.toolbar.addAction(self.undoAction)
 
         self.redoAction = QAction(QIcon("icons/redo.png"), "redo", MainWindow)
-        #self.redoAction.triggered.connect(self.redo)
+        self.redoAction.triggered.connect(self.redo)
         self.toolbar.addAction(self.redoAction)
 
-        self.datetimeAction = QAction(QIcon("icons/calender.png"), "insert date/time", MainWindow)
-        #self.datetimeAction.triggered.connect()
-        self.toolbar.addAction(self.datetimeAction)
+        self.dateAction = QAction(QIcon("icons/calender.png"), "insert date", MainWindow)
+        self.dateAction.triggered.connect(self.date)
+        self.toolbar.addAction(self.dateAction)
+
+        self.timeAction = QAction(QIcon("icons/time.png"), "insert time", MainWindow)
+        self.timeAction.triggered.connect(self.time)
+        self.toolbar.addAction(self.timeAction)
 
         self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
-        #self.tableAction.triggered.connect(self.table)
+        self.tableAction.triggered.connect(self.tableDialog)
         self.toolbar.addAction(self.tableAction)
 
         self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
-        #self.imageAction.triggered.connect(self.insertimage)
+        self.imageAction.triggered.connect(self.insertimage)
         self.toolbar.addAction(self.imageAction)
 
         self.fontcolorAction = QAction(QIcon("icons/font-color.png"), "Select font color", MainWindow)
@@ -303,28 +321,7 @@ class Notes(object):
 
 
 
-    def closeEvent(self):
 
-        
-        
-        print('fuuuucccckkkkk')
-
-        reply = QMessageBox.question(self, 'Message',
-                                     "Are you sure to quit?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            print('okeh')
-            shutil.rmtree(self.recentLoad)
-            sys.exit()
-            event.accept()
-
-        else:
-            print('cancelled')
-            # maybesave function?
-            
-            #self.save()
-            event.ignore()
         
         
 
@@ -367,6 +364,31 @@ class Notes(object):
     # self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
 
 
+
+    def closeEvent(central_widget, event):
+
+        
+        
+        print('fuuuucccckkkkk')
+
+        reply = QMessageBox.question(central_widget, 'Message',
+                                     "Are you sure to quit?", QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print('okeh')
+            shutil.rmtree(self.recentLoad)
+            sys.exit()
+            central_widget.event.accept()
+
+        else:
+            print('cancelled')
+            # maybesave function?
+            
+            #self.save()
+            central_widget.event.ignore()
+
+
     def currentEdit(self):
 
         self.stack_currWid = self.stack.currentWidget()
@@ -374,7 +396,7 @@ class Notes(object):
         self.tab_currWid = self.tab_currWid
         #self.activeEdit = self.tab_currWid.findChild(QTabWidget, self.tab_currWid.text())
         self.activeEdit = self.tab_currWid
-        print(self.activeEdit)
+        #print(self.activeEdit)
         return self.activeEdit
 
         # for t in range(self.stack.count()):
@@ -383,13 +405,128 @@ class Notes(object):
         
 
 
+
+
+
+
+    def tableDialog(self):
+
+        self.table_dialog = QDialog(MainWindow)
+
+        self.tablediag_layout = QFormLayout()
+
+        self.lbl_rows = QLabel('Rows :')
+        self.lbl_cols = QLabel('Cols :')
+        self.lbl_spacing = QLabel('Spacing :')
+        self.lbl_padding = QLabel('Padding :')
+
+
+        self.sb_rows = QSpinBox()
+        self.sb_cols = QSpinBox()
+        self.sb_spacing = QSpinBox()
+        self.sb_padding = QSpinBox()
+
+        self.btn_insert = QPushButton('Insert Table')
+        self.btn_insert.clicked.connect(self.table)
+
+        self.table_dialog.setLayout(self.tablediag_layout)
+        self.tablediag_layout.addRow(self.lbl_rows, self.sb_rows)
+        self.tablediag_layout.addRow(self.lbl_cols, self.sb_cols)
+        self.tablediag_layout.addRow(self.lbl_spacing, self.sb_spacing)
+        self.tablediag_layout.addRow(self.lbl_padding, self.sb_padding)
+        self.tablediag_layout.addRow(self.btn_insert)
+
+        self.table_dialog.show()
+
+
+
+
+    def table(self):
+        
+        self.tableRows = self.sb_rows.text()
+        self.tableCols = self.sb_cols.text()
+        self.tableSpacing = self.sb_spacing.text()
+        self.tablePadding = self.sb_padding.text()
+
+        tableFormatting = QTextTableFormat()
+        tableFormatting.setCellPadding(int(self.tablePadding))
+        tableFormatting.setCellSpacing(int(self.tableSpacing))
+
+        cursor = self.currentEdit().textCursor()
+
+        table = cursor.insertTable(int(self.tableRows), int(self.tableCols), tableFormatting)
+        # table.QTextTableFormat.setCellPadding(int(self.tablePadding))
+        # table.QTextTableFormat.setCellSpacing(int(self.tableSpacing))
+
+
+
+
+    def copy(self):
+        cursor = self.currentEdit().textCursor()
+        txtSelected = cursor.selectedText()
+        self.copyTxt = txtSelected
+
+
+    def paste(self):
+        self.currentEdit().append(self.copyTxt)
+
+
+    def cut(self):
+        self.currentEdit().cut()
+
+
+
     def fontColorSelect(self):
         color = QColorDialog.getColor()
 
         self.currentEdit().setTextColor(color)
 
 
+    def undo(self):
+        self.currentEdit().undo()
 
+    def redo(self):
+        self.currentEdit().redo()
+
+    def date(self):
+        currentDate = QDate.currentDate()
+        self.currentEdit().setText(currentDate.toString(Qt.DefaultLocaleLongDate))
+
+
+    def time(self):
+        currentTime = QTime.currentTime()
+        self.currentEdit().setText(currentTime.toString(Qt.DefaultLocaleLongDate))
+
+
+    def insertimage(self):
+        filename = QtWidgets.QFileDialog.getOpenFileName(MainWindow, 'Insert image',".","Images (*.png *.xpm *.jpg *.bmp *.gif)")
+
+        filename = str(filename[0])
+        fext = os.path.splitext(filename)[1]
+        print('extension :', fext)
+        fbase = os.path.basename(filename)
+        print('filename :',os.path.basename(filename))
+
+        
+
+        if not os.path.exists(r'{}'.format(self.recentLoad) + r'/res'):
+            print(r'{}'.format(self.recentLoad) + r'/res')
+            os.makedirs(r'{}'.format(self.recentLoad) + r'/res')
+        
+        shutil.copyfile(r'{}'.format(filename), r'{}'.format(self.recentLoad) + r'/res/{}'.format(fbase))
+        # need to feed the copyfile copy in res directory to the qimage()
+        img = QImage(filename)
+
+        if img.isNull():
+            imgErrorMessage = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical,
+                            "Image load error",
+                            "Could not load image file!, Please make sure the file is an image format",
+                            QtWidgets.QMessageBox.Ok,
+                            self)
+            popup.show()
+        else:
+            cursor = self.currentEdit().textCursor()
+            cursor.insertImage(img, filename)
 
 
 
@@ -510,7 +647,7 @@ class Notes(object):
 
         if self.checkInfo == False and self.le_item.text() != False:
             self.ico = QIcon()
-            self.defaultListIcon = 'icons/justify.png'
+            self.defaultListIcon = 'icons/notebook.png'
             self.ico.addPixmap(QPixmap(self.defaultListIcon))
             
             item = QListWidgetItem()
