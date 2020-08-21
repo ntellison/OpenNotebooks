@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import Qt
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
                             QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
 from PyQt5 import QtCore
@@ -42,7 +42,8 @@ class Notes(object):
 
         self.listchanges = []
         self.tabchanges = []
-
+        
+        
 
         #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
 
@@ -54,7 +55,28 @@ class Notes(object):
         
 
 
+    def closeEvent(self, event):
 
+        
+        
+        print('fuuuucccckkkkk')
+
+        reply = QMessageBox.question(self, 'Message',
+                                    "Are you sure to quit?", QMessageBox.Yes |
+                                    QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print('okeh')
+            shutil.rmtree(self.recentLoad)
+            sys.exit()
+            event.accept()
+
+        else:
+            print('cancelled')
+            # maybesave function?
+            
+            #self.save()
+            event.ignore()
 
 
 
@@ -62,7 +84,6 @@ class Notes(object):
 
 
     def setupUi(self, MainWindow):
-
 
 
         
@@ -164,11 +185,16 @@ class Notes(object):
         self.fontcolorAction.triggered.connect(self.fontColorSelect)
         self.toolbar.addAction(self.fontcolorAction)
 
+        self.fontAction = QAction(QIcon("icons/font.png"), "Choose Font", MainWindow)
+        self.fontAction.triggered.connect(self.selectFont)
+        self.toolbar.addAction(self.fontAction)
+
 
         
-        central_widget = QWidget(MainWindow)
+        self.central_widget = QWidget(MainWindow)
+        
 
-        self.splitter = QSplitter(central_widget)
+        self.splitter = QSplitter(self.central_widget)
         self.splitter.setOrientation(Qt.Horizontal)
         # self.splitter.addWidget(self.listc)        
         # self.splitter.addWidget(self.listFrame)        
@@ -214,8 +240,8 @@ class Notes(object):
 
 
         self.boxlayout = QHBoxLayout()        
-        central_widget.setLayout(self.boxlayout)
-        MainWindow.setCentralWidget(central_widget)
+        self.central_widget.setLayout(self.boxlayout)
+        MainWindow.setCentralWidget(self.central_widget)
 
         self.boxlayout.addWidget(self.splitter)
 
@@ -390,28 +416,7 @@ class Notes(object):
 
 
 
-    def closeEvent(central_widget, event):
 
-        
-        
-        print('fuuuucccckkkkk')
-
-        reply = QMessageBox.question(central_widget, 'Message',
-                                     "Are you sure to quit?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            print('okeh')
-            shutil.rmtree(self.recentLoad)
-            sys.exit()
-            central_widget.event.accept()
-
-        else:
-            print('cancelled')
-            # maybesave function?
-            
-            #self.save()
-            central_widget.event.ignore()
 
 
     def currentEdit(self):
@@ -582,6 +587,20 @@ class Notes(object):
         else:
             cursor = self.currentEdit().textCursor()
             cursor.insertImage(img, filename)
+
+
+
+
+
+    def selectFont(self):
+
+        font, ok = QFontDialog.getFont()
+
+        if ok:
+            self.currentEdit().setCurrentFont(font)
+
+
+
 
 
 
