@@ -5,7 +5,8 @@ import subprocess
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat
+from PyQt5 import Qt
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
                             QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
 from PyQt5 import QtCore
@@ -119,6 +120,22 @@ class Notes(object):
         self.redoAction.triggered.connect(self.redo)
         self.toolbar.addAction(self.redoAction)
 
+        self.leftAlign = QAction(QIcon("icons/align-left.png"), "align left", MainWindow)
+        self.leftAlign.triggered.connect(self.textAlignLeft)
+        self.toolbar.addAction(self.leftAlign)
+
+        self.rightAlign = QAction(QIcon("icons/align-right.png"), "align right", MainWindow)
+        self.rightAlign.triggered.connect(self.textAlignRight)
+        self.toolbar.addAction(self.rightAlign)
+
+        self.centerAlign = QAction(QIcon("icons/align-center.png"), "align center", MainWindow)
+        self.centerAlign.triggered.connect(self.textAlignCenter)
+        self.toolbar.addAction(self.centerAlign)
+
+        self.justifyAlign = QAction(QIcon("icons/align-justify.png"), "align justify", MainWindow)
+        self.justifyAlign.triggered.connect(self.textAlignJustify)
+        self.toolbar.addAction(self.justifyAlign)
+
         self.dateAction = QAction(QIcon("icons/calender.png"), "insert date", MainWindow)
         self.dateAction.triggered.connect(self.date)
         self.toolbar.addAction(self.dateAction)
@@ -130,6 +147,14 @@ class Notes(object):
         self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
         self.tableAction.triggered.connect(self.tableDialog)
         self.toolbar.addAction(self.tableAction)
+
+        self.bulletAction = QAction(QIcon("icons/bullet.png"), "insert bulleted list", MainWindow)
+        self.bulletAction.triggered.connect(self.listBullets)
+        self.toolbar.addAction(self.bulletAction)
+
+        self.numberAction = QAction(QIcon("icons/number.png"), "insert numbered list", MainWindow)
+        self.numberAction.triggered.connect(self.listNumbered)
+        self.toolbar.addAction(self.numberAction)
 
         self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
         self.imageAction.triggered.connect(self.insertimage)
@@ -488,6 +513,20 @@ class Notes(object):
     def redo(self):
         self.currentEdit().redo()
 
+    def textAlignLeft(self):
+        print('left')
+        self.currentEdit().setAlignment(Qt.AlignLeft)
+
+    def textAlignRight(self):
+        self.currentEdit().setAlignment(Qt.AlignRight)
+
+    def textAlignCenter(self):
+        print('center')
+        self.currentEdit().setAlignment(Qt.AlignCenter)
+
+    def textAlignJustify(self):
+        self.currentEdit().setAlignment(Qt.AlignJustify)
+
     def date(self):
         currentDate = QDate.currentDate()
         self.currentEdit().setText(currentDate.toString(Qt.DefaultLocaleLongDate))
@@ -496,6 +535,22 @@ class Notes(object):
     def time(self):
         currentTime = QTime.currentTime()
         self.currentEdit().setText(currentTime.toString(Qt.DefaultLocaleLongDate))
+
+
+    def listBullets(self):
+
+        cursor = self.currentEdit().textCursor()
+
+        cursor.insertList(QTextListFormat.ListDisc)
+
+
+
+    def listNumbered(self):
+
+        cursor = self.currentEdit().textCursor()
+
+        cursor.insertList(QTextListFormat.ListDecimal)
+
 
 
     def insertimage(self):
