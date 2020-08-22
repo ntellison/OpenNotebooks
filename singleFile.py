@@ -857,7 +857,7 @@ class Notes(object):
     def programcfg(self):
         if os.path.exists('settings/programSettings.xml'):
             xmlSettings_currpath = ET.parse('settings/programSettings.xml').getroot()
-            for p in xmlSettings_currpath.findall('recentFilePath'):
+            for p in xmlSettings_currpath.findall('recentfilepath'):
                 self.currfile = p.text
 
         return self.currfile
@@ -918,7 +918,7 @@ class Notes(object):
         elif action == deleteListItem:
             
             self.fpath = self.listc.currentItem().text()
-            print(self.programcfg() + self.fpath)
+            #print(self.programcfg() + self.fpath)
             self.item = self.listc.currentItem()
             self.y = self.listc.takeItem(self.listc.row(self.item))#pops the list item out
             #self.r = self.stacked_widget.removeWidget(self.tab_widget.currentWidget())
