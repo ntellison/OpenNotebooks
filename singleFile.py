@@ -185,6 +185,10 @@ class Notes(object):
         self.fontcolorAction.triggered.connect(self.fontColorSelect)
         self.toolbar.addAction(self.fontcolorAction)
 
+        self.fontBackgroundAction = QAction(QIcon("icons/highlight.png"), "Select font background color", MainWindow)
+        self.fontBackgroundAction.triggered.connect(self.fontBackground)
+        self.toolbar.addAction(self.fontBackgroundAction)
+
         self.fontAction = QAction(QIcon("icons/font.png"), "Choose Font", MainWindow)
         self.fontAction.triggered.connect(self.selectFont)
         self.toolbar.addAction(self.fontAction)
@@ -600,7 +604,11 @@ class Notes(object):
             self.currentEdit().setCurrentFont(font)
 
 
+    def fontBackground(self):
 
+        backgroundColor = QColorDialog.getColor()
+
+        self.currentEdit().setTextBackgroundColor(backgroundColor)
 
 
 
