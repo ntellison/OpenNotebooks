@@ -109,9 +109,13 @@ class Notes(object):
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
 
-        self.addnew = QAction(QIcon("icons/new.png"), "add new", MainWindow)
-        #self.addnew.triggered.connect(self.itemMenu)         
+        self.addnew = QAction(QIcon("icons/notebook.png"), "Add New Nobebook", MainWindow)
+        self.addnew.triggered.connect(self.itemMenu)         
         self.toolbar.addAction(self.addnew)
+
+        self.newFile = QAction(QIcon("icons/new.png"), "Create New Note File", MainWindow)
+        self.newFile.triggered.connect(self.createFile)
+        self.toolbar.addAction(self.newFile)
 
         self.printcfg = QAction(QIcon("icons/print.png"), "print", MainWindow)
         #self.printcfg.triggered.connect(self.print)
@@ -538,12 +542,18 @@ class Notes(object):
 
     def date(self):
         currentDate = QDate.currentDate()
-        self.currentEdit().setText(currentDate.toString(Qt.DefaultLocaleLongDate))
+        cursor = self.currentEdit().textCursor()
+        # setText method erases all the content in the textedit and replaces it with just the date
+        # insert at cursor
+        cursor.insertText(currentDate.toString(Qt.DefaultLocaleLongDate))
+        #self.currentEdit().setText(currentDate.toString(Qt.DefaultLocaleLongDate))
 
 
     def time(self):
         currentTime = QTime.currentTime()
-        self.currentEdit().setText(currentTime.toString(Qt.DefaultLocaleLongDate))
+        cursor = self.currentEdit().textCursor()
+
+        cursor.insertText(currentTime.toString(Qt.DefaultLocaleLongDate))
 
 
     def listBullets(self):
@@ -930,12 +940,13 @@ class Notes(object):
 
 
         elif action == renameListItem:
-            newItemName, ok = QInputDialog.getText(self.lb, 'Input Dialog','List Item Name:')
+            newItemName, ok = QInputDialog.getText(self.listc, 'Input Dialog','List Item Name:')
             if ok:
                 self.item = self.listc.currentItem()
                 self.curr_item = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_item.setObjectName(newItemName)
                 self.item.setText(newItemName)
+                # update the key with the new list item name in the list_icons_dict
         elif action == save:
             print(self.list_icons_dict)
             self.save()
