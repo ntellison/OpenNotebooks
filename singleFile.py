@@ -47,7 +47,8 @@ class Notes(object):
 
         #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
 
-
+        self.setupUi(MainWindow)
+        self.load()
 
         #self.init_ui()
         # self.initMenubar()
@@ -114,7 +115,7 @@ class Notes(object):
         self.toolbar.addAction(self.addnew)
 
         self.newFile = QAction(QIcon("icons/new.png"), "Create New Note File", MainWindow)
-        self.newFile.triggered.connect(self.createFile)
+        self.newFile.triggered.connect(self.newWindow)
         self.toolbar.addAction(self.newFile)
 
         self.printcfg = QAction(QIcon("icons/print.png"), "print", MainWindow)
@@ -259,7 +260,7 @@ class Notes(object):
 
 
 
-        self.load()
+        #self.load()
 
 
 
@@ -619,6 +620,22 @@ class Notes(object):
         backgroundColor = QColorDialog.getColor()
 
         self.currentEdit().setTextBackgroundColor(backgroundColor)
+
+
+
+    def newWindow(self):
+
+        self.setupUi(MainWindow)
+        #self.createFile()
+        
+
+
+
+
+
+
+
+
 
 
 
@@ -1104,10 +1121,13 @@ class Notes(object):
         self.createbtn = QPushButton('Choose File')
         self.createbtn.clicked.connect(self.createclicked)
 
+
         self.createle = QLineEdit()
 
         self.cb_pass = QCheckBox()
         self.cb_pass.stateChanged.connect(self.cbpasstoggle)
+
+        self.createPasslbl = QLabel('Enter Password')
 
         self.le_pass = QLineEdit()
         self.le_pass.setReadOnly(True)
@@ -1119,6 +1139,7 @@ class Notes(object):
         self.creatediaglog.setLayout(self.createfylelayy)
         self.createfylelayy.addRow(self.createbtn)
         self.createfylelayy.addRow(self.createle)
+        self.createfylelayy.addRow(self.createPasslbl)
         self.createfylelayy.addRow(self.cb_pass, self.le_pass)
         self.createfylelayy.addRow(createfile_btnbox)
 
@@ -1170,6 +1191,8 @@ class Notes(object):
         self.save()
 
         self.creatediaglog.close()
+
+        
 
 
 
@@ -1468,6 +1491,43 @@ class Notes(object):
 
         self.enterpass.close()
 
+    
+
+    def loadChoiceDialog(self):
+
+        self.choice_dialog = QDialog()
+
+        self.choice_layout = QFormLayout()
+
+        self.lbl_choice = QLabel('Cannot find any recently opened files. Would you like to open an existing Note file or create a new Note file?')
+
+        self.btn_choiceOpen = QPushButton('Open Note File')
+        self.btn_choiceOpen.clicked.connect(self.openNote)
+
+        self.btn_choiceNew = QPushButton('Create a new Note File')
+        self.btn_choiceNew.clicked.connect(self.createFile)
+
+        self.choice_dialog.setLayout(self.choice_layout)
+        self.choice_layout.addRow(self.lbl_choice)
+        self.choice_layout.addRow(self.btn_choiceOpen, self.btn_choiceNew)
+
+        self.choice_dialog.exec() # .show() wont show only exec() seems to work
+
+
+    def openNote(self):
+        self.noteFileOpen = QFileDialog.getOpenFileName(MainWindow, 'Open File')
+        print('notefileopen :', self.noteFileOpen)
+        self.loadfile = str(self.noteFileOpen[0])
+        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
+        print('loadfile :', self.loadfile)
+        self.choice_dialog.close()
+
+    def createNote(self):
+        self.createFile()
+
+        self.choice_dialog.close()
+
+
 
 
 
@@ -1486,6 +1546,8 @@ class Notes(object):
         #         sys.exit()
 
 
+        #loadfile was self.recentLoad
+
         if os.path.exists('settings/programSettings.xml'):
             self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
             #self.xmlSettingsLoad.getroot()
@@ -1494,13 +1556,18 @@ class Notes(object):
                 recent = o.text
                 
                 if 'none' in recent:
-                    MainWindow.show()
-                    return
+                    # new dialog -- Cannot find any recently opened files. Would you like to open an existing Note file or create a new Note file?
+                    
+                    self.loadChoiceDialog()
+                    
+                    #self.recentLoad = self.noteFileOpen
+                    #MainWindow.show()
+                    #return
                     
 
                 else:
-                    self.recentLoad = o.text
-                    print('recentload :',self.recentLoad)
+                    self.loadfile = o.text
+                    print('recentload :',self.loadfile)
                         #MainWindow.show()
             
 
@@ -1512,30 +1579,33 @@ class Notes(object):
 
         #could put a symbol or underscore in the filename of the 7z file to indicate it does have encryption
 
-        self.rl_head = os.path.split(self.recentLoad)
-
-        if '_' in '{}'.format(self.recentLoad):
+        #self.rl_head = os.path.split(str(self.loadfile[0]))
+        self.rl_head = self.loadfile
+        print('rl_head :', self.rl_head)
+        if '_' in '{}'.format(self.loadfile):
             # need a window here for user to enter password and feed string into the 7z subprocess below
             print('Encrypted 7z')
             self.loadpass()
             print(self.user_pass)
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}.7z'.format(self.recentLoad), '-o{}'.format(self.recentLoad)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}.7z'.format(self.loadfile), '-o{}'.format(self.loadfile)], shell=False)
         else:
             print('file is regular 7z')
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.recentLoad), '-o{}'.format(self.rl_head[0])], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(self.loadfile)], shell=False)
 
-
-        if not os.path.exists(r'{}{}'.format(self.recentLoad, r'/config.xml')):
-            #os.makedirs(r'{}'.format(self.recentLoad))
-            print('NO EXIST')
+        # print('splittext :', str(os.path.splitext(self.loadfile)[0]))
+        # if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0])):
+        #     #os.makedirs(r'{}'.format(self.recentLoad))
+        #     print('NO EXIST')
             
-        else:
-            print('THIS PATH EXISTS')
+        # else:
+        #     print('THIS PATH EXISTS')
 
         #replace 'config.xml' with the filepath from the programSettings.xml
         # filename = ET.parse(self.recentLoad + '/config.xml').getroot()
-        filename = ET.parse(r'{}{}'.format(self.recentLoad, r'/config.xml')).getroot()
-
+        
+        #filename = ET.parse(r'{}{}'.format(os.path.basename(self.loadfile[0]), r'/config.xml')).getroot()
+        print('splittext :', str(os.path.splitext(self.loadfile)[0]))
+        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
         for listitem in filename.findall('listitem'):
             #self.lb.addItem(listitem.text)
             item = QListWidgetItem()
@@ -1567,14 +1637,15 @@ class Notes(object):
                 self.tabico = QIcon(self.tab_icon)
                 self.tabwidget_icons_dict[tabname.text] = self.tab_icon
                 content = tabname.get('content')
-
-                if os.path.exists(r'{}\{}'.format(self.recentLoad ,self.tab_widget.objectName())):
+                print('THIS SHIT :' ,r'{}/{}/{}/{}.html'.format(os.path.splitext(self.loadfile)[0] , self.tab_widget.objectName(), content, content))
+                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
                     
 
 
                     tE = QTextEdit()
                     tE.setObjectName(content)
-                    with open(r'{}/{}/{}/{}.html'.format(self.recentLoad , self.tab_widget.objectName(), content, content), 'r') as file:
+                    
+                    with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(self.loadfile)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
                         tE.setText(file.read())
                     file.close()
                     self.id.addTab(tE, self.tabico, tabname.text)
@@ -1648,6 +1719,32 @@ class Notes(object):
 
 
 
+
+
+# def main():
+#     application = QApplication(sys.argv)
+
+#     # window
+#     MainWindow = QMainWindow()
+#     ui = Notes()
+#     ui.setupUi(MainWindow)
+#     #ui.setWindowTitle('Notes')
+#     #ui.resize(1280, 720)
+#     #ui.show()
+#     MainWindow.show()
+    
+    
+#     sys.exit(application.exec_())
+
+
+# if __name__ == "__main__":
+#     main()
+
+
+
+
+
+
 if __name__ == "__main__":
 
     application = QApplication(sys.argv)
@@ -1655,7 +1752,7 @@ if __name__ == "__main__":
     # window
     MainWindow = QMainWindow()
     ui = Notes()
-    ui.setupUi(MainWindow)
+    #ui.setupUi(MainWindow)
     #ui.setWindowTitle('Notes')
     #ui.resize(1280, 720)
     #ui.show()
