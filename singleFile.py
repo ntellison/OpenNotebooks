@@ -625,8 +625,11 @@ class Notes(object):
 
     def newWindow(self):
 
-        self.setupUi(MainWindow)
-        #self.createFile()
+        #MainWindow.show()
+        #return
+
+        #self.setupUi(MainWindow)
+        self.createFile()
         
 
 
@@ -1143,7 +1146,7 @@ class Notes(object):
         self.createfylelayy.addRow(self.cb_pass, self.le_pass)
         self.createfylelayy.addRow(createfile_btnbox)
 
-        self.creatediaglog.show()
+        self.creatediaglog.exec()
 
 
     def cbpasstoggle(self):
@@ -1181,6 +1184,11 @@ class Notes(object):
                 os.makedirs(self.saveFile)
                 
 
+        root = ET.Element('programElements')
+        tree = ElementTree(root)
+
+        tree.write(open(self.saveFile + '/config.xml', 'wb'))
+
         xml = ET.parse('settings/programSettings.xml')
 
         y = xml.find('recentfilepath')
@@ -1188,7 +1196,11 @@ class Notes(object):
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
-        self.save()
+        #self.save()
+
+        self.loadfile = self.saveFile
+
+
 
         self.creatediaglog.close()
 
@@ -1200,6 +1212,43 @@ class Notes(object):
     def createcancel(self):
 
         self.creatediaglog.close()
+
+
+
+#### function for 7z extraction ####
+
+    def extractfile(self, pw, fp):
+
+        if '_' in '{}'.format(fp):
+            # need a window here for user to enter password and feed string into the 7z subprocess below
+            print('Encrypted 7z')
+            self.loadpass()
+            print(self.user_pass)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp), '-o{}'.format(fp)], shell=False)
+        else:
+            print('file is regular 7z')
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(fp)], shell=False)
+
+
+
+
+#### function for 7z add ####
+
+    def storefile(self, pw, fp):
+
+        if '_' in fp:
+
+            print(pw)
+            print(fp)
+
+            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(pw) , '{}'.format(fp), '-o{}'.format(fp)], shell=False)
+
+        else:
+            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(fp), '{}'.format(fp)], shell=False)
+
+
+
+
 
 
 
@@ -1317,6 +1366,8 @@ class Notes(object):
                     # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
                     #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
 
+                    
+
                     if not os.path.exists(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
                         os.makedirs(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
                         print(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
@@ -1353,10 +1404,12 @@ class Notes(object):
 
             if '_' in self.saveFile:
 
+                
+
                 print(self.pw)
                 print(self.savefile_fnt)
-
-                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '-o{}'.format(self.saveFile)], shell=False)
+                # used to add all files in the working directory with the -o flag and when i deleted it, it worked the way it should
+                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False) 
 
             else:
                 subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
@@ -1505,7 +1558,7 @@ class Notes(object):
         self.btn_choiceOpen.clicked.connect(self.openNote)
 
         self.btn_choiceNew = QPushButton('Create a new Note File')
-        self.btn_choiceNew.clicked.connect(self.createFile)
+        self.btn_choiceNew.clicked.connect(self.createNote)
 
         self.choice_dialog.setLayout(self.choice_layout)
         self.choice_layout.addRow(self.lbl_choice)
@@ -1559,8 +1612,8 @@ class Notes(object):
                     # new dialog -- Cannot find any recently opened files. Would you like to open an existing Note file or create a new Note file?
                     
                     self.loadChoiceDialog()
-                    
-                    #self.recentLoad = self.noteFileOpen
+                    #self.newWindow()
+                    #self.loadfile = self.noteFileOpen
                     #MainWindow.show()
                     #return
                     
@@ -1590,7 +1643,7 @@ class Notes(object):
             subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}.7z'.format(self.loadfile), '-o{}'.format(self.loadfile)], shell=False)
         else:
             print('file is regular 7z')
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(self.loadfile)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
 
         # print('splittext :', str(os.path.splitext(self.loadfile)[0]))
         # if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0])):
