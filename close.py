@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -24,10 +24,31 @@ class Ui_MainWindow(object):
     #{================================
 
     def closeEvent(self):
-        #Your desired functionality here
-        print('Close button pressed')
-        import sys
-        sys.exit(0)
+        reply = QMessageBox.question(MainWindow, 'Message',
+                                    "Are you sure to quit?", QMessageBox.Yes |
+                                    QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print('okeh')
+            #shutil.rmtree(self.recentLoad)
+            #event.accept()
+            #sys.exit()
+            
+
+        else:
+            print('cancelled')
+            # maybesave function?
+            
+            #self.save()
+            #event.ignore()
+
+
+
+    # def closeEvent(self):
+    #     #Your desired functionality here
+    #     print('Close button pressed')
+    #     import sys
+    #     sys.exit(0)
 
     #}================================
 

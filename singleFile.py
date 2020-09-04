@@ -46,38 +46,18 @@ class Notes(object):
         
 
         #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
-
+        
         self.setupUi(MainWindow)
+        MainWindow.closeEvent = self.closeEvent
+        
         self.load()
-
+        #application.aboutToQuit.connect(self.closeEvent)
         #self.init_ui()
         # self.initMenubar()
         # self.initToolbar()
         
 
 
-    def closeEvent(self, event):
-
-        
-        
-        print('fuuuucccckkkkk')
-
-        reply = QMessageBox.question(self, 'Message',
-                                    "Are you sure to quit?", QMessageBox.Yes |
-                                    QMessageBox.No, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            print('okeh')
-            shutil.rmtree(self.recentLoad)
-            sys.exit()
-            event.accept()
-
-        else:
-            print('cancelled')
-            # maybesave function?
-            
-            #self.save()
-            event.ignore()
 
 
 
@@ -202,6 +182,7 @@ class Notes(object):
         
         self.central_widget = QWidget(MainWindow)
         
+        
 
         self.splitter = QSplitter(self.central_widget)
         self.splitter.setOrientation(Qt.Horizontal)
@@ -254,7 +235,7 @@ class Notes(object):
 
         self.boxlayout.addWidget(self.splitter)
 
-        
+
         #application.aboutToQuit.connect(self.closeEvent)
 
 
@@ -267,7 +248,36 @@ class Notes(object):
         #self.vlayout = QVBoxLayout()
 
 
-        
+
+
+
+
+
+
+
+    def closeEvent(self, event):
+    
+        print('fuuuucccckkkkk')
+
+        reply = QMessageBox.question(MainWindow, 'Message',
+                                    "Are you sure to quit?", QMessageBox.Yes |
+                                    QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print('okeh')
+            split = os.path.splitext(self.loadfile)[0]
+            shutil.rmtree(split)
+            #shutil.rmtree(self.recentLoad)
+            event.accept()
+            sys.exit()
+            
+
+        else:
+            print('cancelled')
+            # maybesave function?
+            
+            #self.save()
+            event.ignore()
 
 
 
@@ -422,6 +432,8 @@ class Notes(object):
     # self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
     # self.curr_tab = self.curr_tab_wid.currentIndex()
     # self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
+
+
 
 
 
