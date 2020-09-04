@@ -123,7 +123,7 @@ class Notes(object):
         self.toolbar.addAction(self.printcfg)
 
         self.openAction = QAction(QIcon("icons/open.png"), "open notes file", MainWindow)
-        #self.openAction.triggered.connect(self.open)
+        self.openAction.triggered.connect(self.open)
         self.toolbar.addAction(self.openAction)
 
         self.copyAction = QAction(QIcon("icons/copy.png"), "copy text", MainWindow)
@@ -630,8 +630,24 @@ class Notes(object):
 
         #self.setupUi(MainWindow)
         self.createFile()
-        
 
+
+
+
+    def open(self):
+        self.noteFileOpen = QFileDialog.getOpenFileName(MainWindow, 'Open File')
+        print('notefileopen :', self.noteFileOpen)
+        self.loadfile = str(self.noteFileOpen[0])
+        print('LOADFILE :', self.loadfile)
+        xml = ET.parse('settings/programSettings.xml')
+
+        y = xml.find('recentfilepath')
+        y.text = str(self.loadfile)
+
+        xml.write(open('settings/programSettings.xml', 'wb'))
+        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
+        print('loadfile :', self.loadfile)
+        self.load()
 
 
 
@@ -1571,8 +1587,16 @@ class Notes(object):
         self.noteFileOpen = QFileDialog.getOpenFileName(MainWindow, 'Open File')
         print('notefileopen :', self.noteFileOpen)
         self.loadfile = str(self.noteFileOpen[0])
+        print('LOADFILE :', self.loadfile)
+        xml = ET.parse('settings/programSettings.xml')
+
+        y = xml.find('recentfilepath')
+        y.text = str(self.loadfile)
+
+        xml.write(open('settings/programSettings.xml', 'wb'))
         #self.loadfile = os.path.splitext(str(self.noteFileOpen))
         print('loadfile :', self.loadfile)
+        self.load()
         self.choice_dialog.close()
 
     def createNote(self):
@@ -1640,10 +1664,11 @@ class Notes(object):
             print('Encrypted 7z')
             self.loadpass()
             print(self.user_pass)
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}.7z'.format(self.loadfile), '-o{}'.format(self.loadfile)], shell=False)
+            # apparently it doesnt need the -o flag.
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}'.format(self.loadfile)], shell=False)
         else:
             print('file is regular 7z')
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(self.loadfile)], shell=False)
 
         # print('splittext :', str(os.path.splitext(self.loadfile)[0]))
         # if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0])):
