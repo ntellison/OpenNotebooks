@@ -596,11 +596,11 @@ class Notes(object):
 
         
 
-        if not os.path.exists(r'{}'.format(self.recentLoad) + r'/res'):
-            print(r'{}'.format(self.recentLoad) + r'/res')
-            os.makedirs(r'{}'.format(self.recentLoad) + r'/res')
+        if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res'):
+            print(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res')
+            os.makedirs(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res')
         
-        shutil.copyfile(r'{}'.format(filename), r'{}'.format(self.recentLoad) + r'/res/{}'.format(fbase))
+        shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res/{}'.format(fbase))
         # need to feed the copyfile copy in res directory to the qimage()
         img = QImage(filename)
 
