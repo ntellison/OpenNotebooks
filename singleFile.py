@@ -20,7 +20,7 @@ import shutil
 from xml.etree.ElementTree import ElementTree
 import xml.etree.ElementTree as ET
 
-#import dicttoxml
+
 from dicttoxml import dicttoxml
 
 
@@ -32,10 +32,6 @@ class Notes(object):
     def __init__(self):
         super(Notes).__init__()
         
-    #     super(Notes, self).__init__()
-    #     #QMainWindow.__init__(self)
-        #MainWindow.installEventFilter(MainWindow)
-              
 
         self.list_icons_dict = {}
         self.tabwidget_icons_dict = {}
@@ -44,21 +40,10 @@ class Notes(object):
         self.tabchanges = []
         
         
-
-        #self.noteSettings = QSettings('settings/noteapp.ini', QSettings.IniFormat)
-        
         self.setupUi(MainWindow)
         MainWindow.closeEvent = self.closeEvent
         
         self.load()
-        #application.aboutToQuit.connect(self.closeEvent)
-        #self.init_ui()
-        # self.initMenubar()
-        # self.initToolbar()
-        
-
-
-
 
 
 
@@ -85,8 +70,6 @@ class Notes(object):
 
 
 
-
-        # self.toolbar = QToolBar(MainWindow)
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
 
@@ -186,12 +169,6 @@ class Notes(object):
 
         self.splitter = QSplitter(self.central_widget)
         self.splitter.setOrientation(Qt.Horizontal)
-        # self.splitter.addWidget(self.listc)        
-        # self.splitter.addWidget(self.listFrame)        
-        # self.splitter.addWidget(self.stack)               
-        #self.splitter.addWidget(self.stackFrame)
-
-        #self.splitter.setMinimumWidth(10)
         self.splitter.setStretchFactor(0,25)
         self.splitter.setStretchFactor(1,75)
 
@@ -221,8 +198,6 @@ class Notes(object):
         self.splitter.addWidget(self.stack)
 
         self.splitter.setSizes([50, 650])
-        # self.splitter.setStretchFactor(0,25)
-        # self.splitter.setStretchFactor(1,9)
 
 ####################################################################################################################
 
@@ -234,21 +209,6 @@ class Notes(object):
         MainWindow.setCentralWidget(self.central_widget)
 
         self.boxlayout.addWidget(self.splitter)
-
-
-        #application.aboutToQuit.connect(self.closeEvent)
-
-
-
-
-        #self.load()
-
-
-
-        #self.vlayout = QVBoxLayout()
-
-
-
 
 
 
@@ -282,160 +242,7 @@ class Notes(object):
 
 
 
-        # self.boxlayout.addWidget(self.splitter)
-        # self.boxlayout.addWidget(self.listc)
-                
-        # self.boxlayout.addWidget(self.stack)
-
-
-        # self.boxlayout.addLayout(self.vlayout)
-        # #self.vlayout.addLayout(self.boxlayout)
-
-
-
-        
-
-
-        # self.setLayout(self.vlayout)
-
-
-
 ######################################################################################################################
-
-
-        #self.central_widget.setLayout(self.boxlayout)
-
-
-        #self.l.addLayout(self.boxlayout)
-
-        # self.central_layout = QVBoxLayout()
-
-
-        # self.central_widget.setLayout(self.central_layout)
-
-        # self.centralWidget = QWidget()
-
-        # self.setCentralWidget(self.centralWidget)
-
-        # self.layout = QHBoxLayout()
-        # self.layout.addWidget(self.splitter)                
-        # self.centralWidget.setLayout(self.layout)
-
-        # self.layout.addWidget(self.listc)
-        # self.layout.addWidget(self.stack)
-
-
-
-        #self.initMenubar()
-
-
-#################################################################################################################################
-
-    # def newFile(self):
-
-    #     self.newFileDialog = QDialog()
-
-    #     self.layout_newFile = QFormLayout()
-
-    #     self.label_newFileDialog = QLabel("File Save Location:")
-
-    #     self.le_newFileFilepath = QLineEdit().setReadOnly(True)
-
-    #     self.btn_newFileDestination = QPushButton('Save Location')
-    #     self.btn_newFileDestination.clicked.connect(self.noteSave)
-
-    #     self.label_filePass = QLabel("Password :")
-
-    #     self.filePass = QLineEdit()
-    #     self.filePass.setEchoMode(QLineEdit.Password)
-
-    #     self.btn_newFileSave = QPushButton("Create File")
-    #     #self.btn_newFileSave.clicked.connect(self.createFile)
-
-    #     self.newFileDialog.setLayout(self.layout_newFile)
-    #     self.layout_newFile.addRow(self.label_newFileDialog, self.le_newFileFilepath)
-    #     #self.layout_newFile.addRow(self.le_newFileFilepath)
-    #     self.layout_newFile.addRow(self.btn_newFileDestination)
-    #     self.layout_newFile.addRow(self.label_filePass, self.filePass)
-    #     self.layout_newFile.addRow(self.btn_newFileSave)
-
-    #     self.newFileDialog.show()
-
-
-
-
-
-
-    # def noteSave(self):
-
-    #     noteLocation = QFileDialog.getSaveFileName(self, 'Save File')[0]
-
-    #     self.le_newFileFilepath.setText(str(noteLocation))
-
-
-
-
-    # def createFile(self):
-
-    #     pass
-    
-
-#################################################################################################################################
-
-    # def closeEvent(self):
-    #     #Your desired functionality here
-    #     print('Close button pressed')
-    #     import sys
-    #     sys.exit(0)
-
-
-
-
-
-        
-        
-
-        
-
-
-    # def closeEvent(self, event):
-    #     print("JFC")
-    #     # this actually needs to be in a on close method
-    #     mssg = QMessageBox.question(MainWindow, 'Close Window', 'Are you sure you want to exit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
-
-    #     if mssg == QMessageBox.Yes:
-    #         event.accept()            
-    #         print('CLOSE EVENT TRIGGERED')
-    #         shutil.rmtree(self.saveFile)        
-
-    #     else:
-    #         event.ignore()
-
-
-
-
-
-
-    # for g in range(self.stack.count()):
-    # self.q = self.stack.widget(g)
-    # tabwidgetName = ET.SubElement(root, 'tabwid_name')
-    # tabwidgetName.text = self.q.objectName()
-    # for p in range(self.q.count()):
-    #     self.tabtext = self.q.tabText(p)
-    #     #self.tabicon = self.q.tabIcon(p)
-    #     self.ticon = self.tabwidget_icons_dict[self.tabtext]
-    #     self.tabcontents = self.q.widget(p).objectName()+
-
-
-    # self.item = self.listc.currentItem()
-    # self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
-    # self.curr_tab = self.curr_tab_wid.currentIndex()
-    # self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
-
-
-
-
 
 
 
@@ -445,15 +252,8 @@ class Notes(object):
         self.stack_currWid = self.stack.currentWidget()
         self.tab_currWid = self.stack_currWid.currentWidget()
         self.tab_currWid = self.tab_currWid
-        #self.activeEdit = self.tab_currWid.findChild(QTabWidget, self.tab_currWid.text())
         self.activeEdit = self.tab_currWid
-        #print(self.activeEdit)
         return self.activeEdit
-
-        # for t in range(self.stack.count()):
-        #     self.activeTE = self.stack.widget(t)
-
-        
 
 
 
@@ -506,8 +306,6 @@ class Notes(object):
         cursor = self.currentEdit().textCursor()
 
         table = cursor.insertTable(int(self.tableRows), int(self.tableCols), tableFormatting)
-        # table.QTextTableFormat.setCellPadding(int(self.tablePadding))
-        # table.QTextTableFormat.setCellSpacing(int(self.tableSpacing))
 
 
 
@@ -657,7 +455,6 @@ class Notes(object):
         y.text = str(self.loadfile)
 
         xml.write(open('settings/programSettings.xml', 'wb'))
-        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
         print('loadfile :', self.loadfile)
         self.load()
 
@@ -777,12 +574,6 @@ class Notes(object):
 
     def item_ok(self):
 
-
-            # fname = QFileDialog.getOpenFileName(self, 'Open File', 'images\icons')
-            # fname = str(fname[0])
-        
-
-        #print(fname)
         self.checkInfo = self.check.isChecked()
 
         if self.checkInfo == False and self.le_item.text() != False:
@@ -806,10 +597,8 @@ class Notes(object):
         elif self.checkInfo == True and self.le_item.text() != False:
 
             self.ico = QIcon()
-            #self.ico.setObjectName('pug')
             self.ico_path = self.item_filename
             self.ico_path = self.item_filename
-            #print(self.ico.objectName())
             self.ico.addPixmap(QPixmap(self.item_filename))
             item = QListWidgetItem()
             item.setIcon(self.ico)
@@ -818,16 +607,12 @@ class Notes(object):
             self.listc.addItem(item)
             self.tab_widget = QTabWidget()
             self.tab_widget.setMovable(True)
-            #self.tab_widget.addTab(QWidget(), self.default_icon, item_text)
             self.tab_widget.setObjectName(item_text)
             self.stack.addWidget(self.tab_widget)
 
             self.list_icons_dict[str(item_text)] = str(self.item_filename)
             print("List Icon Dict :", self.list_icons_dict)
-            #self.tabwidget_icons_dict[self.tab_widget.objectName()] = #nested dict here (tabnames:filepath)
 
-            #print('list icons:','\n' ,self.list_icons_dict.items())
-            #print(self.tabwidget_icons_dict.items())
 
         else:
             self.item_msg_box = QMessageBox(self, 'Message', 'Please Enter a title for ListItem', QMessageBox.Ok)
@@ -836,8 +621,8 @@ class Notes(object):
         self.item_dialog.close()
 
 
-    # def checktoggle(self):
-    #     self.btn_icon.setEnabled(True)
+
+
 
     def chooseTabIcon(self):
         fname = QFileDialog.getOpenFileName(MainWindow, 'Open File', 'images\icons')
@@ -862,15 +647,14 @@ class Notes(object):
             self.newtabname_textedit = QTextEdit()
             self.newtabname_textedit.setObjectName(str(self.newTabName))
             self.curr_tab_wid.addTab(self.newtabname_textedit, self.ico ,self.newTabName)
-            #self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
+
 
             self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
             self.tabwidget_icons_dict.update({self.newTabName:'icons/folder.png'})
 
         elif self.check_tab_icon == True and self.le_text.text() != False:
 
-            # fname = QFileDialog.getOpenFileName(self, 'Open File', 'images\icons')
-            # fname = str(fname[0])
+
 
             self.tab_ico = self.tabicon_filename
 
@@ -890,15 +674,7 @@ class Notes(object):
             self.tab_msg_box = QMessageBox(self, 'Message', 'Please Enter a title for TAb', QMessageBox.Ok)
             self.dialog.close()
 
-        #self.tab_content = self.cb.currentText()
 
-        # if self.tab_content == 'RichText':
-        #     self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
-        # elif self.tab_content == 'Canvas':
-        #     self.curr_tab_wid.addTab(QGraphicsView(),self.ico, self.newTabName)
-
-        # self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-        # self.tabwidget_icons_dict.update({self.newTabName:self.tab_ico})
         print(self.tabwidget_icons_dict)
         self.dialog.close()
 
@@ -976,10 +752,9 @@ class Notes(object):
         elif action == deleteListItem:
             
             self.fpath = self.listc.currentItem().text()
-            #print(self.programcfg() + self.fpath)
             self.item = self.listc.currentItem()
             self.y = self.listc.takeItem(self.listc.row(self.item))#pops the list item out
-            #self.r = self.stacked_widget.removeWidget(self.tab_widget.currentWidget())
+
             self.r = self.stack.findChild(QTabWidget, self.item.text())
             sip.delete(self.r)
 
@@ -1036,46 +811,11 @@ class Notes(object):
         self.notepassword = self.passle.text
         self.pw = self.passle.text
         self.passdialog.close()
-        #
-        # self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0] 
-
-        #return self.notepassword
 
 
 
 
 
-
-
-    def print(self):
-
-        lo = MainWindow.pos()
-        lem = lo.x()
-        lul = lo.y()
-        lol = self.listc.width()
-        lool = self.listc.height()
-
-        print(lo, type(str(lem)), lul, lol, lool)
-
-        print(self.activeTE)
-
-
-        # #self.tabwidget_icons_dict['tabwidget'] = self.curr_tab_wid.objectName() #nested dict here (tabnames:filepath)
-        # for i in self.stacked_widget.findChildren(QTabWidget):
-
-        #     #self.tabwidget_icons_dict['tabwidget'] = i.objectName()
-        #     #self.tabwidget_icons_dict['tabwidget'] = {}
-        #     for j in range(i.count()):
-        #         self.tabname = i.tabText(j)
-        #         self.tabwidget_icons_dict[i.objectName()] = {}
-        #         #self.tabwidget_icons_dict['tabwidget'][i.objectName()] = self.dict
-        #         #self.tabwidget_icons_dict[i.objectName()] = self.dict
-        #         #self.tabwidget_icons_dict[i.objectName()][self.tabname] = self.tab_ico
-        #         #self.tabwidget_icons_dict[i.objectName()] = {self.tabname:self.tab_ico}
-        #         #self.tabwidget_icons_dict[i.objectName()] = self.widget[self.tabname] = self.tab_ico
-        #         #self.tabwidget_icons_dict[self.tabname] = self.tab_ico
-        #         #self.tabwidget_icons_dict[self.newTabName] = self.tab_ico
-        # print(self.tabwidget_icons_dict.items())
 
 
     def uichanges(self):
@@ -1120,7 +860,7 @@ class Notes(object):
         mainw.set('y', str(self.mwy))
         mainw.set('width', str(self.mww))
         mainw.set('height', str(self.mwh))
-        #mainw.set('position', str(self.mw))
+        
 
 
         listsize = ET.SubElement(settings_root, 'listsize')
@@ -1201,7 +941,7 @@ class Notes(object):
                 self.savefile_fn = os.path.split(self.saveFile)
                 self.savefile_fnh = self.savefile_fn[0]
                 self.savefile_fnt = self.savefile_fn[1]
-                #self.savefile_fn = '_{}'.format(self.savefile_fn[1])
+                
                 os.makedirs(self.savefile_fnh + '/_{}'.format(self.savefile_fnt))
                 self.saveFile = self.savefile_fnh + '/_{}'.format(self.savefile_fnt)
 
@@ -1224,7 +964,7 @@ class Notes(object):
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
-        #self.save()
+        
 
         self.loadfile = self.saveFile
 
@@ -1308,55 +1048,6 @@ class Notes(object):
             self.saveFile = p.text                
 
 
-                    
-
-
-
-
-            # try:
-            #     #f = open('settings/programSettings.xml', 'r')
-            #     xmlSettings_save = ET.parse('settings/programSettings.xml')
-            #     xmlSettings_save.getroot()
-            #     for p in xmlSettings_save.findall('recentfilepath'):
-            #         rfp = p.text
-            #         print(rfp)
-            #     if 'none' in rfp:
-            #         self.createFile()
-            #         continue
-            #         #self.saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
-            #         #self.passwordmenu()
-            #     else:
-            #         self.saveFile = p.text
-            # except FileNotFoundError:
-            #     print("file not found")
-
-
-                # except FileNotFoundError:
-                #     print("file not found")
-                #     self.passwordmenu()
-
-                # finally:
-                #     self.passwordmenu()            
-                    #saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]            
-                    #f.close()
-
-
-
-
-
-
-                # if os.path.exists('settings/programSettings.xml'):
-                #     xmlSettings_save = ET.parse('settings/programSettings.xml')
-                #     xmlSettings_save.getroot()
-                #     for p in xmlSettings_save.findall('recentfilepath'):
-                #         saveFile = p.text
-                        
-                # else:
-                #     ### need to add an additional dialog to see if the user wants to add a password ####
-                #     self.passwordmenu()
-                #     saveFile = QFileDialog.getSaveFileName(MainWindow, 'Save File')[0]
-                    
-                    
 
 
 
@@ -1383,16 +1074,6 @@ class Notes(object):
                     self.ticon = self.tabwidget_icons_dict[self.tabtext]
                     self.tabcontents = self.q.widget(p).objectName()
 
-                    # self.savefile_fn = os.path.split(self.saveFile)
-                    # self.savefile_fn = '_{}'.format(self.savefile_fn[1])
-                    # self.saveFile = self.saveFile + '\{}'.format(self.savefile_fn)
-
-                    # if not os.path.exists(self.saveFile + '\{}'.format(tabwidgetName.text)):
-                    #     os.makedirs(self.saveFile + '\{}'.format(self.savefile_fn) + '\{}'.format(tabwidgetName.text))
-
-
-                    # if not os.path.exists(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text)):
-                    #     os.makedirs(r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}'.format(tabwidgetName.text))
 
                     
 
@@ -1405,28 +1086,16 @@ class Notes(object):
                     file.close()
 
 
-                    # with open (r'C:\Users\User\source\repos\TestNoteApplication\TestNoteApplication\NoteFinal\Notes\{}\{}.html'.format(tabwidgetName.text, self.tabcontents) , 'w') as file:
-                    #     file.write(self.q.widget(p).toHtml())
-                    # file.close()
 
-                    #self.tabcontents = type(self.q.widget(p))
+
                     tabName = ET.SubElement(tabwidgetName, 'tabName')
                     tabName.set('content', str(self.tabcontents))
                     tabName.set('tabIcon', self.ticon)
                     tabName.text = self.tabtext
-                    #self.tabwidget_icons_dict[tabwidgetName.text] = self.tabtext, self.tabwidget_icons_dict[#nested dict here (tabnames:filepath)
-                    #self.tabwidget_icons_dict[self.tabtext] =
-
-            # if not os.path.exists(self.saveFile):
-            #     os.makedirs(self.saveFile)
 
             tree.write(open(self.saveFile + '/config.xml', 'wb'))
 
-            #self.pw = self.passwordmenu()
 
-            # self.savefile_fn = os.path.split(self.saveFile)
-            # self.savefile_fn = '_{}'.format(self.savefile_fn[1])
-            # print('filename :', self.savefile_fn)
             print('savefilepath :', self.saveFile)
 
 
@@ -1446,86 +1115,9 @@ class Notes(object):
 
 
 
-            # if self.pw != "":
-
-            #     print(self.pw)
-
-            #     subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '-o{}'.format(self.savefile_fn)], shell=False)
-
-            # else:
-            #     subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
-
 
             self.programconfig(self.saveFile)
             
-
-
-
-
-            #self.passwordmenu()
-
-            #self.createFile()
-
-
-
-        #list_xml = dicttoxml(self.list_icons_dict, custom_root='listicons')
-        #tab_xml = dicttoxml(self.tabwidget_icons_dict, custom_root='tabicons')
-        #xml = xml.decode()
-
-
-
-
-
-
-        # if not os.path.exists('settings'):
-        #     os.makedirs('settings')
-
-        # settings_root = ET.Element('programSettings')
-        # settings_tree = ElementTree(settings_root)
-
-        # recentFilePath = ET.SubElement(settings_root, 'recentFilePath')
-        # recentFilePath.text = self.saveFile
-
-        # mainw = ET.SubElement(settings_root, 'mainwindowSize')
-        # mainw.set('x', MainWindow.x())
-        # mainw.set('y', MainWindow.y())
-        # mainw.text = MainWindow.pos()
-
-        # listsize = ET.SubElement(settings_root, 'listSize')
-        # listsize.set('width', self.listc.width())
-        # listsize.set('height', self.listc.height())
-        # listsize.text = 'listcoords'
-
-        # stacksize = ET.SubElement(settings_root, 'stackSize')
-        # stacksize.set('width', self.stack.width())
-        # stacksize.set('height', self.stack.height())
-        # stacksize.text = 'stackcoords'
-
-
-        # #settings_root.set('recentFilePath', self.saveFile)
-
-
-
-        # settings_tree.write(open('settings/programSettings.xml', 'wb'))
-
-
-
-
-
-
-
-
-
-        # self.noteSettings.beginGroup("programSettings")
-        # self.noteSettings.setValue('recentFilePath', self.saveFile.text())
-        # self.noteSettings.endGroup()
-        # self.noteSettings.sycn()
-        
-
-
-
-
-
 
 
 
@@ -1625,18 +1217,6 @@ class Notes(object):
 
 
 
-
-        # try:
-        #     filename = ET.parse('config.xml').getroot()
-        #     #ico_fname = ET.parse('icons.xml').getroot()
-        # except:
-        #     msg_box = QMessageBox.question(MainWindow, 'Message', 'No existing file. Would you like to make a new Notes File?', QMessageBox.Ok)
-        #     if msg_box == QMessageBox.Ok:
-        #         sys.exit()
-
-
-        #loadfile was self.recentLoad
-
         if os.path.exists('settings/programSettings.xml'):
             self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
             #self.xmlSettingsLoad.getroot()
@@ -1661,9 +1241,6 @@ class Notes(object):
             
 
 
-            #self.xmlSettingsTree = ElementTree(self.xmlSettings)
-            #self.recentLoad = self.xmlSettingsTree.findtext('recentFilePath').text()
-
 
 
         #could put a symbol or underscore in the filename of the 7z file to indicate it does have encryption
@@ -1682,22 +1259,13 @@ class Notes(object):
             print('file is regular 7z')
             subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(self.loadfile)], shell=False)
 
-        # print('splittext :', str(os.path.splitext(self.loadfile)[0]))
-        # if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0])):
-        #     #os.makedirs(r'{}'.format(self.recentLoad))
-        #     print('NO EXIST')
-            
-        # else:
-        #     print('THIS PATH EXISTS')
 
-        #replace 'config.xml' with the filepath from the programSettings.xml
-        # filename = ET.parse(self.recentLoad + '/config.xml').getroot()
-        
-        #filename = ET.parse(r'{}{}'.format(os.path.basename(self.loadfile[0]), r'/config.xml')).getroot()
+
         print('splittext :', str(os.path.splitext(self.loadfile)[0]))
         filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
+
         for listitem in filename.findall('listitem'):
-            #self.lb.addItem(listitem.text)
+            
             item = QListWidgetItem()
             icon = listitem.get('item_icon')
             self.ico = QIcon(icon)
@@ -1707,15 +1275,7 @@ class Notes(object):
 
             self.list_icons_dict[listitem.text] = icon
 
-            #for i in range(self.lb.count()):
-            
-                #self.lb.item(i).addPixmap(str(icon))
-            #self.item = self.lb.item(listitem)
-            
-            
-            #li = self.lb.findChild(self.item(listitem))
-            #self.li.setIcon(self.ico)
-            #self.item.addPixmap(QPixmap(self.ico))
+
         for tabwidget in filename.iter('tabwid_name'):
             self.tab_widget = QTabWidget()
             self.tab_widget.setObjectName(tabwidget.text)
@@ -1782,57 +1342,6 @@ class Notes(object):
 
 
 
-        #self.programconfig(self.recentLoad)
-
-
-
-        #MainWindow.setFixedSize()
-
-
-        # self.noteSettings.beginGroup("programSettings")
-        # self.noteSettings.setValue('recentFilePath', str(self.recent))
-        # self.noteSettings.endGroup()
-        # self.noteSettings.sync()
-
-                
-
-
-
-
-
-                # if 'QTextEdit' in str(content):
-                #     self.id.addTab(QTextEdit(), self.tabico, tabname.text)
-                # elif 'QGraphicsView' in str(content):
-                #     self.id.addTab(QGraphicsView(), self.tabico, tabname.text)
-                # elif 'QWidget' in str(content):
-                #     self.id.addTab(QWidget(), self.tabico ,tabname.text)
-
-
-
-
-
-# def main():
-#     application = QApplication(sys.argv)
-
-#     # window
-#     MainWindow = QMainWindow()
-#     ui = Notes()
-#     ui.setupUi(MainWindow)
-#     #ui.setWindowTitle('Notes')
-#     #ui.resize(1280, 720)
-#     #ui.show()
-#     MainWindow.show()
-    
-    
-#     sys.exit(application.exec_())
-
-
-# if __name__ == "__main__":
-#     main()
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -1850,19 +1359,4 @@ if __name__ == "__main__":
     
     
     sys.exit(application.exec_())
-
-
-# def main():
-#     app = QApplication(sys.argv)
-
-#     main = Notes()
-#     main.show()
-
-#     sys.exit(app.exec_())
-
-# if __name__ == "__main__":
-#     main()
-
-
-
 
