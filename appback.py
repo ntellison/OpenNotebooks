@@ -70,8 +70,8 @@ class NotesEditing(Notes):
 
 
 
-        self.listc.customContextMenuRequested.connect(self.listMenu)
-        self.listc.itemClicked.connect(self.list_clicked)
+        self.list.customContextMenuRequested.connect(self.listMenu)
+        self.list.itemClicked.connect(self.list_clicked)
         self.stack.customContextMenuRequested.connect(self.tabMenu)
 
         self.MainWindow.closeEvent = self.closeEvent
@@ -328,8 +328,8 @@ class NotesEditing(Notes):
 
 
     def list_clicked(self):
-        self.item = self.listc.currentItem()
-        self.index = self.listc.currentIndex()
+        self.item = self.list.currentItem()
+        self.index = self.list.currentIndex()
 
         self.x = self.stack.findChild(QTabWidget, self.item.text())
         self.stack.setCurrentWidget(self.x)
@@ -445,7 +445,7 @@ class NotesEditing(Notes):
             item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
-            self.listc.addItem(item)
+            self.list.addItem(item)
             self.tab_widget = QTabWidget()
             self.tab_widget.setMovable(True)
             self.tab_widget.setObjectName(item_text)
@@ -464,7 +464,7 @@ class NotesEditing(Notes):
             item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
-            self.listc.addItem(item)
+            self.list.addItem(item)
             self.tab_widget = QTabWidget()
             self.tab_widget.setMovable(True)
             self.tab_widget.setObjectName(item_text)
@@ -502,7 +502,7 @@ class NotesEditing(Notes):
             self.ico.addPixmap(QPixmap('icons/folder.png'), QIcon.Normal, QIcon.On)
 
             self.newTabName = self.le_text.text()            
-            self.item = self.listc.currentItem()
+            self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.newtabname_textedit = QTextEdit()
             self.newtabname_textedit.setObjectName(str(self.newTabName))
@@ -523,7 +523,7 @@ class NotesEditing(Notes):
             self.ico.addPixmap(QPixmap(self.tab_ico), QIcon.Normal, QIcon.On)
 
             self.newTabName = self.le_text.text()            
-            self.item = self.listc.currentItem()
+            self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
 
@@ -573,7 +573,7 @@ class NotesEditing(Notes):
         if action == addTab:
             self.tabContents()
         if action == deleteTab:
-            self.item = self.listc.currentItem()
+            self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab = self.curr_tab_wid.currentIndex()
             self.curr_tab_wid.removeTab(self.curr_tab)
@@ -584,7 +584,7 @@ class NotesEditing(Notes):
         if action ==renameTab:
             tabRename, ok = QInputDialog.getText(self.tab_widget, 'Input Dialog', 'Enter new tab name')
             if ok:
-                self.item = self.listc.currentItem()
+                self.item = self.list.currentItem()
                 self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_tab = self.curr_tab_wid.currentIndex()
                 self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
@@ -605,15 +605,15 @@ class NotesEditing(Notes):
         save = self.contextMenu.addAction('Save')
 
 
-        action = self.contextMenu.exec_(self.listc.mapToGlobal(event))
+        action = self.contextMenu.exec_(self.list.mapToGlobal(event))
 
         if action == addListItem:
             self.itemMenu()
         elif action == deleteListItem:
             
-            self.fpath = self.listc.currentItem().text()
-            self.item = self.listc.currentItem()
-            self.y = self.listc.takeItem(self.listc.row(self.item))#pops the list item out
+            self.fpath = self.list.currentItem().text()
+            self.item = self.list.currentItem()
+            self.y = self.list.takeItem(self.list.row(self.item))#pops the list item out
 
             self.r = self.stack.findChild(QTabWidget, self.item.text())
             sip.delete(self.r)
@@ -623,9 +623,9 @@ class NotesEditing(Notes):
 
 
         elif action == renameListItem:
-            newItemName, ok = QInputDialog.getText(self.listc, 'Input Dialog','List Item Name:')
+            newItemName, ok = QInputDialog.getText(self.list, 'Input Dialog','List Item Name:')
             if ok:
-                self.item = self.listc.currentItem()
+                self.item = self.list.currentItem()
                 self.curr_item = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_item.setObjectName(newItemName)
                 self.item.setText(newItemName)
@@ -725,8 +725,8 @@ class NotesEditing(Notes):
 
         listsize = ET.SubElement(settings_root, 'listsize')
         listsize.text = 'listcoords'        
-        listsize.set('width', str(self.listc.width()))
-        listsize.set('height', str(self.listc.height()))
+        listsize.set('width', str(self.list.width()))
+        listsize.set('height', str(self.list.height()))
 
 
         stacksize = ET.SubElement(settings_root, 'stacksize')
@@ -916,8 +916,8 @@ class NotesEditing(Notes):
 
             
 
-            for i in range(self.listc.count()):
-                self.x = self.listc.item(i).text()
+            for i in range(self.list.count()):
+                self.x = self.list.item(i).text()
                 #self.y = self.lb.item(i).icon()
                 listitem = ET.SubElement(root, 'listitem')
                 print(self.list_icons_dict)
@@ -1131,7 +1131,7 @@ class NotesEditing(Notes):
             self.ico = QIcon(icon)
             item.setIcon(self.ico)
             item.setText(listitem.text)
-            self.listc.addItem(item)
+            self.list.addItem(item)
 
             self.list_icons_dict[listitem.text] = icon
 

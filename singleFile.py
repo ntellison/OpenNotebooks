@@ -28,11 +28,6 @@ from dicttoxml import dicttoxml
 class Notes(object):
     def __init__(self):
         super(Notes).__init__()
-        
-        
-        
-
-        #self.setupUi(MainWindow)
 
 
     def setupUi(self, MainWindow):
@@ -161,13 +156,13 @@ class Notes(object):
 
 
 
-        self.listc = QListWidget(self.splitter)
-        self.listc.setObjectName("List")
-        self.listc.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.list = QListWidget(self.splitter)
+        self.list.setObjectName("List")
+        self.list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
-        self.listc.setAcceptDrops(True)
-        self.listc.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        self.listc.setDragEnabled(True)
+        self.list.setAcceptDrops(True)
+        self.list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        self.list.setDragEnabled(True)
         
 
 
@@ -180,7 +175,7 @@ class Notes(object):
         self.listFrame = QFrame()
         self.stackFrame = QFrame() #maybe delete this
 
-        self.splitter.addWidget(self.listc)
+        self.splitter.addWidget(self.list)
         self.splitter.addWidget(self.stack)
 
         self.splitter.setSizes([50, 650])
