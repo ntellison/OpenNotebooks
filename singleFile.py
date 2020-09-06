@@ -1,27 +1,10 @@
 import os
 import sys
-import subprocess
 
-from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import Qt
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QAction, QPushButton,
-                            QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QAction, QGroupBox, QDialogButtonBox, QGraphicsScene, QCheckBox, QMessageBox, QColorDialog)
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 from PyQt5 import QtCore
-from PyQt5.QtCore import QEvent, Qt, QSize, QSettings, QDate, QTime
-from PyQt5 import QtGui, QtWidgets, QtCore
-
-import sip
-import shutil
-
-from xml.etree.ElementTree import ElementTree
-import xml.etree.ElementTree as ET
-from dicttoxml import dicttoxml
-
-
-
+from PyQt5.QtWidgets import (QMainWindow, QToolBar, QSplitter, QFrame, QHBoxLayout, QAbstractItemView, QWidget, QAction, QStackedWidget, QListWidget)
 
 
 
@@ -161,7 +144,7 @@ class Notes(object):
         self.list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
         self.list.setAcceptDrops(True)
-        self.list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        self.list.setDragDropMode(QAbstractItemView.InternalMove)
         self.list.setDragEnabled(True)
         
 
