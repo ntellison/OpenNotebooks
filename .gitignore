@@ -5,3 +5,6 @@ config.xml
 __pycache__/appback.cpython-37.pyc
 __pycache__/singleFile.cpython-37.pyc
 __pycache__/singleFile.cpython-37.pyc
+__pycache__/editor.cpython-37.pyc
+__pycache__/notesUi.cpython-37.pyc
+__pycache__/
