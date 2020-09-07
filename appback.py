@@ -808,7 +808,7 @@ class NotesEditing(Notes):
 
 
 
-#### function for 7z extraction ####
+
 
     def extractfile(self, pw, fp):
 
@@ -820,8 +820,6 @@ class NotesEditing(Notes):
 
 
 
-
-#### function for 7z add ####
 
     def storefile(self, pw, fp):
 

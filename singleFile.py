@@ -15,9 +15,6 @@ class Notes(object):
 
     def setupUi(self, MainWindow):
 
-
-        
-        
         menubar = MainWindow.menuBar()
 
 
