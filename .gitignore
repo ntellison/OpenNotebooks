@@ -2,3 +2,5 @@ zip.py
 settings/programSettings.xml
 mynotefile/config.xml
 config.xml
+__pycache__/appback.cpython-37.pyc
+__pycache__/singleFile.cpython-37.pyc
