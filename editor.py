@@ -1,4 +1,4 @@
-from singleFile import Notes
+from notesUi import Notes
 import os
 import sys
 import subprocess

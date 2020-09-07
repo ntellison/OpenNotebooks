@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from appback import NotesEditing
+from editor import NotesEditing
 
 application = QApplication(sys.argv)
 Editor = NotesEditing()
