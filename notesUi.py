@@ -125,6 +125,7 @@ class Notes(object):
 
         
         self.central_widget = QWidget(MainWindow)
+        self.central_widget.setObjectName('central')
         
         
 
@@ -139,6 +140,7 @@ class Notes(object):
         self.list = QListWidget(self.splitter)
         self.list.setObjectName("List")
         self.list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        #self.list.setAlternatingRowColors(True)
         
         self.list.setAcceptDrops(True)
         self.list.setDragDropMode(QAbstractItemView.InternalMove)

@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, Q
 from PyQt5.QtCore import QEvent, Qt, QSize, QSettings, QDate, QTime
 from PyQt5.QtWidgets import (QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QPushButton, QListWidgetItem, QTextEdit,
                             QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QGroupBox, QDialogButtonBox,
-                            QGraphicsScene, QCheckBox, QMessageBox, QColorDialog, QFileDialog, QDialog)
+                            QGraphicsScene, QCheckBox, QMessageBox, QColorDialog, QFileDialog, QDialog, QFontDialog, QInputDialog)
 
 import sip
 import shutil
@@ -31,6 +31,10 @@ class NotesEditing(Notes):
 
         self.listchanges = []
         self.tabchanges = []
+
+        self.deftabico = 'icons/notebook.png'
+        self.defaultListIcon = 'icons/notebook.png'
+
 
         self.MainWindow = QMainWindow()
         self.setupUi(self.MainWindow)
@@ -414,20 +418,28 @@ class NotesEditing(Notes):
 
         if self.checkInfo == False and self.le_item.text() != False:
             self.ico = QIcon()
-            self.defaultListIcon = 'icons/notebook.png'
+            
             self.ico.addPixmap(QPixmap(self.defaultListIcon))
             
             item = QListWidgetItem()
             item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
+            item.setTextAlignment(Qt.AlignCenter)
             self.list.addItem(item)
+            deftabtitle = 'New Tab'
             self.tab_widget = QTabWidget()
             self.tab_widget.setMovable(True)
             self.tab_widget.setObjectName(item_text)
+            self.tab_widget.addTab(QTextEdit(), QIcon(self.deftabico), deftabtitle)
             self.stack.addWidget(self.tab_widget)
 
             self.list_icons_dict[item_text] = self.defaultListIcon
+
+            # update tab icon dict as well since a default "New Tab" is being added.
+            self.tabwidget_icons_dict[item_text] = {deftabtitle : self.deftabico}
+            #self.tabwidget_icons_dict.update({deftabtitle : self.deftabico})
+            print(self.tabwidget_icons_dict)
 
 
         elif self.checkInfo == True and self.le_item.text() != False:
@@ -446,7 +458,8 @@ class NotesEditing(Notes):
             self.tab_widget.setObjectName(item_text)
             self.stack.addWidget(self.tab_widget)
 
-            self.list_icons_dict[str(item_text)] = str(self.item_filename)
+            #self.list_icons_dict[str(item_text)] = str(self.item_filename)
+            self.list_icons_dict.update({item_text : self.ico})
 
 
         else:
@@ -473,19 +486,21 @@ class NotesEditing(Notes):
 
         if self.check_tab_icon == False and self.le_text.text() != False:
 
-            self.ico = QIcon()
-            self.ico.addPixmap(QPixmap('icons/folder.png'), QIcon.Normal, QIcon.On)
+            self.newtabicon = QIcon()
+            self.newtabicon.addPixmap(QPixmap(self.deftabico), QIcon.Normal, QIcon.On)
 
             self.newTabName = self.le_text.text()            
             self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.newtabname_textedit = QTextEdit()
             self.newtabname_textedit.setObjectName(str(self.newTabName))
-            self.curr_tab_wid.addTab(self.newtabname_textedit, self.ico ,self.newTabName)
+            self.curr_tab_wid.addTab(self.newtabname_textedit, self.newtabicon ,self.newTabName)
 
+            # below is working
+            self.tabwidget_icons_dict[self.item.text()].update({self.newTabName : self.deftabico})
 
-            self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            self.tabwidget_icons_dict.update({self.newTabName:'icons/folder.png'})
+            # self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
+            # self.tabwidget_icons_dict.update({self.newTabName:self.deftabico})
 
         elif self.check_tab_icon == True and self.le_text.text() != False:
 
@@ -502,8 +517,10 @@ class NotesEditing(Notes):
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
 
-            self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            self.tabwidget_icons_dict.update({self.newTabName:self.tab_ico})
+            self.tabwidget_icons_dict[self.item.text()].update({{self.newTabName : self.tab_ico}})
+
+            # self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
+            # self.tabwidget_icons_dict.update({self.newTabName:self.tab_ico})
 
         else:
             self.tab_msg_box = QMessageBox(self, 'Message', 'Please Enter a title for TAb', QMessageBox.Ok)
@@ -550,9 +567,17 @@ class NotesEditing(Notes):
             self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab = self.curr_tab_wid.currentIndex()
+
+            print("TAB CHANGES", self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab) + '.html')
+            self.tabchanges.append(self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+
+            # self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
+            del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
+
+
             self.curr_tab_wid.removeTab(self.curr_tab)
 
-            self.tabchanges.append(self.programcfg() + '/' + self.curr_tab.text)
+
 
         if action == renameTab:
             tabRename, ok = QInputDialog.getText(self.tab_widget, 'Input Dialog', 'Enter new tab name')
@@ -560,7 +585,46 @@ class NotesEditing(Notes):
                 self.item = self.list.currentItem()
                 self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_tab = self.curr_tab_wid.currentIndex()
+
+
+                print('curr_tab :', self.curr_tab_wid.tabText(self.curr_tab))
+
+                print('tabrename :', tabRename)
+
+                # change key name for the icon value
+
+                # access the vale (icon filepath) for the particular associated tabwidget for notebook name
+
+                ti = self.tabwidget_icons_dict[self.item.text()].get(self.curr_tab_wid.tabText(self.curr_tab))
+
+                del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
+
+                print('tabdict AFTER', self.tabwidget_icons_dict)
+
+                self.tabwidget_icons_dict[self.item.text()].update({tabRename : ti})
+
+                print('tabdict New Renamed', self.tabwidget_icons_dict)
+
+                #self.tabwidget_icons_dict[self.item.text()][]
+
+                #self.tabwidget_icons_dict[tabRename] = self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
+
+
                 self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
+
+
+                #needs to rename the folder and the file
+
+                
+            
+            # if self.curr_tab_wid.tabText(self.curr_tab) in self.tabchanges:
+            #     print("TRUE")
+            #     print(tabRename)
+            #     self.tabchanges[self.curr_tab_wid.tabText(self.curr_tab)] = tabRename
+
+
+            print("tabicondict", self.tabwidget_icons_dict)
+
 
 
 
@@ -573,6 +637,7 @@ class NotesEditing(Notes):
         deleteListItem = self.contextMenu.addAction('Delete Notebook')
         renameListItem = self.contextMenu.addAction('Rename Notebook')
         save = self.contextMenu.addAction('Save')
+        pdict = self.contextMenu.addAction('Print')
 
 
         action = self.contextMenu.exec_(self.list.mapToGlobal(event))
@@ -589,7 +654,13 @@ class NotesEditing(Notes):
             sip.delete(self.r)
 
             #add file to list [] to be deleted on the next Save?
+            
             self.listchanges.append(self.programcfg() + '/' + self.fpath)
+
+            # delete nested dictionary from tabwidgets_icons_dict
+            del self.tabwidget_icons_dict[self.fpath]
+
+            del self.list_icons_dict[self.fpath]
 
 
         elif action == renameListItem:
@@ -598,10 +669,36 @@ class NotesEditing(Notes):
                 self.item = self.list.currentItem()
                 self.curr_item = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_item.setObjectName(newItemName)
+
+
+                # maybe put dict here
+                self.list_icons_dict[newItemName] = self.list_icons_dict.pop(self.item.text())
+
+                print('ListIcons', self.list_icons_dict)
+
+                # update root dict key in tabwidget
+                popped = self.tabwidget_icons_dict.pop(self.item.text())
+                # create the root dict key with the new listitem name and assign the previously popped nested dict to it
+                self.tabwidget_icons_dict[newItemName] = popped
+
+
                 self.item.setText(newItemName)
+
+
+            # rename folder with listitem name
+
+
                 # update the key with the new list item name in the list_icons_dict
+
+            # # change key name for the icon value
+
+
         elif action == save:
             self.save()
+
+        elif action == pdict:
+            print('tabiconsdict :', self.tabwidget_icons_dict)
+            print('listicondict :', self.list_icons_dict)
 
 
 
@@ -654,7 +751,8 @@ class NotesEditing(Notes):
             pass
         else:
             for h in self.listchanges:
-                shutil.rmtree(h)
+                if os.path.exists(h):
+                    shutil.rmtree(h)
 
         if not self.tabchanges:
             pass
@@ -667,10 +765,10 @@ class NotesEditing(Notes):
 
     def programconfig(self, path):
 
-        self.mww = self.width()
-        self.mwh = self.height()
-        self.mwx = self.x()
-        self.mwy = self.y()  
+        self.mww = self.MainWindow.width()
+        self.mwh = self.MainWindow.height()
+        self.mwx = self.MainWindow.x()
+        self.mwy = self.MainWindow.y()  
         
         if not os.path.exists('settings'):
             os.makedirs('settings')
@@ -751,7 +849,7 @@ class NotesEditing(Notes):
 
     def createclicked(self):
 
-        f = QFileDialog.getSaveFileName(self, 'Save File')[0]
+        f = QFileDialog.getSaveFileName(self.MainWindow, 'Save File')[0]
         
         self.createle.setText(f)
 
@@ -838,7 +936,8 @@ class NotesEditing(Notes):
 
     def save(self):
 
-
+        print('tabwidgetdict' ,self.tabwidget_icons_dict)
+        print('listwidgetdict' ,self.list_icons_dict)
 
         self.uichanges()
 
@@ -876,17 +975,21 @@ class NotesEditing(Notes):
                 tabwidgetName.text = self.q.objectName()
                 for p in range(self.q.count()):
                     self.tabtext = self.q.tabText(p)
+                    print('tabtext search :', self.tabtext)
                     #self.tabicon = self.q.tabIcon(p)
-                    self.ticon = self.tabwidget_icons_dict[self.tabtext]
-                    self.tabcontents = self.q.widget(p).objectName()
+                    self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
+                    #self.tabcontents = self.q.widget(p).objectName()
+                    #self.tabcontents = self.q.objectName()
+                    self.tabcontents = self.tabtext
 
 
-                    
+                    #needs to set tab content correctly
+                    print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
 
-                    if not os.path.exists(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
-                        os.makedirs(self.saveFile + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
+                    if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
+                        os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
 
-                    with open(r'{}'.format(self.saveFile) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
+                    with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
                         file.write(self.q.widget(p).toHtml())
                     file.close()
 
@@ -901,7 +1004,7 @@ class NotesEditing(Notes):
             tree.write(open(self.saveFile + '/config.xml', 'wb'))
 
 
-
+            #self.userpass
 
             if '_' in self.saveFile:
 
@@ -951,7 +1054,8 @@ class NotesEditing(Notes):
 
     def lp_ok(self):
 
-        self.user_pass = self.lp_le.text()
+        #self.user_pass = self.lp_le.text()
+        self.pw = self.lp_le.text()
 
         self.enterpass.close()
 
@@ -1036,9 +1140,9 @@ class NotesEditing(Notes):
 
             self.loadpass()
             # apparently it doesnt need the -o flag.
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.user_pass), '{}'.format(self.loadfile)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.loadfile)], shell=False)
         else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(self.loadfile)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
 
 
         filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
@@ -1060,12 +1164,24 @@ class NotesEditing(Notes):
             self.tab_widget.setObjectName(tabwidget.text)
             self.tab_widget.setMovable(True)
             self.stack.addWidget(self.tab_widget)
+            # set the tabwidget name as the key with empty dictionary to be populated with tab info in the nested loop
+            self.tabwidget_icons_dict[tabwidget.text] = {}
             for tabname in tabwidget.iter('tabName'):
                 self.id = self.stack.findChild(QTabWidget, tabwidget.text)
                 self.tab_icon = tabname.get('tabIcon')
                 self.tabico = QIcon(self.tab_icon)
-                self.tabwidget_icons_dict[tabname.text] = self.tab_icon
+                #self.tabwidget_icons_dict[tabname.text] = self.tab_icon
+                print('tabwidget text :', tabwidget.text)                
+                print('tabname text :', tabname.text)
+
+                # the tabwidget text is being looped twice and replaces the values on the second loop, so there are no new tab entries they are all the first tab
+                # in the tabwidgets so they always get overwritten
+
+                #self.tabwidget_icons_dict[self.id.objectName()] = {tabname.text : self.tab_icon}
+                self.tabwidget_icons_dict[tabwidget.text].update({tabname.text : self.tab_icon})
                 content = tabname.get('content')
+
+
 
                 if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
                     
@@ -1087,12 +1203,11 @@ class NotesEditing(Notes):
                     msg_box.exec()
 
 
-
         if os.path.isfile('settings/programSettings.xml'):
 
             self.recentconfig = ET.parse('settings/programSettings.xml').getroot()
         
-        for i in self.recentconfig.findall('mainwindowsize'):
+        for i in self.recentconfig.findall('selfsize'):
             self.mws_x = i.get('x')
             self.mws_y = i.get('y')
             self.mw_width = i.get('width')

@@ -32,31 +32,18 @@ QDialog {
 
 /* QTabWidget */
 
-/* QTabWidget {
-    margin-top: -1px;
-} */
-
-QTabBar::tab:selected {
-    background-color: rgba(172, 172, 172, 0.623);
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-}
-
 QTabBar {
     background-color: #302f2f;
-    font: 25px;
-
+    font: 20px;
 }
 
 QTabBar::tab {
     background-color: #777171;
-    width: 70px;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
+    width: 100px;
 }
 
-QTabBar::tab:icon {
-    width: 250px;
+QTabBar::tab::icon {
+    width: 150px;
     height: 50px;
 }
 
@@ -80,44 +67,31 @@ QMenuBar {
 /* List Widget */
 
 QListView#List {
-    /* alternate-background-color: gray;     */
     background-color: #201f1f;
+    font: 20pt;
     
 }
 
 QListView#List::item {
-    /* background-color: #c64a13; */
-    /* background-color: #132ec6; */
+    background-color: #1a24b6;
     width: 50px;
     height: 50px;
-
-    font: 40pt;
 
     /* text-align: right; */
     /* padding-right: 40px; */
     /*border: 1px solid white;*/
 }
 
-
-QListView#List::item:selected {
-    background-color: rgba(167, 162, 236, 0.507);
-    /* font: 40pt; */
-    /* width: 90px;
-    height: 90px; */
-}
-
-/* QListView#List::item:text {
+QListView#List::item::text {
 
     padding: 0px, 0px, 0px, 80px ;
     margin: 0px, 0px, 70px, 60px;
-    
-} */
+}
 
 
 QListView#List::icon {
-    width: 45px;
-    height: 45px;
-    padding: 0px;
+    width: 35px;
+    height: 35px;
     /* padding-left: 70px; */
     /* padding-left: 80px; */
     /* padding-right: 35px; */
