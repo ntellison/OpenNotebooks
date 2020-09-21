@@ -106,17 +106,40 @@ class Notes(object):
         
         self.toolbar.addAction(self.addnew)
 
+        self.addtab = QAction(QIcon("icons/tabtest"), "Add New Tab", MainWindow)
+        
+        self.toolbar.addAction(self.addtab)
+
+        self.toolbar.addSeparator()
+
         self.newFile = QAction(QIcon("icons/new.png"), "Create New Note File", MainWindow)
         
         self.toolbar.addAction(self.newFile)
+
+        self.openAction = QAction(QIcon("icons/open.png"), "open notes file", MainWindow)
+        
+        self.toolbar.addAction(self.openAction)
+
+        self.toolbar.addSeparator()
+
+        self.undoAction = QAction(QIcon("icons/undo.png"), "undo", MainWindow)
+        
+        self.toolbar.addAction(self.undoAction)
+
+        self.redoAction = QAction(QIcon("icons/redo.png"), "redo", MainWindow)
+        
+        self.toolbar.addAction(self.redoAction)        
+
+
 
         self.printcfg = QAction(QIcon("icons/print.png"), "print", MainWindow)
         
         self.toolbar.addAction(self.printcfg)
 
-        self.openAction = QAction(QIcon("icons/open.png"), "open notes file", MainWindow)
-        
-        self.toolbar.addAction(self.openAction)
+
+
+        self.toolbar.addSeparator()    
+
 
         self.copyAction = QAction(QIcon("icons/copy.png"), "copy text", MainWindow)
         
@@ -130,13 +153,9 @@ class Notes(object):
         
         self.toolbar.addAction(self.cutAction)
 
-        self.undoAction = QAction(QIcon("icons/undo.png"), "undo", MainWindow)
-        
-        self.toolbar.addAction(self.undoAction)
 
-        self.redoAction = QAction(QIcon("icons/redo.png"), "redo", MainWindow)
-        
-        self.toolbar.addAction(self.redoAction)
+        self.toolbar.addSeparator()
+
 
         self.leftAlign = QAction(QIcon("icons/alignleft.png"), "align left", MainWindow)
         
@@ -154,6 +173,10 @@ class Notes(object):
         
         self.toolbar.addAction(self.justifyAlign)
 
+
+        self.toolbar.addSeparator()
+
+
         self.dateAction = QAction(QIcon("icons/calender.png"), "insert date", MainWindow)
         
         self.toolbar.addAction(self.dateAction)
@@ -162,9 +185,10 @@ class Notes(object):
         
         self.toolbar.addAction(self.timeAction)
 
-        self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
-        
-        self.toolbar.addAction(self.tableAction)
+
+
+        self.toolbar.addSeparator()
+
 
         self.bulletAction = QAction(QIcon("icons/bullets.png"), "insert bulleted list", MainWindow)
         
@@ -174,9 +198,23 @@ class Notes(object):
         
         self.toolbar.addAction(self.numberAction)
 
+
+        self.toolbar.addSeparator()
+
+
+
+        self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
+        
+        self.toolbar.addAction(self.tableAction)
+
         self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
         
         self.toolbar.addAction(self.imageAction)
+
+
+        self.toolbar.addSeparator()
+
+
 
         self.fontcolorAction = QAction(QIcon("icons/font-color.png"), "Select font color", MainWindow)
         

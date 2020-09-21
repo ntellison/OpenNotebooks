@@ -73,6 +73,7 @@ class NotesEditing(Notes):
         # Toolbar
 
         self.addnew.triggered.connect(self.itemMenu)
+        self.addtab.triggered.connect(self.tabContents)
         self.newFile.triggered.connect(self.newWindow)
         #self.printcfg.triggered.connect(self.print)
         self.openAction.triggered.connect(self.open)
