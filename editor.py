@@ -32,8 +32,8 @@ class NotesEditing(Notes):
         self.listchanges = []
         self.tabchanges = []
 
-        self.deftabico = 'icons/notebook.png'
-        self.defaultListIcon = 'icons/notebook.png'
+        self.deftabico = 'icons/tabred.png'
+        self.defaultListIcon = 'icons/notebookgrey.png'
 
 
         self.MainWindow = QMainWindow()
@@ -589,6 +589,8 @@ class NotesEditing(Notes):
 
                 print('curr_tab :', self.curr_tab_wid.tabText(self.curr_tab))
 
+                self.tabchanges.append(self.programcfg() + '/' + self.item.text() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+
                 print('tabrename :', tabRename)
 
                 # change key name for the icon value
@@ -611,6 +613,8 @@ class NotesEditing(Notes):
 
 
                 self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
+
+
 
 
                 #needs to rename the folder and the file
@@ -670,7 +674,7 @@ class NotesEditing(Notes):
                 self.curr_item = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_item.setObjectName(newItemName)
 
-
+                self.listchanges.append(self.programcfg() + '/' + self.item.text())
                 # maybe put dict here
                 self.list_icons_dict[newItemName] = self.list_icons_dict.pop(self.item.text())
 
@@ -683,6 +687,9 @@ class NotesEditing(Notes):
 
 
                 self.item.setText(newItemName)
+
+
+
 
 
             # rename folder with listitem name
@@ -747,18 +754,24 @@ class NotesEditing(Notes):
     def uichanges(self):
 
         # if the list is empty
+
+        print(self.listchanges)
+        print(self.tabchanges)
+
         if not self.listchanges:
             pass
         else:
             for h in self.listchanges:
                 if os.path.exists(h):
                     shutil.rmtree(h)
+                    print('removed')
 
         if not self.tabchanges:
             pass
         else:
             for g in self.tabchanges:
-                os.remove(g)
+                shutil.rmtree(g)
+                #os.remove(g) # removes a single file
 
 
 
@@ -936,8 +949,8 @@ class NotesEditing(Notes):
 
     def save(self):
 
-        print('tabwidgetdict' ,self.tabwidget_icons_dict)
-        print('listwidgetdict' ,self.list_icons_dict)
+        #print('tabwidgetdict' ,self.tabwidget_icons_dict)
+        #print('listwidgetdict' ,self.list_icons_dict)
 
         self.uichanges()
 
@@ -975,7 +988,7 @@ class NotesEditing(Notes):
                 tabwidgetName.text = self.q.objectName()
                 for p in range(self.q.count()):
                     self.tabtext = self.q.tabText(p)
-                    print('tabtext search :', self.tabtext)
+                    #print('tabtext search :', self.tabtext)
                     #self.tabicon = self.q.tabIcon(p)
                     self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
                     #self.tabcontents = self.q.widget(p).objectName()
@@ -984,7 +997,7 @@ class NotesEditing(Notes):
 
 
                     #needs to set tab content correctly
-                    print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
+                    #print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
 
                     if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
                         os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))

@@ -70,19 +70,19 @@ class Notes(object):
         
         self.toolbar.addAction(self.redoAction)
 
-        self.leftAlign = QAction(QIcon("icons/align-left.png"), "align left", MainWindow)
+        self.leftAlign = QAction(QIcon("icons/alignleft.png"), "align left", MainWindow)
         
         self.toolbar.addAction(self.leftAlign)
 
-        self.rightAlign = QAction(QIcon("icons/align-right.png"), "align right", MainWindow)
+        self.rightAlign = QAction(QIcon("icons/alignright.png"), "align right", MainWindow)
         
         self.toolbar.addAction(self.rightAlign)
 
-        self.centerAlign = QAction(QIcon("icons/align-center.png"), "align center", MainWindow)
+        self.centerAlign = QAction(QIcon("icons/center.png"), "align center", MainWindow)
         
         self.toolbar.addAction(self.centerAlign)
 
-        self.justifyAlign = QAction(QIcon("icons/align-justify.png"), "align justify", MainWindow)
+        self.justifyAlign = QAction(QIcon("icons/justify.png"), "align justify", MainWindow)
         
         self.toolbar.addAction(self.justifyAlign)
 
@@ -98,7 +98,7 @@ class Notes(object):
         
         self.toolbar.addAction(self.tableAction)
 
-        self.bulletAction = QAction(QIcon("icons/bullet.png"), "insert bulleted list", MainWindow)
+        self.bulletAction = QAction(QIcon("icons/bullets.png"), "insert bulleted list", MainWindow)
         
         self.toolbar.addAction(self.bulletAction)
 
