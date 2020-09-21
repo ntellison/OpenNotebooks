@@ -40,6 +40,38 @@ class NotesEditing(Notes):
         self.setupUi(self.MainWindow)
 
 
+        # Menubar
+
+        self.menu_file_action.triggered.connect(self.newWindow)
+        self.new_notebook_action.triggered.connect(self.itemMenu)
+        self.open_file_action.triggered.connect(self.open)
+        self.save_file_action.triggered.connect(self.save)
+        
+        self.undo_edit_action.triggered.connect(self.undo)
+        self.redo_edit_action.triggered.connect(self.redo)
+        self.copy_edit_action.triggered.connect(self.copy)
+        self.cut_edit_action.triggered.connect(self.cut)
+        self.paste_edit_action.triggered.connect(self.paste)
+        self.image_edit_action.triggered.connect(self.insertimage)
+        self.table_edit_action.triggered.connect(self.tableDialog)
+        self.time_edit_action.triggered.connect(self.time)
+        self.date_edit_action.triggered.connect(self.date)
+
+        self.fontcolor_format_action.triggered.connect(self.fontColorSelect)
+        self.fontbgcolor_format_action.triggered.connect(self.fontBackground)
+        self.font_format_action.triggered.connect(self.selectFont)
+        self.leftalign_format_action.triggered.connect(self.textAlignLeft)
+        self.centeralign_format_action.triggered.connect(self.textAlignCenter)
+        self.rightalign_format_action.triggered.connect(self.textAlignRight)
+        self.alignjustify_format_action.triggered.connect(self.textAlignJustify)
+
+
+
+        
+
+
+        # Toolbar
+
         self.addnew.triggered.connect(self.itemMenu)
         self.newFile.triggered.connect(self.newWindow)
         #self.printcfg.triggered.connect(self.print)
@@ -439,7 +471,7 @@ class NotesEditing(Notes):
             # update tab icon dict as well since a default "New Tab" is being added.
             self.tabwidget_icons_dict[item_text] = {deftabtitle : self.deftabico}
             #self.tabwidget_icons_dict.update({deftabtitle : self.deftabico})
-            print(self.tabwidget_icons_dict)
+            #print(self.tabwidget_icons_dict)
 
 
         elif self.checkInfo == True and self.le_item.text() != False:
@@ -1184,8 +1216,8 @@ class NotesEditing(Notes):
                 self.tab_icon = tabname.get('tabIcon')
                 self.tabico = QIcon(self.tab_icon)
                 #self.tabwidget_icons_dict[tabname.text] = self.tab_icon
-                print('tabwidget text :', tabwidget.text)                
-                print('tabname text :', tabname.text)
+                # print('tabwidget text :', tabwidget.text)                
+                # print('tabname text :', tabname.text)
 
                 # the tabwidget text is being looped twice and replaces the values on the second loop, so there are no new tab entries they are all the first tab
                 # in the tabwidgets so they always get overwritten

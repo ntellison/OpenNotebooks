@@ -45,9 +45,7 @@ QTabBar::tab:selected {
 QTabBar {
     background-color: #302f2f;
     font: 25px;
-    qproperty-iconSize: 30px;    
-    qproperty-setTabShape: triangular;
-    qproperty-setStyle: fusion;
+    qproperty-iconSize: 30px;
 }
 
 QTabBar::tab {
@@ -76,6 +74,7 @@ QTabBar::tab {
 /* Toolbar */
 QToolBar {
     background-color: #302f2f;
+    qproperty-iconSize: 35px;
 }
 
 QMenuBar {

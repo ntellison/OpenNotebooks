@@ -18,16 +18,84 @@ class Notes(object):
         menubar = MainWindow.menuBar()
 
 
-        menu_file = menubar.addMenu("File")
-        menu_edit = menubar.addMenu("Edit")
-        menu_view = menubar.addMenu("View")
-        menu_view = menubar.addMenu("Export")
+        self.menu_file = menubar.addMenu("File")
+        self.menu_edit = menubar.addMenu("Edit")
+        self.menu_format = menubar.addMenu("Format")
+        self.menu_help = menubar.addMenu("Help")
+        #self.menu_view = menubar.addMenu("Export")
 
-        menu_file_action = QAction("New File", MainWindow)
-        menu_file.addAction(menu_file_action)
-        #menu_file_action.triggered.connect(self.newFile)
-        #menu_file.addAction(self.newFile)
-        
+
+        # menubar file menu
+
+        self.menu_file_action = QAction("New File", MainWindow)
+        self.menu_file.addAction(self.menu_file_action)
+
+        self.new_notebook_action = QAction("New Notebook", MainWindow)
+        self.menu_file.addAction(self.new_notebook_action)
+
+        self.open_file_action = QAction("Open an existing file", MainWindow)
+        self.menu_file.addAction(self.open_file_action)
+
+        self.save_file_action = QAction("Save File", MainWindow)
+        self.menu_file.addAction(self.save_file_action)
+
+        # menubar edit menu
+
+        self.undo_edit_action = QAction("Undo", MainWindow)
+        self.menu_edit.addAction(self.undo_edit_action)
+
+        self.redo_edit_action = QAction("Redo", MainWindow)
+        self.menu_edit.addAction(self.redo_edit_action)
+
+        self.copy_edit_action = QAction("Copy", MainWindow)
+        self.menu_edit.addAction(self.copy_edit_action)
+
+        self.cut_edit_action = QAction("Cut", MainWindow)
+        self.menu_edit.addAction(self.cut_edit_action)
+
+        self.paste_edit_action = QAction("Paste", MainWindow)
+        self.menu_edit.addAction(self.paste_edit_action)
+
+        self.image_edit_action = QAction("Insert an Image", MainWindow)
+        self.menu_edit.addAction(self.image_edit_action)
+
+        self.table_edit_action = QAction("Insert a Table", MainWindow)
+        self.menu_edit.addAction(self.table_edit_action)
+
+        self.time_edit_action = QAction("Insert the current Time", MainWindow)
+        self.menu_edit.addAction(self.time_edit_action)
+
+        self.date_edit_action = QAction("Insert the current Date", MainWindow)
+        self.menu_edit.addAction(self.date_edit_action)
+
+
+        # menubar format menu
+
+        self.fontcolor_format_action = QAction("Choose font color", MainWindow)
+        self.menu_format.addAction(self.fontcolor_format_action)
+
+        self.fontbgcolor_format_action = QAction("Choose font Background Color", MainWindow)
+        self.menu_format.addAction(self.fontbgcolor_format_action)
+
+        self.font_format_action = QAction("Choose font", MainWindow)
+        self.menu_format.addAction(self.font_format_action)
+
+        self.leftalign_format_action = QAction("Align Text Left", MainWindow)
+        self.menu_format.addAction(self.leftalign_format_action)
+
+        self.centeralign_format_action = QAction("Align Text Center", MainWindow)
+        self.menu_format.addAction(self.centeralign_format_action)
+
+        self.rightalign_format_action = QAction("Align Text Right", MainWindow)
+        self.menu_format.addAction(self.rightalign_format_action)
+
+        self.alignjustify_format_action = QAction("Align Text Justify", MainWindow)
+        self.menu_format.addAction(self.alignjustify_format_action)
+
+
+        # menubar export menu
+
+        # TOD0
 
 
 
