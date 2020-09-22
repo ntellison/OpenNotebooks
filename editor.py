@@ -597,18 +597,22 @@ class NotesEditing(Notes):
         if action == addTab:
             self.tabContents()
         if action == deleteTab:
-            self.item = self.list.currentItem()
-            self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
-            self.curr_tab = self.curr_tab_wid.currentIndex()
 
-            print("TAB CHANGES", self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab) + '.html')
-            self.tabchanges.append(self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+            tabmsgbox = QMessageBox.question(self.MainWindow, 'Warning', 'This Tab will be permanently deleted. Be sure to backup your notes file before continuing. Are you sure that you want to Delete this Tab?', QMessageBox.Ok, QMessageBox.Cancel)
 
-            # self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
-            del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
+            if tabmsgbox == QMessageBox.Ok:
+                self.item = self.list.currentItem()
+                self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
+                self.curr_tab = self.curr_tab_wid.currentIndex()
+
+                #print("TAB CHANGES", self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab) + '.html')
+                self.tabchanges.append(self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+
+                # self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
+                del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
 
 
-            self.curr_tab_wid.removeTab(self.curr_tab)
+                self.curr_tab_wid.removeTab(self.curr_tab)
 
 
 
@@ -634,11 +638,11 @@ class NotesEditing(Notes):
 
                 del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
 
-                print('tabdict AFTER', self.tabwidget_icons_dict)
+                #print('tabdict AFTER', self.tabwidget_icons_dict)
 
                 self.tabwidget_icons_dict[self.item.text()].update({tabRename : ti})
 
-                print('tabdict New Renamed', self.tabwidget_icons_dict)
+                #print('tabdict New Renamed', self.tabwidget_icons_dict)
 
                 #self.tabwidget_icons_dict[self.item.text()][]
 
@@ -660,7 +664,7 @@ class NotesEditing(Notes):
             #     self.tabchanges[self.curr_tab_wid.tabText(self.curr_tab)] = tabRename
 
 
-            print("tabicondict", self.tabwidget_icons_dict)
+            #print("tabicondict", self.tabwidget_icons_dict)
 
 
 
@@ -682,22 +686,26 @@ class NotesEditing(Notes):
         if action == addListItem:
             self.itemMenu()
         elif action == deleteListItem:
+
+            listmsgbox = QMessageBox.question(self.MainWindow, 'Warning', 'This notebook will be permanently deleted. Be sure to backup your notes file before continuing. Are you sure that you want to Delete this Notebook?', QMessageBox.Ok, QMessageBox.Cancel)
             
-            self.fpath = self.list.currentItem().text()
-            self.item = self.list.currentItem()
-            self.y = self.list.takeItem(self.list.row(self.item))#pops the list item out
+            if listmsgbox == QMessageBox.Ok:
 
-            self.r = self.stack.findChild(QTabWidget, self.item.text())
-            sip.delete(self.r)
+                self.fpath = self.list.currentItem().text()
+                self.item = self.list.currentItem()
+                self.y = self.list.takeItem(self.list.row(self.item))#pops the list item out
 
-            #add file to list [] to be deleted on the next Save?
-            
-            self.listchanges.append(self.programcfg() + '/' + self.fpath)
+                self.r = self.stack.findChild(QTabWidget, self.item.text())
+                sip.delete(self.r)
 
-            # delete nested dictionary from tabwidgets_icons_dict
-            del self.tabwidget_icons_dict[self.fpath]
+                #add file to list [] to be deleted on the next Save?
+                
+                self.listchanges.append(self.programcfg() + '/' + self.fpath)
 
-            del self.list_icons_dict[self.fpath]
+                # delete nested dictionary from tabwidgets_icons_dict
+                del self.tabwidget_icons_dict[self.fpath]
+
+                del self.list_icons_dict[self.fpath]
 
 
         elif action == renameListItem:

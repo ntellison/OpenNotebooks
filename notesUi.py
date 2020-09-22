@@ -102,7 +102,9 @@ class Notes(object):
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
 
-        self.addnew = QAction(QIcon("icons/notebook.png"), "Add New Nobebook", MainWindow)
+        # deletetab , deletenotebook
+
+        self.addnew = QAction(QIcon("icons/notebookgrey.png"), "Add New Nobebook", MainWindow)
         
         self.toolbar.addAction(self.addnew)
 
@@ -181,7 +183,7 @@ class Notes(object):
         
         self.toolbar.addAction(self.dateAction)
 
-        self.timeAction = QAction(QIcon("icons/time.png"), "insert time", MainWindow)
+        self.timeAction = QAction(QIcon("icons/clock.png"), "insert time", MainWindow)
         
         self.toolbar.addAction(self.timeAction)
 
@@ -194,7 +196,7 @@ class Notes(object):
         
         self.toolbar.addAction(self.bulletAction)
 
-        self.numberAction = QAction(QIcon("icons/number.png"), "insert numbered list", MainWindow)
+        self.numberAction = QAction(QIcon("icons/numbers.png"), "insert numbered list", MainWindow)
         
         self.toolbar.addAction(self.numberAction)
 
