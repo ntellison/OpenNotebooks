@@ -32,6 +32,8 @@ class NotesEditing(Notes):
         self.listchanges = []
         self.tabchanges = []
 
+        self.status = True
+
         self.deftabico = 'icons/tabred.png'
         self.defaultListIcon = 'icons/notebookgrey.png'
 
@@ -44,7 +46,8 @@ class NotesEditing(Notes):
 
         self.menu_file_action.triggered.connect(self.newWindow)
         self.new_notebook_action.triggered.connect(self.itemMenu)
-        self.open_file_action.triggered.connect(self.open)
+        # self.open_file_action.triggered.connect(self.open)
+        self.open_file_action.triggered.connect(self.openNote)
         self.save_file_action.triggered.connect(self.save)
         
         self.undo_edit_action.triggered.connect(self.undo)
@@ -114,11 +117,8 @@ class NotesEditing(Notes):
 
     def closeEvent(self, event):
 
-        reply = QMessageBox.question(self.MainWindow, 'Message',
-                                    "Are you sure to quit?", QMessageBox.Yes |
-                                    QMessageBox.No, QMessageBox.No)
+        if self.status:
 
-        if reply == QMessageBox.Yes:
             split = os.path.splitext(self.loadfile)[0]
             shutil.rmtree(split)
             #shutil.rmtree(self.recentLoad)
@@ -126,8 +126,24 @@ class NotesEditing(Notes):
             sys.exit()
 
         else:
-            # maybesave function?
-            event.ignore()
+
+            reply = QMessageBox.question(self.MainWindow, 'Message',
+                                        "It looks like you have some unsaved changes to your notes. Are you sure to quit?", QMessageBox.Yes |
+                                        QMessageBox.No, QMessageBox.No)
+
+            if reply == QMessageBox.Yes:
+                try:
+                    split = os.path.splitext(self.loadfile)[0]
+                    shutil.rmtree(split)
+                    #shutil.rmtree(self.recentLoad)
+                    event.accept()
+                    sys.exit()
+                except:
+                    sys.exit()
+
+            else:
+                # maybesave function?
+                event.ignore()
 
 
 
@@ -313,7 +329,11 @@ class NotesEditing(Notes):
 
 
     def newWindow(self):
-        #self.setupUi(self)
+        #self.setupUi(self)+
+
+        # w = NotesEditing()
+        # w.show()
+
         self.createFile()
 
 
@@ -322,12 +342,14 @@ class NotesEditing(Notes):
     def open(self):
         self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
 
-        self.loadfile = str(self.noteFileOpen[0])
+        self.loadfile = self.noteFileOpen[0]
+
+        print("open loadfile" ,self.loadfile)
 
         xml = ET.parse('settings/programSettings.xml')
 
         y = xml.find('recentfilepath')
-        y.text = str(self.loadfile)
+        y.text = str(os.path.splitext(self.loadfile)[0])
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
@@ -349,6 +371,10 @@ class NotesEditing(Notes):
         self.x = self.stack.findChild(QTabWidget, self.item.text())
         self.stack.setCurrentWidget(self.x)
 
+
+
+    def notebookstatus(self):
+        self.status = False
 
 
 
@@ -458,13 +484,17 @@ class NotesEditing(Notes):
             item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
-            item.setTextAlignment(Qt.AlignCenter)
+            #item.setTextAlignment(Qt.AlignCenter)
             self.list.addItem(item)
             deftabtitle = 'New Tab'
             self.tab_widget = QTabWidget()
             self.tab_widget.setMovable(True)
             self.tab_widget.setObjectName(item_text)
-            self.tab_widget.addTab(QTextEdit(), QIcon(self.deftabico), deftabtitle)
+
+            self.sectioncontent = QTextEdit()
+            self.sectioncontent.textChanged.connect(self.notebookstatus)
+            self.tab_widget.addTab(self.sectioncontent, QIcon(self.deftabico), deftabtitle)
+
             self.stack.addWidget(self.tab_widget)
 
             self.list_icons_dict[item_text] = self.defaultListIcon
@@ -526,6 +556,9 @@ class NotesEditing(Notes):
             self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.newtabname_textedit = QTextEdit()
+
+            self.newtabname_textedit.textChanged.connect(self.notebookstatus)
+
             self.newtabname_textedit.setObjectName(str(self.newTabName))
             self.curr_tab_wid.addTab(self.newtabname_textedit, self.newtabicon ,self.newTabName)
 
@@ -927,7 +960,7 @@ class NotesEditing(Notes):
         else:
             if not os.path.exists(self.saveFile):
                 os.makedirs(self.saveFile)
-                
+            
 
         root = ET.Element('programElements')
         tree = ElementTree(root)
@@ -964,11 +997,35 @@ class NotesEditing(Notes):
 
     def extractfile(self, pw, fp):
 
+
         if '_' in '{}'.format(fp):
+
             self.loadpass()
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp), '-o{}'.format(fp)], shell=False)
+
+            # apparently it doesnt need the -o flag.
+            zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp)], shell=False)
+            print('Return Code :', zippw.returncode)
+
+            if zippw.returncode == 0:
+                pass
+            else:
+                box = QMessageBox(self.MainWindow)
+                box.setText("Wrong Password")
+                box.setWindowTitle("File Error")
+                # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                box.exec()
+                if box == QMessageBox.Ok:
+                    self.loadpass()
+
         else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(fp)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(fp)], shell=False)
+
+
+        # if '_' in '{}'.format(fp):
+        #     self.loadpass()
+        #     subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp), '-o{}'.format(fp)], shell=False)
+        # else:
+        #     subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(fp)], shell=False)
 
 
 
@@ -1000,7 +1057,7 @@ class NotesEditing(Notes):
         #xmlSettings_save.getroot()
         for p in xmlSettings_save.findall('recentfilepath'):
             rfp = p.text
-        if 'none' in rfp:
+        if not rfp:
             self.createFile()
             #self.saveFile = QFileDialog.getSaveFileName(self, 'Save File')[0]
             #self.passwordmenu()
@@ -1071,6 +1128,7 @@ class NotesEditing(Notes):
 
             self.programconfig(self.saveFile)
             
+            self.status = True
 
 
 
@@ -1144,12 +1202,13 @@ class NotesEditing(Notes):
     def openNote(self):
         self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
 
-        self.loadfile = str(self.noteFileOpen[0])
+        self.loadfile = os.path.splitext(self.noteFileOpen[0])
+
 
         xml = ET.parse('settings/programSettings.xml')
 
         y = xml.find('recentfilepath')
-        y.text = str(self.loadfile)
+        y.text = str(self.loadfile[0])
 
         xml.write(open('settings/programSettings.xml', 'wb'))
         #self.loadfile = os.path.splitext(str(self.noteFileOpen))
@@ -1178,7 +1237,7 @@ class NotesEditing(Notes):
             for o in self.xmlSettingsLoad.findall('recentfilepath'):
                 recent = o.text
                 
-                if 'none' in recent:
+                if not recent:
                     
                     self.loadChoiceDialog()
                     #return
@@ -1188,96 +1247,117 @@ class NotesEditing(Notes):
 
 
 
+        try:
+
+            if '_' in '{}'.format(self.loadfile):
+                
+                while True:
+
+                    self.loadpass()
+
+                    # apparently it doesnt need the -o flag.
+                    zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.loadfile)], shell=False)
+                    print('Return Code :', zippw.returncode)
+
+                    if zippw.returncode == 0:
+                        break
+                    else:
+                        box = QMessageBox(self.MainWindow)
+                        box.setText("Wrong Password")
+                        box.setWindowTitle("File Error")
+                        # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                        box.exec()
+                        # if box == QMessageBox.Ok:
+                        #     self.loadpass()
+
+            else:
+                subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
 
 
-        if '_' in '{}'.format(self.loadfile):
 
-            self.loadpass()
-            # apparently it doesnt need the -o flag.
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.loadfile)], shell=False)
-        else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
+            filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
+
+            for listitem in filename.findall('listitem'):
+                
+                item = QListWidgetItem()
+                icon = listitem.get('item_icon')
+                self.ico = QIcon(icon)
+                item.setIcon(self.ico)
+                item.setText(listitem.text)
+                self.list.addItem(item)
+
+                self.list_icons_dict[listitem.text] = icon
 
 
-        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
+            for tabwidget in filename.iter('tabwid_name'):
+                self.tab_widget = QTabWidget()
+                self.tab_widget.setObjectName(tabwidget.text)
+                self.tab_widget.setMovable(True)
+                self.stack.addWidget(self.tab_widget)
+                # set the tabwidget name as the key with empty dictionary to be populated with tab info in the nested loop
+                self.tabwidget_icons_dict[tabwidget.text] = {}
+                for tabname in tabwidget.iter('tabName'):
+                    self.id = self.stack.findChild(QTabWidget, tabwidget.text)
+                    self.tab_icon = tabname.get('tabIcon')
+                    self.tabico = QIcon(self.tab_icon)
+                    #self.tabwidget_icons_dict[tabname.text] = self.tab_icon
+                    # print('tabwidget text :', tabwidget.text)                
+                    # print('tabname text :', tabname.text)
 
-        for listitem in filename.findall('listitem'):
+                    # the tabwidget text is being looped twice and replaces the values on the second loop, so there are no new tab entries they are all the first tab
+                    # in the tabwidgets so they always get overwritten
+
+                    #self.tabwidget_icons_dict[self.id.objectName()] = {tabname.text : self.tab_icon}
+                    self.tabwidget_icons_dict[tabwidget.text].update({tabname.text : self.tab_icon})
+                    content = tabname.get('content')
+
+
+
+                    if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
+                        
+
+
+                        tE = QTextEdit()
+                        tE.setObjectName(content)
+                        tE.textChanged.connect(self.notebookstatus)
+                        
+                        with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(self.loadfile)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                            tE.setText(file.read())
+                        file.close()
+                        self.id.addTab(tE, self.tabico, tabname.text)
+
+                    else:
+                        msg_box = QMessageBox()
+                        msg_box.setText("Error when loading file")
+                        msg_box.setWindowTitle("File Error")
+                        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                        msg_box.exec()
+
+
+            if os.path.isfile('settings/programSettings.xml'):
+
+                self.recentconfig = ET.parse('settings/programSettings.xml').getroot()
             
-            item = QListWidgetItem()
-            icon = listitem.get('item_icon')
-            self.ico = QIcon(icon)
-            item.setIcon(self.ico)
-            item.setText(listitem.text)
-            self.list.addItem(item)
-
-            self.list_icons_dict[listitem.text] = icon
+            for i in self.recentconfig.findall('selfsize'):
+                self.mws_x = i.get('x')
+                self.mws_y = i.get('y')
+                self.mw_width = i.get('width')
+                self.mw_height = i.get('height')
 
 
-        for tabwidget in filename.iter('tabwid_name'):
-            self.tab_widget = QTabWidget()
-            self.tab_widget.setObjectName(tabwidget.text)
-            self.tab_widget.setMovable(True)
-            self.stack.addWidget(self.tab_widget)
-            # set the tabwidget name as the key with empty dictionary to be populated with tab info in the nested loop
-            self.tabwidget_icons_dict[tabwidget.text] = {}
-            for tabname in tabwidget.iter('tabName'):
-                self.id = self.stack.findChild(QTabWidget, tabwidget.text)
-                self.tab_icon = tabname.get('tabIcon')
-                self.tabico = QIcon(self.tab_icon)
-                #self.tabwidget_icons_dict[tabname.text] = self.tab_icon
-                # print('tabwidget text :', tabwidget.text)                
-                # print('tabname text :', tabname.text)
+            self.MainWindow.setGeometry(int(self.mws_x), int(self.mws_y), int(self.mw_width), int(self.mw_height))
 
-                # the tabwidget text is being looped twice and replaces the values on the second loop, so there are no new tab entries they are all the first tab
-                # in the tabwidgets so they always get overwritten
+            for ls in self.recentconfig.findall('listsize'):
 
-                #self.tabwidget_icons_dict[self.id.objectName()] = {tabname.text : self.tab_icon}
-                self.tabwidget_icons_dict[tabwidget.text].update({tabname.text : self.tab_icon})
-                content = tabname.get('content')
+                self.list_width = ls.get('width')
+                
+
+            for ss in self.recentconfig.findall('stacksize'):
+
+                self.ssize = ss.get('width')
 
 
+            self.splitter.setSizes([int(self.list_width), int(self.ssize)])
 
-                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
-                    
-
-
-                    tE = QTextEdit()
-                    tE.setObjectName(content)
-                    
-                    with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(self.loadfile)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
-                        tE.setText(file.read())
-                    file.close()
-                    self.id.addTab(tE, self.tabico, tabname.text)
-
-                else:
-                    msg_box = QMessageBox()
-                    msg_box.setText("Error when loading file")
-                    msg_box.setWindowTitle("File Error")
-                    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-                    msg_box.exec()
-
-
-        if os.path.isfile('settings/programSettings.xml'):
-
-            self.recentconfig = ET.parse('settings/programSettings.xml').getroot()
-        
-        for i in self.recentconfig.findall('selfsize'):
-            self.mws_x = i.get('x')
-            self.mws_y = i.get('y')
-            self.mw_width = i.get('width')
-            self.mw_height = i.get('height')
-
-
-        self.MainWindow.setGeometry(int(self.mws_x), int(self.mws_y), int(self.mw_width), int(self.mw_height))
-
-        for ls in self.recentconfig.findall('listsize'):
-
-            self.list_width = ls.get('width')
-            
-
-        for ss in self.recentconfig.findall('stacksize'):
-
-            self.ssize = ss.get('width')
-
-
-        self.splitter.setSizes([int(self.list_width), int(self.ssize)])
+        except:
+            self.loadChoiceDialog()
