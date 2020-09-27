@@ -1,5 +1,5 @@
 /*
-Default Dark Theme for Notes
+Default Dark Theme for Open Notebooks
 ellison.nt@gmail.com
 */
 
@@ -13,6 +13,7 @@ QWidget#central {
 
 QLineEdit {
     background-color: #a8a8a8;
+    
 }
 
 
@@ -20,6 +21,7 @@ QLineEdit {
 
 QPushButton {
     background-color: #302f2f;
+    color: lightgray;
 }
 
 
@@ -37,9 +39,10 @@ QDialog {
 } */
 
 QTabBar::tab:selected {
-    background-color: rgba(172, 172, 172, 0.623);
+    background-color: rgba(224, 224, 224, 0.623);    
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
+
 }
 
 QTabBar {
@@ -89,8 +92,10 @@ QMenuBar {
 QListView#List {
     /* alternate-background-color: gray;     */
     background-color: #201f1f;
+    color: white;
     qproperty-iconSize: 30px;
     font: 25pt;
+    
     /* padding: 10px; */
     /* margin-top: 10px;
     margin-bottom: 10px; */
@@ -102,6 +107,7 @@ QListView#List::item {
     /* font: 100px; */
     width: 50px;
     height: 50px;
+    
 
     /* font: 0pt; */
 
@@ -149,7 +155,6 @@ QListView#List::item:selected {
 
 
 
-
 /* Text Widget */
 
 QTextEdit {
@@ -171,7 +176,7 @@ QMessageBox {
 /* Context Menu */
 
 QMenu {
-    background-color: wheat;
+    background-color: lightslategray;
 }
 
 QColorDialog {

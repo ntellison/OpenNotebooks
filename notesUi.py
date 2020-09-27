@@ -114,6 +114,10 @@ class Notes(object):
 
         self.toolbar.addSeparator()
 
+        self.saveAction = QAction(QIcon("icons/save.png"), "Save Current Note File", MainWindow)
+
+        self.toolbar.addAction(self.saveAction)
+
         self.newFile = QAction(QIcon("icons/new.png"), "Create New Note File", MainWindow)
         
         self.toolbar.addAction(self.newFile)
@@ -134,7 +138,7 @@ class Notes(object):
 
 
 
-        self.printcfg = QAction(QIcon("icons/print.png"), "print", MainWindow)
+        self.printcfg = QAction(QIcon("icons/pdf.png"), "print", MainWindow)
         
         self.toolbar.addAction(self.printcfg)
 
@@ -151,7 +155,7 @@ class Notes(object):
         
         self.toolbar.addAction(self.pasteAction)
 
-        self.cutAction = QAction(QIcon("icons/paste.png"), "paste text", MainWindow)
+        self.cutAction = QAction(QIcon("icons/cut.png"), "cut text", MainWindow)
         
         self.toolbar.addAction(self.cutAction)
 
@@ -179,7 +183,7 @@ class Notes(object):
         self.toolbar.addSeparator()
 
 
-        self.dateAction = QAction(QIcon("icons/calender.png"), "insert date", MainWindow)
+        self.dateAction = QAction(QIcon("icons/calendar.png"), "insert date", MainWindow)
         
         self.toolbar.addAction(self.dateAction)
 
@@ -218,7 +222,7 @@ class Notes(object):
 
 
 
-        self.fontcolorAction = QAction(QIcon("icons/font-color.png"), "Select font color", MainWindow)
+        self.fontcolorAction = QAction(QIcon("icons/fontcolor.png"), "Select font color", MainWindow)
         
         self.toolbar.addAction(self.fontcolorAction)
 
@@ -226,9 +230,13 @@ class Notes(object):
         
         self.toolbar.addAction(self.fontBackgroundAction)
 
-        self.fontAction = QAction(QIcon("icons/font.png"), "Choose Font", MainWindow)
+        self.fontAction = QAction(QIcon("icons/text.png"), "Choose Font", MainWindow)
         
         self.toolbar.addAction(self.fontAction)
+
+        self.HRAction = QAction(QIcon("icons/hr.png"), "Insert Horizontal Rule", MainWindow)
+
+        self.toolbar.addAction(self.HRAction)
 
 
         
