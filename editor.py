@@ -335,8 +335,11 @@ class NotesEditing(Notes):
 
         # getopenfilename? then load?
 
-        w = NotesEditing()
-        w.show()
+        #o = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
+
+        self.w = NotesEditing()
+        # the show() is unnecessary!!
+        #self.w.show()
 
         #self.createFile()
 
@@ -344,20 +347,46 @@ class NotesEditing(Notes):
 
 
     def open(self):
-        self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
 
-        self.loadfile = self.noteFileOpen[0]
+        self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')[0]
 
-        print("open loadfile" ,self.loadfile)
+        self.loadfile = os.path.splitext(self.noteFileOpen)[0]
+        #self.loadfile = str(self.noteFileOpen[0])
+
+
 
         xml = ET.parse('settings/programSettings.xml')
 
         y = xml.find('recentfilepath')
-        y.text = str(os.path.splitext(self.loadfile)[0])
+        y.text = str(self.loadfile)
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
-        self.load()
+        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
+
+        # loading while program is already running. may need to restore and delete files/folders before calling load()
+        # if self.activefile or self.inuse has a value, then delete it before loading the new file.
+        # call save() then delete. or message that current file must have all changes saved before opening another note file
+        # i think the dictionaries need to be cleared too?
+
+        self.loadcheck()
+
+        # original funciton below
+
+        # self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
+
+        # self.loadfile = self.noteFileOpen[0]
+
+        # print("open loadfile" ,self.loadfile)
+
+        # xml = ET.parse('settings/programSettings.xml')
+
+        # y = xml.find('recentfilepath')
+        # y.text = str(os.path.splitext(self.loadfile)[0])
+
+        # xml.write(open('settings/programSettings.xml', 'wb'))
+
+        # self.load()
 
 
 
@@ -1222,7 +1251,7 @@ class NotesEditing(Notes):
 
         self.loadfile = os.path.splitext(self.noteFileOpen)[0]
         #self.loadfile = str(self.noteFileOpen[0])
-        print('GODDAMN MOTHERFUCKING loadfile :', self.loadfile)
+
 
 
         xml = ET.parse('settings/programSettings.xml')
