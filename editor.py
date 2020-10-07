@@ -120,41 +120,24 @@ class NotesEditing(Notes):
 
     def closeEvent(self, event):
 
-        self.active = QApplication.activeWindow()
-        print('Active :', self.active)
-
-        self.inst = QApplication.instance()
-        print('instance id :', self.inst)
-
-        #print('self.var :', self.var)
-
 
         if self.var != None:
 
 
             if self.status:
 
-                #split = os.path.splitext(self.loadfile)[0]
-
-                # the x variable being passed into the load function
-                #self.var
-
-                #split = os.path.splitext(self.openfile)[0]
                 split = os.path.splitext(self.var)[0]
 
                 if os.path.exists(split):
 
                     shutil.rmtree(split)
                     event.accept()
-                #shutil.rmtree(self.recentLoad)
+
 
                 else:
                     event.accept()
 
-                # maybe try .close or .exit
-                # Qapplication.exit()
-                #sys.exit()
-                #active.close()
+
                 self.active.close()
 
             else:
@@ -165,17 +148,12 @@ class NotesEditing(Notes):
 
                 if reply == QMessageBox.Yes:
                     try:
-                        #split = os.path.splitext(self.loadfile)[0]
-                        #split = os.path.splitext(self.openfile)[0]
                         
                         split = os.path.splitext(self.var)[0]
                         if os.path.exists(split):
 
                             shutil.rmtree(split)
-                            #shutil.rmtree(self.recentLoad)
                             event.accept()
-                            #sys.exit()
-                            #active.close()
                             self.active.close()
                             
                         else:
@@ -185,14 +163,13 @@ class NotesEditing(Notes):
 
                     except:
                         self.active.close()
-                        #sys.exit()
+
 
                 else:
                     # maybesave function?
                     event.ignore()
         else:
-            self.active.close()            
-            #event.ignore()
+            self.active.close()
 
 
 
@@ -344,7 +321,7 @@ class NotesEditing(Notes):
             os.makedirs(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res')
         
         shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res/{}'.format(fbase))
-        # need to feed the copyfile copy in res directory to the qimage()
+
         img = QImage(filename)
 
         if img.isNull():
@@ -378,64 +355,12 @@ class NotesEditing(Notes):
 
 
 
-    def newWindow(self):
-
-        # f = QFileDialog.getSaveFileName(self.MainWindow, "Save Note File", None, "7zip Files (.7z)")[0]
-
-        # path = os.path.splitext(f)[0]
-
-        # xml = ET.parse('settings/programSettings.xml')
-
-        # path = xml.find('recentfilepath')
-        # path.text = str(f)
-
-        # xml.write(open('settings/programSettings.xml', 'wb'))
-
-
-        #self.createFile()
-
-        # root = ET.Element('programElements')
-        # tree = ElementTree(root)
-
-
-
-
-
-        # xml = ET.parse('settings/programSettings.xml')
-        # i = xml.find('instance')
-        # i.text = 'True'
-
-        # xml.write(open('settings/programSettings.xml', 'wb'))
-
-
-
-
-
-        #instance.text = True # might just need to be a string
-        # global instance
-        # instance = True
-
-        self.createFile()
-
-        #self.w = NotesEditing()
-
-
-
-
-        # the show() is unnecessary!!
-        #self.w.show()
-
-        #self.createFile()
-
-
-
 
     def open(self):
 
         self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')[0]
 
         self.openfile = os.path.splitext(self.noteFileOpen)[0]
-        #self.loadfile = str(self.noteFileOpen[0])
 
 
 
@@ -446,51 +371,7 @@ class NotesEditing(Notes):
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
-        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
-
-        # loading while program is already running. may need to restore and delete files/folders before calling load()
-        # if self.activefile or self.inuse has a value, then delete it before loading the new file.
-        # call save() then delete. or message that current file must have all changes saved before opening another note file
-        # i think the dictionaries need to be cleared too?
-
-
-
-        # i think that all instances are running in the same event loop, so when closeEvent is called it exits all instances in that event loop
-        # self.window = QMainWindow()
-        # self.setupUi(self.window)
-        #self.ui = Notes()
-        #self.ui.setupUi(self.window)
         self.win = NotesEditing()
-        #self.win.load(self.openfile)
-        #self.window.show()
-
-
-        #self.win.load(self.openfile)
-        #self.loadcheck()
-
-        #self.loadfile = self.openfile
-
-
-
-
-        # original funciton below
-
-        # self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
-
-        # self.loadfile = self.noteFileOpen[0]
-
-        # print("open loadfile" ,self.loadfile)
-
-        # xml = ET.parse('settings/programSettings.xml')
-
-        # y = xml.find('recentfilepath')
-        # y.text = str(os.path.splitext(self.loadfile)[0])
-
-        # xml.write(open('settings/programSettings.xml', 'wb'))
-
-        # self.load()
-
-
 
 
     def insertHR(self):
@@ -532,10 +413,6 @@ class NotesEditing(Notes):
 
         self.layout_tab = QFormLayout()
 
-        # content_type = ['RichText', 'Canvas']
-        # self.cb = QComboBox()
-        # self.cb.addItems(content_type)
-
         self.label = QLabel("Enter tab name here:")
 
         self.le_text = QLineEdit()
@@ -559,7 +436,6 @@ class NotesEditing(Notes):
         self.layout_tab.addRow(self.label)
         self.layout_tab.addRow(self.le_text)
         self.layout_tab.addRow(self.combo_tab)
-        #self.layout.addRow(self.cb)
         self.layout_tab.addRow(self.btn_icon)
         self.layout_tab.addRow(self.le_tab_path)
         self.layout_tab.addRow(buttonBox)
@@ -633,7 +509,6 @@ class NotesEditing(Notes):
             item.setIcon(self.ico)
             item_text = self.le_item.text()
             item.setText(item_text)
-            #item.setTextAlignment(Qt.AlignCenter)
             self.list.addItem(item)
             deftabtitle = 'New Tab'
             self.tab_widget = QTabWidget()
@@ -650,8 +525,7 @@ class NotesEditing(Notes):
 
             # update tab icon dict as well since a default "New Tab" is being added.
             self.tabwidget_icons_dict[item_text] = {deftabtitle : self.deftabico}
-            #self.tabwidget_icons_dict.update({deftabtitle : self.deftabico})
-            #print(self.tabwidget_icons_dict)
+
 
 
         elif self.checkInfo == True and self.le_item.text() != False:
@@ -670,7 +544,6 @@ class NotesEditing(Notes):
             self.tab_widget.setObjectName(item_text)
             self.stack.addWidget(self.tab_widget)
 
-            #self.list_icons_dict[str(item_text)] = str(self.item_filename)
             self.list_icons_dict.update({item_text : self.ico})
 
 
@@ -714,8 +587,6 @@ class NotesEditing(Notes):
             # below is working
             self.tabwidget_icons_dict[self.item.text()].update({self.newTabName : self.deftabico})
 
-            # self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            # self.tabwidget_icons_dict.update({self.newTabName:self.deftabico})
 
         elif self.check_tab_icon == True and self.le_text.text() != False:
 
@@ -734,8 +605,6 @@ class NotesEditing(Notes):
 
             self.tabwidget_icons_dict[self.item.text()].update({{self.newTabName : self.tab_ico}})
 
-            # self.tabwidget_icons_dict['tabwidget'] = {self.curr_tab_wid.objectName()}
-            # self.tabwidget_icons_dict.update({self.newTabName:self.tab_ico})
 
         else:
             self.tab_msg_box = QMessageBox(self, 'Message', 'Please Enter a title for TAb', QMessageBox.Ok)
@@ -787,10 +656,8 @@ class NotesEditing(Notes):
                 self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_tab = self.curr_tab_wid.currentIndex()
 
-                #print("TAB CHANGES", self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab) + '.html')
                 self.tabchanges.append(self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
 
-                # self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
                 del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
 
 
@@ -812,42 +679,16 @@ class NotesEditing(Notes):
 
                 print('tabrename :', tabRename)
 
-                # change key name for the icon value
-
-                # access the vale (icon filepath) for the particular associated tabwidget for notebook name
 
                 ti = self.tabwidget_icons_dict[self.item.text()].get(self.curr_tab_wid.tabText(self.curr_tab))
 
                 del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
 
-                #print('tabdict AFTER', self.tabwidget_icons_dict)
 
                 self.tabwidget_icons_dict[self.item.text()].update({tabRename : ti})
 
-                #print('tabdict New Renamed', self.tabwidget_icons_dict)
-
-                #self.tabwidget_icons_dict[self.item.text()][]
-
-                #self.tabwidget_icons_dict[tabRename] = self.tabwidget_icons_dict.pop(self.curr_tab_wid.tabText(self.curr_tab))
-
 
                 self.curr_tab_wid.setTabText(self.curr_tab, tabRename)
-
-
-
-
-                #needs to rename the folder and the file
-
-                
-            
-            # if self.curr_tab_wid.tabText(self.curr_tab) in self.tabchanges:
-            #     print("TRUE")
-            #     print(tabRename)
-            #     self.tabchanges[self.curr_tab_wid.tabText(self.curr_tab)] = tabRename
-
-
-            #print("tabicondict", self.tabwidget_icons_dict)
-
 
 
 
@@ -880,7 +721,6 @@ class NotesEditing(Notes):
                 self.r = self.stack.findChild(QTabWidget, self.item.text())
                 sip.delete(self.r)
 
-                #add file to list [] to be deleted on the next Save?
                 
                 self.listchanges.append(self.programcfg() + '/' + self.fpath)
 
@@ -898,7 +738,7 @@ class NotesEditing(Notes):
                 self.curr_item.setObjectName(newItemName)
 
                 self.listchanges.append(self.programcfg() + '/' + self.item.text())
-                # maybe put dict here
+
                 self.list_icons_dict[newItemName] = self.list_icons_dict.pop(self.item.text())
 
                 print('ListIcons', self.list_icons_dict)
@@ -913,16 +753,6 @@ class NotesEditing(Notes):
 
 
 
-
-
-            # rename folder with listitem name
-
-
-                # update the key with the new list item name in the list_icons_dict
-
-            # # change key name for the icon value
-
-
         elif action == save:
             self.save()
 
@@ -932,7 +762,6 @@ class NotesEditing(Notes):
             print('Active :', active)
             print('tabiconsdict :', self.tabwidget_icons_dict)
             print('listicondict :', self.list_icons_dict)
-
 
 
 
@@ -982,10 +811,6 @@ class NotesEditing(Notes):
     def uichanges(self):
 
         # if the list is empty
-
-        print(self.listchanges)
-        print(self.tabchanges)
-
         if not self.listchanges:
             pass
         else:
@@ -999,7 +824,7 @@ class NotesEditing(Notes):
         else:
             for g in self.tabchanges:
                 shutil.rmtree(g)
-                #os.remove(g) # removes a single file
+
 
 
 
@@ -1097,8 +922,6 @@ class NotesEditing(Notes):
 
     def createok(self):
 
-        # needs to save to a 7zip file
-
         self.saveFile = self.createle.text()
         self.pw = self.le_pass.text()
 
@@ -1115,9 +938,7 @@ class NotesEditing(Notes):
                 
                 os.makedirs(self.savefile_fnh + '/_{}'.format(self.savefile_fnt))
                 self.saveFile = self.savefile_fnh + '/_{}'.format(self.savefile_fnt)
-                print('SAVE FILE :', self.saveFile)
 
-                #self.var = self.saveFile
 
                 instance = self.saveFile
 
@@ -1136,20 +957,10 @@ class NotesEditing(Notes):
 
                 xml.write(open('settings/programSettings.xml', 'wb'))                
 
-                # global instance
-                # instance = self.saveFile
-
                 self.poo = NotesEditing()
 
                 
                 self.creatediaglog.close()
-
-
-                # Needs to make the 7z file and then call loadcheck() or load('path to 7z file')
-                # maybe delete the save()below
-                #
-                #self.save()
-                
 
 
 
@@ -1171,22 +982,9 @@ class NotesEditing(Notes):
 
             xml.write(open('settings/programSettings.xml', 'wb'))
 
-
-            # global instance
-            # instance = self.saveFile
-
             self.woo = NotesEditing()
-            #self.load(self.saveFile)
-
-            #self.loadfile = self.saveFile
-
-
 
             self.creatediaglog.close()
-
-        
-
-
 
 
     def createcancel(self):
@@ -1195,96 +993,48 @@ class NotesEditing(Notes):
 
 
 
+    # def extractfile(self, pw, fp):
 
 
-    def extractfile(self, pw, fp):
+    #     if '_' in '{}'.format(fp):
 
+    #         self.loadpass()
 
-        if '_' in '{}'.format(fp):
+    #         # apparently it doesnt need the -o flag.
+    #         zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp)], shell=False)
+    #         print('Return Code :', zippw.returncode)
 
-            self.loadpass()
+    #         if zippw.returncode == 0:
+    #             pass
+    #         else:
+    #             box = QMessageBox(self.MainWindow)
+    #             box.setText("Wrong Password")
+    #             box.setWindowTitle("File Error")
+    #             box.exec()
+    #             if box == QMessageBox.Ok:
+    #                 self.loadpass()
 
-            # apparently it doesnt need the -o flag.
-            zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp)], shell=False)
-            print('Return Code :', zippw.returncode)
-
-            if zippw.returncode == 0:
-                pass
-            else:
-                box = QMessageBox(self.MainWindow)
-                box.setText("Wrong Password")
-                box.setWindowTitle("File Error")
-                # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-                box.exec()
-                if box == QMessageBox.Ok:
-                    self.loadpass()
-
-        else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(fp)], shell=False)
-
-
-        # if '_' in '{}'.format(fp):
-        #     self.loadpass()
-        #     subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(pw), '{}.7z'.format(fp), '-o{}'.format(fp)], shell=False)
-        # else:
-        #     subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}'.format(fp)], shell=False)
+    #     else:
+    #         subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(fp)], shell=False)
 
 
 
+    # def storefile(self, pw, fp):
 
-    def storefile(self, pw, fp):
+    #     if '_' in fp:
 
-        if '_' in fp:
+    #         subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(pw) , '{}'.format(fp), '-o{}'.format(fp)], shell=False)
 
-            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(pw) , '{}'.format(fp), '-o{}'.format(fp)], shell=False)
-
-        else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(fp), '{}'.format(fp)], shell=False)
-
-
-
-
+    #     else:
+    #         subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(fp), '{}'.format(fp)], shell=False)
 
 
 
     def save(self):
 
-        #print('tabwidgetdict' ,self.tabwidget_icons_dict)
-        #print('listwidgetdict' ,self.list_icons_dict)
-
         self.uichanges()
 
-
-        # self.saveFile = c
-        # print('SAVEFILE C :', self.saveFile)
-
-
-        #if instance:
-            #pass
-            # need to call create file instead
-            # make a list of the instances as they are created?
-            #self.createFile()
-            #self.saveFile = QFileDialog.getSaveFileName(self.MainWindow, "Save Note File", None, "7zip Files (.7z)")[0]
-        #else:
-
-                
-            # xmlSettings_save = ET.parse('settings/programSettings.xml')
-            # #xmlSettings_save.getroot()
-            # for p in xmlSettings_save.findall('recentfilepath'):
-            #     rfp = p.text
-            # if not rfp:
-            #     self.createFile()
-            #     #self.saveFile = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            #     #self.passwordmenu()
-                
-            # else:
-            #     self.saveFile = p.text                
-
-
-
         self.saveFile = self.var
-
-
 
 
         root = ET.Element('programElements')
@@ -1304,16 +1054,10 @@ class NotesEditing(Notes):
             tabwidgetName.text = self.q.objectName()
             for p in range(self.q.count()):
                 self.tabtext = self.q.tabText(p)
-                #print('tabtext search :', self.tabtext)
-                #self.tabicon = self.q.tabIcon(p)
                 self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
-                #self.tabcontents = self.q.widget(p).objectName()
-                #self.tabcontents = self.q.objectName()
                 self.tabcontents = self.tabtext
 
 
-                #needs to set tab content correctly
-                #print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
 
                 if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
                     os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
@@ -1333,11 +1077,9 @@ class NotesEditing(Notes):
         tree.write(open(self.saveFile + '/config.xml', 'wb'))
 
 
-        #self.userpass
-
         if '_' in self.saveFile:
 
-            # used to add all files in the working directory with the -o flag and when i deleted it, it worked the way it should
+            # used to add all files in the working directory with the -o flag and when i deleted it, it worked the way it should.....idk
             subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False) 
 
         else:
@@ -1383,12 +1125,9 @@ class NotesEditing(Notes):
 
     def lp_ok(self):
 
-        #self.user_pass = self.lp_le.text()
         self.pw = self.lp_le.text()
 
         self.enterpass.close()
-        #self.passcheck = True
-        #return self.passcheck
 
 
     def lp_cancel(self):
@@ -1424,9 +1163,6 @@ class NotesEditing(Notes):
         self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')[0]
 
         self.loadfile = os.path.splitext(self.noteFileOpen)[0]
-        #self.loadfile = str(self.noteFileOpen[0])
-
-
 
         xml = ET.parse('settings/programSettings.xml')
 
@@ -1435,15 +1171,10 @@ class NotesEditing(Notes):
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
-        #self.loadfile = os.path.splitext(str(self.noteFileOpen))
-
-        # loading while program is already running. may need to restore and delete files/folders before calling load()
-        # if self.activefile or self.inuse has a value, then delete it before loading the new file.
-        # call save() then delete. or message that current file must have all changes saved before opening another note file
-        # i think the dictionaries need to be cleared too?
-
         self.loadcheck()
         self.choice_dialog.close()
+
+
 
     def createNote(self):
         self.createFile()
@@ -1454,14 +1185,6 @@ class NotesEditing(Notes):
 
     def loadcheck(self):
         
-        # self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
-        # i = self.xmlSettingsLoad.find('instance')
-        # self.instance = i.text
-
-        # I added the above 'instance' XML tag manually, it needs to reset when save is called and when the closeEvent is called.
-
-
-        # if self.instance == 'False':
         if instance == '':
 
             if os.path.exists('settings/programSettings.xml'):
@@ -1474,9 +1197,8 @@ class NotesEditing(Notes):
                     
                     if not recent:
                         self.var = None
-                        #self.loadChoiceDialog()
-                        return
 
+                        return
 
                     elif os.path.exists(str(recent) + '.7z'):
                         self.loadfile = o.text                    
@@ -1487,14 +1209,10 @@ class NotesEditing(Notes):
                         print("cant find the file you are trying to open")
                         self.var = None
                         return
-                        #self.loadChoiceDialog()
         
         elif instance:
 
             self.load(instance)
-
-        #else:
-
 
 
 
@@ -1507,14 +1225,7 @@ class NotesEditing(Notes):
     def load(self, x):
 
 
-
-
-        print('Made it here')
-        #self.loadfile = os.path.splitext(self.loadfile[0])
-        print('LodFile being used to extract :',x)
-
         self.var = x
-        # when create new note is called it overwrites the loaded file's self.var
 
 
         if '_' in '{}'.format(self.var):
@@ -1523,12 +1234,10 @@ class NotesEditing(Notes):
 
                 self.loadpass()
 
-                #if self.passcheck != None:
                 if self.pw != '':
 
-                    # apparently it doesnt need the -o flag.
+                    # apparently it doesnt need the -o flag...
                     zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.var)], shell=False)
-                    print('Return Code :', zippw.returncode)
 
                     if zippw.returncode == 0:
                         break
@@ -1536,10 +1245,7 @@ class NotesEditing(Notes):
                         box = QMessageBox(self.MainWindow)
                         box.setText("Wrong Password")
                         box.setWindowTitle("File Error")
-                        # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                         box.exec()
-                        # if box == QMessageBox.Ok:
-                        #     self.loadpass()
                 else:
                     return False
 
@@ -1568,20 +1274,11 @@ class NotesEditing(Notes):
             self.tab_widget.setObjectName(tabwidget.text)
             self.tab_widget.setMovable(True)
             self.stack.addWidget(self.tab_widget)
-            # set the tabwidget name as the key with empty dictionary to be populated with tab info in the nested loop
             self.tabwidget_icons_dict[tabwidget.text] = {}
             for tabname in tabwidget.iter('tabName'):
                 self.id = self.stack.findChild(QTabWidget, tabwidget.text)
                 self.tab_icon = tabname.get('tabIcon')
                 self.tabico = QIcon(self.tab_icon)
-                #self.tabwidget_icons_dict[tabname.text] = self.tab_icon
-                # print('tabwidget text :', tabwidget.text)                
-                # print('tabname text :', tabname.text)
-
-                # the tabwidget text is being looped twice and replaces the values on the second loop, so there are no new tab entries they are all the first tab
-                # in the tabwidgets so they always get overwritten
-
-                #self.tabwidget_icons_dict[self.id.objectName()] = {tabname.text : self.tab_icon}
                 self.tabwidget_icons_dict[tabwidget.text].update({tabname.text : self.tab_icon})
                 content = tabname.get('content')
 
@@ -1632,5 +1329,3 @@ class NotesEditing(Notes):
 
 
         self.splitter.setSizes([int(self.list_width), int(self.ssize)])
-
-
