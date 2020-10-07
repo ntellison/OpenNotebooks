@@ -7,7 +7,7 @@ from PyQt5 import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont
 from PyQt5.QtCore import QEvent, Qt, QSize, QSettings, QDate, QTime
 from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
-from PyQt5.QtWidgets import (QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QPushButton, QListWidgetItem, QTextEdit,
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QPushButton, QListWidgetItem, QTextEdit,
                             QLabel, QVBoxLayout, QSpinBox, QPlainTextEdit, QStackedWidget, QComboBox, QListWidget, QMenu, QGroupBox, QDialogButtonBox,
                             QGraphicsScene, QCheckBox, QMessageBox, QColorDialog, QFileDialog, QDialog, QFontDialog, QInputDialog)
 
@@ -19,7 +19,8 @@ import xml.etree.ElementTree as ET
 from dicttoxml import dicttoxml
 
 
-
+global instance
+instance = ''
 
 
 class NotesEditing(Notes):
@@ -78,7 +79,8 @@ class NotesEditing(Notes):
 
         self.addnew.triggered.connect(self.itemMenu)
         self.addtab.triggered.connect(self.tabContents)
-        self.newFile.triggered.connect(self.newWindow)
+        self.saveAction.triggered.connect(self.save)
+        self.newFile.triggered.connect(self.createFile)
         self.printcfg.triggered.connect(self.exportPDF)
         self.openAction.triggered.connect(self.open)
         self.copyAction.triggered.connect(self.copy)
@@ -116,36 +118,82 @@ class NotesEditing(Notes):
         #self.load()
 
 
-
     def closeEvent(self, event):
 
-        if self.status:
+        self.active = QApplication.activeWindow()
+        print('Active :', self.active)
 
-            split = os.path.splitext(self.loadfile)[0]
-            shutil.rmtree(split)
-            #shutil.rmtree(self.recentLoad)
-            event.accept()
-            sys.exit()
+        self.inst = QApplication.instance()
+        print('instance id :', self.inst)
 
-        else:
+        #print('self.var :', self.var)
 
-            reply = QMessageBox.question(self.MainWindow, 'Message',
-                                        "It looks like you have some unsaved changes to your notes. Are you sure to quit?", QMessageBox.Yes |
-                                        QMessageBox.No, QMessageBox.No)
 
-            if reply == QMessageBox.Yes:
-                try:
-                    split = os.path.splitext(self.loadfile)[0]
+        if self.var != None:
+
+
+            if self.status:
+
+                #split = os.path.splitext(self.loadfile)[0]
+
+                # the x variable being passed into the load function
+                #self.var
+
+                #split = os.path.splitext(self.openfile)[0]
+                split = os.path.splitext(self.var)[0]
+
+                if os.path.exists(split):
+
                     shutil.rmtree(split)
-                    #shutil.rmtree(self.recentLoad)
                     event.accept()
-                    sys.exit()
-                except:
-                    sys.exit()
+                #shutil.rmtree(self.recentLoad)
+
+                else:
+                    event.accept()
+
+                # maybe try .close or .exit
+                # Qapplication.exit()
+                #sys.exit()
+                #active.close()
+                self.active.close()
 
             else:
-                # maybesave function?
-                event.ignore()
+
+                reply = QMessageBox.question(self.MainWindow, 'Message',
+                                            "It looks like you have some unsaved changes to your notes. Are you sure to quit?", QMessageBox.Yes |
+                                            QMessageBox.No, QMessageBox.No)
+
+                if reply == QMessageBox.Yes:
+                    try:
+                        #split = os.path.splitext(self.loadfile)[0]
+                        #split = os.path.splitext(self.openfile)[0]
+                        
+                        split = os.path.splitext(self.var)[0]
+                        if os.path.exists(split):
+
+                            shutil.rmtree(split)
+                            #shutil.rmtree(self.recentLoad)
+                            event.accept()
+                            #sys.exit()
+                            #active.close()
+                            self.active.close()
+                            
+                        else:
+                            event.accept()
+
+                            self.active.close()
+
+                    except:
+                        self.active.close()
+                        #sys.exit()
+
+                else:
+                    # maybesave function?
+                    event.ignore()
+        else:
+            self.active.close()            
+            #event.ignore()
+
 
 
 
@@ -331,13 +379,49 @@ class NotesEditing(Notes):
 
 
     def newWindow(self):
-        #self.setupUi(self)
 
-        # getopenfilename? then load?
+        # f = QFileDialog.getSaveFileName(self.MainWindow, "Save Note File", None, "7zip Files (.7z)")[0]
 
-        #o = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')
+        # path = os.path.splitext(f)[0]
 
-        self.w = NotesEditing()
+        # xml = ET.parse('settings/programSettings.xml')
+
+        # path = xml.find('recentfilepath')
+        # path.text = str(f)
+
+        # xml.write(open('settings/programSettings.xml', 'wb'))
+
+
+        #self.createFile()
+
+        # root = ET.Element('programElements')
+        # tree = ElementTree(root)
+
+
+
+
+
+        # xml = ET.parse('settings/programSettings.xml')
+        # i = xml.find('instance')
+        # i.text = 'True'
+
+        # xml.write(open('settings/programSettings.xml', 'wb'))
+
+
+
+
+
+        #instance.text = True # might just need to be a string
+        # global instance
+        # instance = True
+
+        self.createFile()
+
+        #self.w = NotesEditing()
+
+
+
+
         # the show() is unnecessary!!
         #self.w.show()
 
@@ -350,7 +434,7 @@ class NotesEditing(Notes):
 
         self.noteFileOpen = QFileDialog.getOpenFileName(self.MainWindow, 'Open File')[0]
 
-        self.loadfile = os.path.splitext(self.noteFileOpen)[0]
+        self.openfile = os.path.splitext(self.noteFileOpen)[0]
         #self.loadfile = str(self.noteFileOpen[0])
 
 
@@ -358,7 +442,7 @@ class NotesEditing(Notes):
         xml = ET.parse('settings/programSettings.xml')
 
         y = xml.find('recentfilepath')
-        y.text = str(self.loadfile)
+        y.text = str(self.openfile)
 
         xml.write(open('settings/programSettings.xml', 'wb'))
 
@@ -369,7 +453,25 @@ class NotesEditing(Notes):
         # call save() then delete. or message that current file must have all changes saved before opening another note file
         # i think the dictionaries need to be cleared too?
 
-        self.loadcheck()
+
+
+        # i think that all instances are running in the same event loop, so when closeEvent is called it exits all instances in that event loop
+        # self.window = QMainWindow()
+        # self.setupUi(self.window)
+        #self.ui = Notes()
+        #self.ui.setupUi(self.window)
+        self.win = NotesEditing()
+        #self.win.load(self.openfile)
+        #self.window.show()
+
+
+        #self.win.load(self.openfile)
+        #self.loadcheck()
+
+        #self.loadfile = self.openfile
+
+
+
 
         # original funciton below
 
@@ -825,8 +927,13 @@ class NotesEditing(Notes):
             self.save()
 
         elif action == pdict:
+            print(self.var)
+            active = QApplication.activeWindow()
+            print('Active :', active)
             print('tabiconsdict :', self.tabwidget_icons_dict)
             print('listicondict :', self.list_icons_dict)
+
+
 
 
 
@@ -990,8 +1097,13 @@ class NotesEditing(Notes):
 
     def createok(self):
 
+        # needs to save to a 7zip file
+
         self.saveFile = self.createle.text()
         self.pw = self.le_pass.text()
+
+        global instance
+        instance = self.saveFile
 
         if self.pw != "":
 
@@ -1003,31 +1115,74 @@ class NotesEditing(Notes):
                 
                 os.makedirs(self.savefile_fnh + '/_{}'.format(self.savefile_fnt))
                 self.saveFile = self.savefile_fnh + '/_{}'.format(self.savefile_fnt)
+                print('SAVE FILE :', self.saveFile)
+
+                #self.var = self.saveFile
+
+                instance = self.saveFile
+
+                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
+
+
+                root = ET.Element('programElements')
+                tree = ElementTree(root)
+
+                tree.write(open(self.saveFile + '/config.xml', 'wb'))
+
+                xml = ET.parse('settings/programSettings.xml')
+
+                y = xml.find('recentfilepath')
+                y.text = str(self.saveFile)
+
+                xml.write(open('settings/programSettings.xml', 'wb'))                
+
+                # global instance
+                # instance = self.saveFile
+
+                self.poo = NotesEditing()
+
+                
+                self.creatediaglog.close()
+
+
+                # Needs to make the 7z file and then call loadcheck() or load('path to 7z file')
+                # maybe delete the save()below
+                #
+                #self.save()
+                
+
+
 
         else:
+
             if not os.path.exists(self.saveFile):
                 os.makedirs(self.saveFile)
-            
+                
 
-        root = ET.Element('programElements')
-        tree = ElementTree(root)
+            root = ET.Element('programElements')
+            tree = ElementTree(root)
 
-        tree.write(open(self.saveFile + '/config.xml', 'wb'))
+            tree.write(open(self.saveFile + '/config.xml', 'wb'))
 
-        xml = ET.parse('settings/programSettings.xml')
+            xml = ET.parse('settings/programSettings.xml')
 
-        y = xml.find('recentfilepath')
-        y.text = str(self.saveFile)
+            y = xml.find('recentfilepath')
+            y.text = str(self.saveFile)
 
-        xml.write(open('settings/programSettings.xml', 'wb'))
-
-        
-
-        self.loadfile = self.saveFile
+            xml.write(open('settings/programSettings.xml', 'wb'))
 
 
+            # global instance
+            # instance = self.saveFile
 
-        self.creatediaglog.close()
+            self.woo = NotesEditing()
+            #self.load(self.saveFile)
+
+            #self.loadfile = self.saveFile
+
+
+
+            self.creatediaglog.close()
 
         
 
@@ -1099,84 +1254,99 @@ class NotesEditing(Notes):
 
         self.uichanges()
 
+
+        # self.saveFile = c
+        # print('SAVEFILE C :', self.saveFile)
+
+
+        #if instance:
+            #pass
+            # need to call create file instead
+            # make a list of the instances as they are created?
+            #self.createFile()
+            #self.saveFile = QFileDialog.getSaveFileName(self.MainWindow, "Save Note File", None, "7zip Files (.7z)")[0]
+        #else:
+
                 
-        xmlSettings_save = ET.parse('settings/programSettings.xml')
-        #xmlSettings_save.getroot()
-        for p in xmlSettings_save.findall('recentfilepath'):
-            rfp = p.text
-        if not rfp:
-            self.createFile()
-            #self.saveFile = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            #self.passwordmenu()
-            
+            # xmlSettings_save = ET.parse('settings/programSettings.xml')
+            # #xmlSettings_save.getroot()
+            # for p in xmlSettings_save.findall('recentfilepath'):
+            #     rfp = p.text
+            # if not rfp:
+            #     self.createFile()
+            #     #self.saveFile = QFileDialog.getSaveFileName(self, 'Save File')[0]
+            #     #self.passwordmenu()
+                
+            # else:
+            #     self.saveFile = p.text                
+
+
+
+        self.saveFile = self.var
+
+
+
+
+        root = ET.Element('programElements')
+        tree = ElementTree(root)
+
+        
+
+        for i in range(self.list.count()):
+            self.x = self.list.item(i).text()
+            listitem = ET.SubElement(root, 'listitem')
+            licon = self.list_icons_dict[self.x]
+            listitem.set('item_icon', licon)
+            listitem.text = self.x
+        for g in range(self.stack.count()):
+            self.q = self.stack.widget(g)
+            tabwidgetName = ET.SubElement(root, 'tabwid_name')
+            tabwidgetName.text = self.q.objectName()
+            for p in range(self.q.count()):
+                self.tabtext = self.q.tabText(p)
+                #print('tabtext search :', self.tabtext)
+                #self.tabicon = self.q.tabIcon(p)
+                self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
+                #self.tabcontents = self.q.widget(p).objectName()
+                #self.tabcontents = self.q.objectName()
+                self.tabcontents = self.tabtext
+
+
+                #needs to set tab content correctly
+                #print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
+
+                if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
+                    os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
+
+                with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
+                    file.write(self.q.widget(p).toHtml())
+                file.close()
+
+
+
+
+                tabName = ET.SubElement(tabwidgetName, 'tabName')
+                tabName.set('content', str(self.tabcontents))
+                tabName.set('tabIcon', self.ticon)
+                tabName.text = self.tabtext
+
+        tree.write(open(self.saveFile + '/config.xml', 'wb'))
+
+
+        #self.userpass
+
+        if '_' in self.saveFile:
+
+            # used to add all files in the working directory with the -o flag and when i deleted it, it worked the way it should
+            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False) 
+
         else:
-            self.saveFile = p.text                
+            subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
 
 
-
-
-
-            root = ET.Element('programElements')
-            tree = ElementTree(root)
-
-            
-
-            for i in range(self.list.count()):
-                self.x = self.list.item(i).text()
-                listitem = ET.SubElement(root, 'listitem')
-                licon = self.list_icons_dict[self.x]
-                listitem.set('item_icon', licon)
-                listitem.text = self.x
-            for g in range(self.stack.count()):
-                self.q = self.stack.widget(g)
-                tabwidgetName = ET.SubElement(root, 'tabwid_name')
-                tabwidgetName.text = self.q.objectName()
-                for p in range(self.q.count()):
-                    self.tabtext = self.q.tabText(p)
-                    #print('tabtext search :', self.tabtext)
-                    #self.tabicon = self.q.tabIcon(p)
-                    self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
-                    #self.tabcontents = self.q.widget(p).objectName()
-                    #self.tabcontents = self.q.objectName()
-                    self.tabcontents = self.tabtext
-
-
-                    #needs to set tab content correctly
-                    #print('PATH CREATION :', os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents) )
-
-                    if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
-                        os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
-
-                    with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
-                        file.write(self.q.widget(p).toHtml())
-                    file.close()
-
-
-
-
-                    tabName = ET.SubElement(tabwidgetName, 'tabName')
-                    tabName.set('content', str(self.tabcontents))
-                    tabName.set('tabIcon', self.ticon)
-                    tabName.text = self.tabtext
-
-            tree.write(open(self.saveFile + '/config.xml', 'wb'))
-
-
-            #self.userpass
-
-            if '_' in self.saveFile:
-
-                # used to add all files in the working directory with the -o flag and when i deleted it, it worked the way it should
-                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '-p{}'.format(self.pw) , '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False) 
-
-            else:
-                subprocess.run([r'7z\7-Zip\7z.exe', 'a', '{}'.format(self.saveFile), '{}'.format(self.saveFile)], shell=False)
-
-
-            self.programconfig(self.saveFile)
-            
-            self.status = True
-
+        self.programconfig(self.saveFile)
+        
+        self.status = True
 
 
 
@@ -1217,11 +1387,15 @@ class NotesEditing(Notes):
         self.pw = self.lp_le.text()
 
         self.enterpass.close()
+        #self.passcheck = True
+        #return self.passcheck
 
 
     def lp_cancel(self):
 
         self.enterpass.close()
+
+        return None
 
     
 
@@ -1279,106 +1453,103 @@ class NotesEditing(Notes):
 
 
     def loadcheck(self):
+        
+        # self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
+        # i = self.xmlSettingsLoad.find('instance')
+        # self.instance = i.text
 
-        if os.path.exists('settings/programSettings.xml'):
-            self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
-            #self.xmlSettingsLoad.getroot()
+        # I added the above 'instance' XML tag manually, it needs to reset when save is called and when the closeEvent is called.
 
-            for o in self.xmlSettingsLoad.findall('recentfilepath'):
-                recent = o.text
-                print('RECENT' , recent)
-                
-                if not recent:
+
+        # if self.instance == 'False':
+        if instance == '':
+
+            if os.path.exists('settings/programSettings.xml'):
+                self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
+                #self.xmlSettingsLoad.getroot()
+
+                for o in self.xmlSettingsLoad.findall('recentfilepath'):
+                    recent = o.text
+                    print('RECENT' , recent)
                     
-                    self.loadChoiceDialog()
-                    #return
+                    if not recent:
+                        self.var = None
+                        #self.loadChoiceDialog()
+                        return
 
 
-                elif os.path.exists(str(recent) + '.7z'):
-                    self.loadfile = o.text                    
-                    # need to extract first
-                    self.load()
+                    elif os.path.exists(str(recent) + '.7z'):
+                        self.loadfile = o.text                    
+                        # need to extract first
+                        self.load(self.loadfile)
 
-                else:
-                    print("cant find the file you are trying to open")
-                    self.loadChoiceDialog()
+                    else:
+                        print("cant find the file you are trying to open")
+                        self.var = None
+                        return
+                        #self.loadChoiceDialog()
+        
+        elif instance:
 
+            self.load(instance)
 
-
-
-
-
-
-    def load(self):
-
-
-
-        # if os.path.exists('settings/programSettings.xml'):
-        #     self.xmlSettingsLoad = ET.parse('settings/programSettings.xml')
-        #     #self.xmlSettingsLoad.getroot()
-
-        #     for o in self.xmlSettingsLoad.findall('recentfilepath'):
-        #         recent = o.text
-        #         print('RECENT' , recent)
-                
-        #         if not recent:
-                    
-        #             self.loadChoiceDialog()
-        #             #return
-
-        #         if not os.path.exists(str(recent) + '.7z'):
-        #             # need to extract first
-        #             print("cant find the file you are trying to open")
-        #             self.loadChoiceDialog()
-
-        #         else:
-        #             self.loadfile = o.text
+        #else:
 
 
 
 
-        # try:
 
-        #     if os.path.exists(self.loadfile):
-        #         pass
-        # except:
-        #     self.loadChoiceDialog()
+
+
+
+
+
+    def load(self, x):
+
+
+
 
         print('Made it here')
         #self.loadfile = os.path.splitext(self.loadfile[0])
-        print('LodFile being used to extract :',self.loadfile)
+        print('LodFile being used to extract :',x)
+
+        self.var = x
+        # when create new note is called it overwrites the loaded file's self.var
 
 
-        if '_' in '{}'.format(self.loadfile):
+        if '_' in '{}'.format(self.var):
             
             while True:
 
                 self.loadpass()
 
+                #if self.passcheck != None:
+                if self.pw != '':
 
+                    # apparently it doesnt need the -o flag.
+                    zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.var)], shell=False)
+                    print('Return Code :', zippw.returncode)
 
-                # apparently it doesnt need the -o flag.
-                zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.loadfile)], shell=False)
-                print('Return Code :', zippw.returncode)
-
-                if zippw.returncode == 0:
-                    break
+                    if zippw.returncode == 0:
+                        break
+                    else:
+                        box = QMessageBox(self.MainWindow)
+                        box.setText("Wrong Password")
+                        box.setWindowTitle("File Error")
+                        # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                        box.exec()
+                        # if box == QMessageBox.Ok:
+                        #     self.loadpass()
                 else:
-                    box = QMessageBox(self.MainWindow)
-                    box.setText("Wrong Password")
-                    box.setWindowTitle("File Error")
-                    # box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-                    box.exec()
-                    # if box == QMessageBox.Ok:
-                    #     self.loadpass()
+                    return False
 
         else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.loadfile)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.var)], shell=False)
 
 
 
 
-        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.loadfile)[0], r'/config.xml')).getroot()
+        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.var)[0], r'/config.xml')).getroot()
 
         for listitem in filename.findall('listitem'):
             
@@ -1424,7 +1595,7 @@ class NotesEditing(Notes):
                     tE.setObjectName(content)
                     tE.textChanged.connect(self.notebookstatus)
                     
-                    with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(self.loadfile)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                    with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
                         tE.setText(file.read())
                     file.close()
                     self.id.addTab(tE, self.tabico, tabname.text)
