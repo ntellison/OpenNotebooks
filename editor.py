@@ -48,7 +48,6 @@ class NotesEditing(Notes):
 
         self.menu_file_action.triggered.connect(self.createFile)
         self.new_notebook_action.triggered.connect(self.itemMenu)
-        # self.open_file_action.triggered.connect(self.open)
         self.open_file_action.triggered.connect(self.openNote)
         self.save_file_action.triggered.connect(self.save)
         
@@ -120,6 +119,7 @@ class NotesEditing(Notes):
 
     def closeEvent(self, event):
 
+        self.active = QApplication.activeWindow()
 
         if self.archive != None:
 
@@ -144,7 +144,8 @@ class NotesEditing(Notes):
 
                 reply = QMessageBox.question(self.MainWindow, 'Message',
                                             "It looks like you have some unsaved changes to your notes. Are you sure to quit?", QMessageBox.Yes |
-                                            QMessageBox.No, QMessageBox.No)
+                                            QMessageBox.No | QMessageBox.Save)
+
 
                 if reply == QMessageBox.Yes:
                     try:
@@ -165,9 +166,25 @@ class NotesEditing(Notes):
                         self.active.close()
 
 
-                else:
-                    # maybesave function?
+                elif reply == QMessageBox.Save:
+                    self.save()
+
+                    split = os.path.splitext(self.archive)[0]
+                    
+                    if os.path.exists(split):
+
+                        shutil.rmtree(split)
+                        
+                    event.accept()
+                    self.active.close()
+                    #event.ignore()
+
+                elif reply == QMessageBox.No:
                     event.ignore()
+
+
+
+
         else:
             self.active.close()
 
@@ -1057,7 +1074,7 @@ class NotesEditing(Notes):
                     os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
 
                 with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
-                    file.write(self.q.widget(p).toHtml())
+                    file.write(self.stackTab.widget(p).toHtml())
                 file.close()
 
 
