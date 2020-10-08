@@ -46,7 +46,7 @@ class NotesEditing(Notes):
 
         # Menubar
 
-        self.menu_file_action.triggered.connect(self.newWindow)
+        self.menu_file_action.triggered.connect(self.createFile)
         self.new_notebook_action.triggered.connect(self.itemMenu)
         # self.open_file_action.triggered.connect(self.open)
         self.open_file_action.triggered.connect(self.openNote)
@@ -115,18 +115,18 @@ class NotesEditing(Notes):
         self.MainWindow.closeEvent = self.closeEvent
 
         self.loadcheck()
-        #self.load()
+
 
 
     def closeEvent(self, event):
 
 
-        if self.var != None:
+        if self.archive != None:
 
 
             if self.status:
 
-                split = os.path.splitext(self.var)[0]
+                split = os.path.splitext(self.archive)[0]
 
                 if os.path.exists(split):
 
@@ -149,7 +149,7 @@ class NotesEditing(Notes):
                 if reply == QMessageBox.Yes:
                     try:
                         
-                        split = os.path.splitext(self.var)[0]
+                        split = os.path.splitext(self.archive)[0]
                         if os.path.exists(split):
 
                             shutil.rmtree(split)
@@ -701,7 +701,7 @@ class NotesEditing(Notes):
         deleteListItem = self.contextMenu.addAction('Delete Notebook')
         renameListItem = self.contextMenu.addAction('Rename Notebook')
         save = self.contextMenu.addAction('Save')
-        pdict = self.contextMenu.addAction('Print')
+
 
 
         action = self.contextMenu.exec_(self.list.mapToGlobal(event))
@@ -756,12 +756,6 @@ class NotesEditing(Notes):
         elif action == save:
             self.save()
 
-        elif action == pdict:
-            print(self.var)
-            active = QApplication.activeWindow()
-            print('Active :', active)
-            print('tabiconsdict :', self.tabwidget_icons_dict)
-            print('listicondict :', self.list_icons_dict)
 
 
 
@@ -1034,7 +1028,7 @@ class NotesEditing(Notes):
 
         self.uichanges()
 
-        self.saveFile = self.var
+        self.saveFile = self.archive
 
 
         root = ET.Element('programElements')
@@ -1196,7 +1190,7 @@ class NotesEditing(Notes):
                     print('RECENT' , recent)
                     
                     if not recent:
-                        self.var = None
+                        self.archive = None
 
                         return
 
@@ -1207,7 +1201,7 @@ class NotesEditing(Notes):
 
                     else:
                         print("cant find the file you are trying to open")
-                        self.var = None
+                        self.archive = None
                         return
         
         elif instance:
@@ -1225,10 +1219,10 @@ class NotesEditing(Notes):
     def load(self, x):
 
 
-        self.var = x
+        self.archive = x
 
 
-        if '_' in '{}'.format(self.var):
+        if '_' in '{}'.format(self.archive):
             
             while True:
 
@@ -1236,8 +1230,8 @@ class NotesEditing(Notes):
 
                 if self.pw != '':
 
-                    # apparently it doesnt need the -o flag...
-                    zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.var)], shell=False)
+                    # apparently it doesnt need the -o switch...
+                    zippw = subprocess.run([r'7z\7-Zip\7z.exe', 'x', '-p{}'.format(self.pw), '{}.7z'.format(self.archive)], shell=False)
 
                     if zippw.returncode == 0:
                         break
@@ -1250,12 +1244,12 @@ class NotesEditing(Notes):
                     return False
 
         else:
-            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.var)], shell=False)
+            subprocess.run([r'7z\7-Zip\7z.exe', 'x', '{}.7z'.format(self.archive)], shell=False)
 
 
 
 
-        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.var)[0], r'/config.xml')).getroot()
+        filename = ET.parse(r'{}{}'.format(os.path.splitext(self.archive)[0], r'/config.xml')).getroot()
 
         for listitem in filename.findall('listitem'):
             
