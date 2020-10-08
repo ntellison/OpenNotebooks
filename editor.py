@@ -398,8 +398,8 @@ class NotesEditing(Notes):
         self.item = self.list.currentItem()
         self.index = self.list.currentIndex()
 
-        self.x = self.stack.findChild(QTabWidget, self.item.text())
-        self.stack.setCurrentWidget(self.x)
+        self.findSection = self.stack.findChild(QTabWidget, self.item.text())
+        self.stack.setCurrentWidget(self.findSection)
 
 
 
@@ -447,7 +447,7 @@ class NotesEditing(Notes):
 
         self.layout_item = QFormLayout()
 
-        inst_label = QLabel("Enter Notebook Title:")
+        nbTitle = QLabel("Enter Notebook Title:")
 
         self.le_item = QLineEdit()
 
@@ -466,7 +466,7 @@ class NotesEditing(Notes):
         buttonBox.rejected.connect(self.cancel)
 
         self.item_dialog.setLayout(self.layout_item)
-        self.layout_item.addRow(inst_label)
+        self.layout_item.addRow(nbTitle)
         self.layout_item.addRow(self.le_item)
         self.layout_item.addRow(self.check)
         self.layout_item.addRow(self.btn_listIcon)
@@ -878,7 +878,7 @@ class NotesEditing(Notes):
 
         self.creatediaglog = QDialog()
 
-        self.createfylelayy = QFormLayout()
+        self.createfile_layout = QFormLayout()
 
         self.createbtn = QPushButton('Choose File')
         self.createbtn.clicked.connect(self.createclicked)
@@ -898,12 +898,12 @@ class NotesEditing(Notes):
         createfile_btnbox.accepted.connect(self.createok)
         createfile_btnbox.rejected.connect(self.createcancel)
 
-        self.creatediaglog.setLayout(self.createfylelayy)
-        self.createfylelayy.addRow(self.createbtn)
-        self.createfylelayy.addRow(self.createle)
-        self.createfylelayy.addRow(self.createPasslbl)
-        self.createfylelayy.addRow(self.cb_pass, self.le_pass)
-        self.createfylelayy.addRow(createfile_btnbox)
+        self.creatediaglog.setLayout(self.createfile_layout)
+        self.createfile_layout.addRow(self.createbtn)
+        self.createfile_layout.addRow(self.createle)
+        self.createfile_layout.addRow(self.createPasslbl)
+        self.createfile_layout.addRow(self.cb_pass, self.le_pass)
+        self.createfile_layout.addRow(createfile_btnbox)
 
         self.creatediaglog.exec()
 
@@ -952,12 +952,12 @@ class NotesEditing(Notes):
 
                 xml = ET.parse('settings/programSettings.xml')
 
-                y = xml.find('recentfilepath')
-                y.text = str(self.saveFile)
+                rfp = xml.find('recentfilepath')
+                rfp.text = str(self.saveFile)
 
                 xml.write(open('settings/programSettings.xml', 'wb'))                
-
-                self.poo = NotesEditing()
+                # might have to make the self.notewin a different name than the one below
+                self.notewin = NotesEditing()
 
                 
                 self.creatediaglog.close()
@@ -977,12 +977,12 @@ class NotesEditing(Notes):
 
             xml = ET.parse('settings/programSettings.xml')
 
-            y = xml.find('recentfilepath')
-            y.text = str(self.saveFile)
+            rfp = xml.find('recentfilepath')
+            rfp.text = str(self.saveFile)
 
             xml.write(open('settings/programSettings.xml', 'wb'))
 
-            self.woo = NotesEditing()
+            self.notewin = NotesEditing()
 
             self.creatediaglog.close()
 
@@ -1043,18 +1043,18 @@ class NotesEditing(Notes):
         
 
         for i in range(self.list.count()):
-            self.x = self.list.item(i).text()
+            self.liTxt = self.list.item(i).text()
             listitem = ET.SubElement(root, 'listitem')
-            licon = self.list_icons_dict[self.x]
+            licon = self.list_icons_dict[self.liTxt]
             listitem.set('item_icon', licon)
-            listitem.text = self.x
+            listitem.text = self.liTxt
         for g in range(self.stack.count()):
-            self.q = self.stack.widget(g)
+            self.stackTab = self.stack.widget(g)
             tabwidgetName = ET.SubElement(root, 'tabwid_name')
-            tabwidgetName.text = self.q.objectName()
-            for p in range(self.q.count()):
-                self.tabtext = self.q.tabText(p)
-                self.ticon = self.tabwidget_icons_dict[self.q.objectName()][self.tabtext]
+            tabwidgetName.text = self.stackTab.objectName()
+            for p in range(self.stackTab.count()):
+                self.tabtext = self.stackTab.tabText(p)
+                self.ticon = self.tabwidget_icons_dict[self.stackTab.objectName()][self.tabtext]
                 self.tabcontents = self.tabtext
 
 
