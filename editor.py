@@ -170,7 +170,7 @@ class NotesEditing(Notes):
                     self.save()
 
                     split = os.path.splitext(self.archive)[0]
-                    
+
                     if os.path.exists(split):
 
                         shutil.rmtree(split)
@@ -326,7 +326,7 @@ class NotesEditing(Notes):
 
 
     def insertimage(self):
-        filename = QFileDialog.getOpenFileName(self.MainWindow, 'Insert image',".","Images (*.png *.xpm *.jpg *.bmp *.gif)")
+        filename = QFileDialog.getOpenFileName(self.MainWindow, 'Insert image',".","Images (*.png *.jpg *.bmp *.gif)")
 
         filename = str(filename[0])
         fext = os.path.splitext(filename)[1]
@@ -343,7 +343,7 @@ class NotesEditing(Notes):
 
         if img.isNull():
             imgErrorMessage = QMessageBox(self.MainWindow, QMessageBox.Critical,
-                            "Image load error",
+                            "Something Went Wrong",
                             "Could not load image file., Please make sure the file is an image file. (.png, .jpg, .bmp, .gif)",
                             QMessageBox.Ok,
                             self)
