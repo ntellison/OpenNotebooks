@@ -333,11 +333,12 @@ class NotesEditing(Notes):
 
         fbase = os.path.basename(filename)
 
-        if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res'):
 
-            os.makedirs(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res')
+        if not os.path.exists(r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res'):
+
+            os.makedirs(r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res')
         
-        shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res/{}'.format(fbase))
+        shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res/{}'.format(fbase))
 
         img = QImage(filename)
 
@@ -1211,10 +1212,13 @@ class NotesEditing(Notes):
 
                         return
 
+
                     elif os.path.exists(str(recent) + '.7z'):
                         self.loadfile = o.text                    
                         # need to extract first
                         self.load(self.loadfile)
+
+
 
                     else:
                         print("cant find the file you are trying to open")
