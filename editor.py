@@ -36,6 +36,8 @@ class NotesEditing(Notes):
 
         self.status = True
 
+        self.example = 'ExampleNotebook' #may not need the extension
+
         self.deftabico = 'icons/tabred.png'
         self.defaultListIcon = 'icons/notebookgrey.png'
 
@@ -333,6 +335,7 @@ class NotesEditing(Notes):
 
         fbase = os.path.basename(filename)
 
+        afile = r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res/{}'.format(fbase)
 
         if not os.path.exists(r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res'):
 
@@ -340,7 +343,7 @@ class NotesEditing(Notes):
         
         shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res/{}'.format(fbase))
 
-        img = QImage(filename)
+        img = QImage(afile)
 
         if img.isNull():
             imgErrorMessage = QMessageBox(self.MainWindow, QMessageBox.Critical,
@@ -351,7 +354,7 @@ class NotesEditing(Notes):
             popup.show()
         else:
             cursor = self.currentEdit().textCursor()
-            cursor.insertImage(img, filename)
+            cursor.insertImage(img, afile)
 
 
 
@@ -1208,8 +1211,8 @@ class NotesEditing(Notes):
                     print('RECENT' , recent)
                     
                     if not recent:
-                        self.archive = None
-
+                        #self.archive = None
+                        self.load(self.example)
                         return
 
 
@@ -1299,7 +1302,7 @@ class NotesEditing(Notes):
 
 
 
-                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
+                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.archive)[0] ,self.tab_widget.objectName())):
                     
 
 
