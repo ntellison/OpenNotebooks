@@ -1,3 +1,6 @@
+##################################################
+# ellison.nt@gmail.com #
+##################################################
 from notesUi import Notes
 import os
 import sys
@@ -35,6 +38,8 @@ class NotesEditing(Notes):
         self.tabchanges = []
 
         self.status = True
+
+        self.example = 'ExampleNotebook' #may not need the extension
 
         self.deftabico = 'icons/tabred.png'
         self.defaultListIcon = 'icons/notebookgrey.png'
@@ -333,24 +338,31 @@ class NotesEditing(Notes):
 
         fbase = os.path.basename(filename)
 
-        if not os.path.exists(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res'):
+        afile = r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res/{}'.format(fbase)
 
-            os.makedirs(r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res')
+        if not os.path.exists(r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res'):
+
+            os.makedirs(r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res')
         
-        shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.loadfile)[0]) + r'/res/{}'.format(fbase))
+        if filename and fbase != '':
 
-        img = QImage(filename)
+            shutil.copyfile(r'{}'.format(filename), r'{}'.format(os.path.splitext(self.archive)[0]) + r'/res/{}'.format(fbase))
+
+        img = QImage(afile)
 
         if img.isNull():
-            imgErrorMessage = QMessageBox(self.MainWindow, QMessageBox.Critical,
-                            "Something Went Wrong",
-                            "Could not load image file., Please make sure the file is an image file. (.png, .jpg, .bmp, .gif)",
-                            QMessageBox.Ok,
-                            self)
-            popup.show()
+            return
+            
+        # if img.isNull():
+        #     imgErrorMessage = QMessageBox(self.MainWindow, QMessageBox.Critical,
+        #                     "Something Went Wrong",
+        #                     "Could not load image file., Please make sure the file is an image file. (.png, .jpg, .bmp, .gif)",
+        #                     QMessageBox.Ok,
+        #                     self)
+        #     popup.show()
         else:
             cursor = self.currentEdit().textCursor()
-            cursor.insertImage(img, filename)
+            cursor.insertImage(img, afile)
 
 
 
@@ -1207,18 +1219,22 @@ class NotesEditing(Notes):
                     print('RECENT' , recent)
                     
                     if not recent:
-                        self.archive = None
-
+                        #self.archive = None
+                        self.load(self.example)
                         return
+
 
                     elif os.path.exists(str(recent) + '.7z'):
                         self.loadfile = o.text                    
                         # need to extract first
                         self.load(self.loadfile)
 
+
+
                     else:
                         print("cant find the file you are trying to open")
-                        self.archive = None
+                        #self.archive = None
+                        self.load(self.example)                        
                         return
         
         elif instance:
@@ -1295,7 +1311,7 @@ class NotesEditing(Notes):
 
 
 
-                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.loadfile)[0] ,self.tab_widget.objectName())):
+                if os.path.exists(r'{}\{}'.format(os.path.splitext(self.archive)[0] ,self.tab_widget.objectName())):
                     
 
 

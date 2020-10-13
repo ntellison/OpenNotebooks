@@ -1,5 +1,5 @@
 /*
-Default Dark Theme for Notes
+Default Dark Theme for Open Notebooks
 ellison.nt@gmail.com
 */
 
@@ -13,6 +13,7 @@ QWidget#central {
 
 QLineEdit {
     background-color: #a8a8a8;
+    
 }
 
 
@@ -20,6 +21,7 @@ QLineEdit {
 
 QPushButton {
     background-color: #302f2f;
+    color: lightgray;
 }
 
 
@@ -30,36 +32,51 @@ QDialog {
 }
 
 
-/* QTabWidget */
+
+
+QTabBar::tab:selected {
+    background-color: rgba(224, 224, 224, 0.623);    
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+
+}
+
+
+
 
 QTabBar {
     background-color: #302f2f;
-    font: 20px;
+    font: 25px;
+    qproperty-iconSize: 30px;
 }
 
 QTabBar::tab {
     background-color: #777171;
-    width: 100px;
+    /* width: 70px;
+    height: 250px; */
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    padding: 10px;
+
 }
 
-QTabBar::tab::icon {
-    width: 150px;
-    height: 50px;
-}
 
-/* QTabWidget::icon {
-    width: 100px;
-    height: 100px;
-} */
+
+
 
 /* Toolbar */
 QToolBar {
     background-color: #302f2f;
+    qproperty-iconSize: 35px;
 }
 
+
+/* QMenuBar */
+
 QMenuBar {
-    background-color: gray;
+    background-color: #484848;
     font: 14px;
+    color: whitesmoke;
 }
 
 
@@ -67,38 +84,28 @@ QMenuBar {
 /* List Widget */
 
 QListView#List {
+    /* alternate-background-color: gray;     */
     background-color: #201f1f;
-    font: 20pt;
-    
+    color: white;
+    qproperty-iconSize: 30px;
+    font: 25pt;
 }
 
 QListView#List::item {
-    background-color: #1a24b6;
+
     width: 50px;
     height: 50px;
-
-    /* text-align: right; */
-    /* padding-right: 40px; */
-    /*border: 1px solid white;*/
-}
-
-QListView#List::item::text {
-
-    padding: 0px, 0px, 0px, 80px ;
-    margin: 0px, 0px, 70px, 60px;
 }
 
 
-QListView#List::icon {
-    width: 35px;
-    height: 35px;
-    /* padding-left: 70px; */
-    /* padding-left: 80px; */
-    /* padding-right: 35px; */
-    /* margin-right: 30px; */
-    /* padding: 30px; */
-    /* margin-right: 5px; */
-    /* qproperty-alignment: left; */
+QListView#List::Icon {
+    padding: 50px;
+}
+
+
+
+QListView#List::item:selected {
+    background-color: #3A3A3A;
 }
 
 
@@ -125,7 +132,7 @@ QMessageBox {
 /* Context Menu */
 
 QMenu {
-    background-color: wheat;
+    background-color: lightslategray;
 }
 
 QColorDialog {
