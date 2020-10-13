@@ -1,3 +1,6 @@
+##################################################
+# ellison.nt@gmail.com #
+##################################################
 import os
 import sys
 
@@ -95,20 +98,23 @@ class Notes(object):
 
         # menubar export menu
 
-        # TOD0
 
 
 
         self.toolbar = QToolBar(MainWindow)
         MainWindow.addToolBar(self.toolbar)
 
-        # deletetab , deletenotebook
+
 
         self.addnew = QAction(QIcon("icons/notebookgrey.png"), "Add New Nobebook", MainWindow)
+
+        self.addnew.setShortcut('Ctrl+N')
         
         self.toolbar.addAction(self.addnew)
 
         self.addtab = QAction(QIcon("icons/tabtest"), "Add New Tab", MainWindow)
+
+        self.addtab.setShortcut('Ctrl+T')
         
         self.toolbar.addAction(self.addtab)
 
@@ -116,23 +122,33 @@ class Notes(object):
 
         self.saveAction = QAction(QIcon("icons/save.png"), "Save Current Note File", MainWindow)
 
+        self.saveAction.setShortcut('Ctrl+S')
+
         self.toolbar.addAction(self.saveAction)
 
         self.newFile = QAction(QIcon("icons/new.png"), "Create New Note File", MainWindow)
+
+        self.newFile.setShortcut('Ctrl+Shift+N')
         
         self.toolbar.addAction(self.newFile)
 
         self.openAction = QAction(QIcon("icons/open.png"), "open notes file", MainWindow)
+
+        self.openAction.setShortcut('Ctrl+O')
         
         self.toolbar.addAction(self.openAction)
 
         self.toolbar.addSeparator()
 
         self.undoAction = QAction(QIcon("icons/undo.png"), "undo", MainWindow)
+
+        self.undoAction.setShortcut('Ctrl+Z')
         
         self.toolbar.addAction(self.undoAction)
 
         self.redoAction = QAction(QIcon("icons/redo.png"), "redo", MainWindow)
+
+        self.redoAction.setShortcut('Ctrl+Alt+Z')
         
         self.toolbar.addAction(self.redoAction)        
 
@@ -148,14 +164,20 @@ class Notes(object):
 
 
         self.copyAction = QAction(QIcon("icons/copy.png"), "copy text", MainWindow)
+
+        self.copyAction.setShortcut('Ctrl+C')
         
         self.toolbar.addAction(self.copyAction)
 
         self.pasteAction = QAction(QIcon("icons/paste.png"), "paste text", MainWindow)
+
+        self.pasteAction.setShortcut('Ctrl+V')
         
         self.toolbar.addAction(self.pasteAction)
 
         self.cutAction = QAction(QIcon("icons/cut.png"), "cut text", MainWindow)
+
+        self.cutAction.setShortcut('Ctrl+X')
         
         self.toolbar.addAction(self.cutAction)
 
@@ -184,10 +206,14 @@ class Notes(object):
 
 
         self.dateAction = QAction(QIcon("icons/calendar.png"), "insert date", MainWindow)
+
+        self.dateAction.setShortcut('Ctrl+Alt+D')
         
         self.toolbar.addAction(self.dateAction)
 
         self.timeAction = QAction(QIcon("icons/clock.png"), "insert time", MainWindow)
+
+        self.timeAction.setShortcut('Ctrl+Alt+T')
         
         self.toolbar.addAction(self.timeAction)
 
@@ -197,10 +223,14 @@ class Notes(object):
 
 
         self.bulletAction = QAction(QIcon("icons/bullets.png"), "insert bulleted list", MainWindow)
+
+        self.bulletAction.setShortcut('Ctrl+B')
         
         self.toolbar.addAction(self.bulletAction)
 
         self.numberAction = QAction(QIcon("icons/numbers.png"), "insert numbered list", MainWindow)
+
+        self.numberAction.setShortcut('Alt+N')
         
         self.toolbar.addAction(self.numberAction)
 
@@ -210,10 +240,14 @@ class Notes(object):
 
 
         self.tableAction = QAction(QIcon("icons/table.png"), "insert table", MainWindow)
+
+        self.tableAction.setShortcut('Ctrl+Shift+T')
         
         self.toolbar.addAction(self.tableAction)
 
         self.imageAction = QAction(QIcon("icons/image.png"), "insert image", MainWindow)
+
+        self.imageAction.setShortcut('Ctrl+Alt+I')
         
         self.toolbar.addAction(self.imageAction)
 
@@ -223,18 +257,26 @@ class Notes(object):
 
 
         self.fontcolorAction = QAction(QIcon("icons/fontcolor.png"), "Select font color", MainWindow)
+
+        self.fontcolorAction.setShortcut('Ctrl+Shift+C')
         
         self.toolbar.addAction(self.fontcolorAction)
 
         self.fontBackgroundAction = QAction(QIcon("icons/highlight.png"), "Select font background color", MainWindow)
+
+        self.fontBackgroundAction.setShortcut('Ctrl+Alt+C')
         
         self.toolbar.addAction(self.fontBackgroundAction)
 
         self.fontAction = QAction(QIcon("icons/text.png"), "Choose Font", MainWindow)
+
+        self.fontAction.setShortcut('Ctrl+F')
         
         self.toolbar.addAction(self.fontAction)
 
         self.HRAction = QAction(QIcon("icons/hr.png"), "Insert Horizontal Rule", MainWindow)
+
+        self.HRAction.setShortcut('Ctrl+L')
 
         self.toolbar.addAction(self.HRAction)
 
