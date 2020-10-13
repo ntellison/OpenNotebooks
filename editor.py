@@ -39,7 +39,7 @@ class NotesEditing(Notes):
 
         self.status = True
 
-        self.example = 'ExampleNotebook' #may not need the extension
+        self.example = 'ExampleNotebook'
 
         self.deftabico = 'icons/tabred.png'
         self.defaultListIcon = 'icons/notebookgrey.png'
