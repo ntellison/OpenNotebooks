@@ -446,6 +446,15 @@ class NotesEditing(Notes):
 
         self.le_text = QLineEdit()
 
+        self.filetype_label = QLabel("File Type:")
+
+        self.filetypeCB = QComboBox()
+
+        self.filetypeCB.addItem("Rich Text")
+        self.filetypeCB.addItem("Markdown")
+
+        self.filetypeCB.activated.connect(self.noteFileType)
+
         self.combo_tab = QCheckBox()
         self.combo_tab.stateChanged.connect(self.checkTabToggle)
         
@@ -464,6 +473,7 @@ class NotesEditing(Notes):
         self.dialog.setLayout(self.layout_tab)
         self.layout_tab.addRow(self.label)
         self.layout_tab.addRow(self.le_text)
+        self.layout_tab.addRow(self.filetype_label, self.filetypeCB)
         self.layout_tab.addRow(self.combo_tab)
         self.layout_tab.addRow(self.btn_icon)
         self.layout_tab.addRow(self.le_tab_path)
@@ -593,6 +603,15 @@ class NotesEditing(Notes):
         self.le_tab_path.setText(fname)
 
 
+# the below function may be unnessary
+    def noteFileType(self):
+
+        self.fileTypeSelection = "--" + self.filetypeCB.currentText()
+        
+
+        return self.fileTypeSelection
+
+
 
     def tab_ok(self):
 
@@ -610,7 +629,13 @@ class NotesEditing(Notes):
 
             self.newtabname_textedit.textChanged.connect(self.notebookstatus)
 
-            self.newtabname_textedit.setObjectName(str(self.newTabName))
+            #self.newtabname_textedit.setObjectName(str(self.newTabName))
+            self.newtabname_textedit.setObjectName(str(self.newTabName + self.noteFileType()))
+            print(self.newtabname_textedit.objectName())
+
+
+
+
             self.curr_tab_wid.addTab(self.newtabname_textedit, self.newtabicon ,self.newTabName)
 
             # below is working
@@ -632,7 +657,7 @@ class NotesEditing(Notes):
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.curr_tab_wid.addTab(QTextEdit(), self.ico, self.newTabName)
 
-            self.tabwidget_icons_dict[self.item.text()].update({{self.newTabName : self.tab_ico}})
+            self.tabwidget_icons_dict[self.item.text()].update({self.newTabName : self.tab_ico})
 
 
         else:
