@@ -5,6 +5,7 @@ from notesUi import Notes
 import os
 import sys
 import subprocess
+import markdown
 
 from PyQt5 import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont
@@ -710,7 +711,9 @@ class NotesEditing(Notes):
                 self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
                 self.curr_tab = self.curr_tab_wid.currentIndex()
 
-                self.tabchanges.append(self.programcfg() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+                print("tab changes -->", self.programcfg() + '/' + self.item.text() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
+
+                self.tabchanges.append(self.programcfg() + '/' + self.item.text() + '/' + self.curr_tab_wid.tabText(self.curr_tab))
 
                 del self.tabwidget_icons_dict[self.item.text()][self.curr_tab_wid.tabText(self.curr_tab)]
 
@@ -871,7 +874,11 @@ class NotesEditing(Notes):
             pass
         else:
             for g in self.tabchanges:
-                shutil.rmtree(g)
+                try:
+                    shutil.rmtree(str(g))
+                    print("Success File/folder deleted....")
+                except:
+                    print('something went wrong......')
 
 
 
@@ -1354,17 +1361,30 @@ class NotesEditing(Notes):
                     tE.setObjectName(content)
                     tE.textChanged.connect(self.notebookstatus)
                     
-                    with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
-                        tE.setText(file.read())
-                    file.close()
-                    self.id.addTab(tE, self.tabico, tabname.text)
 
-                else:
-                    msg_box = QMessageBox()
-                    msg_box.setText("Error when loading file")
-                    msg_box.setWindowTitle("File Error")
-                    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-                    msg_box.exec()
+
+                    if os.path.exists(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content)):
+
+                        with open(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                            md2html = markdown.markdown(file.read())
+                            tE.setText(md2html)
+                        file.close()
+                        self.id.addTab(tE, self.tabico, tabname.text)                        
+
+
+                    elif os.path.exists(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content)):
+
+                        with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                            tE.setText(file.read())
+                        file.close()
+                        self.id.addTab(tE, self.tabico, tabname.text)
+
+                    else:
+                        msg_box = QMessageBox()
+                        msg_box.setText("Error when loading file")
+                        msg_box.setWindowTitle("File Error")
+                        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                        msg_box.exec()
 
 
         if os.path.isfile('settings/programSettings.xml'):
