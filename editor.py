@@ -1110,9 +1110,19 @@ class NotesEditing(Notes):
                 if not os.path.exists(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents)):
                     os.makedirs(os.path.splitext(self.saveFile)[0] + '/{}'.format(tabwidgetName.text) + '/{}/'.format(self.tabcontents))
 
-                with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
-                    file.write(self.stackTab.widget(p).toHtml())
-                file.close()
+
+                if '--Markdown' in str(self.stackTab.widget(p).objectName()):
+                    print(self.stackTab.objectName())
+
+                    with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.md'.format(self.tabcontents, self.tabcontents), 'w') as file:
+                        file.write(self.stackTab.widget(p).toPlainText())
+                    file.close()                    
+
+                else:
+
+                    with open(r'{}'.format(os.path.splitext(self.saveFile)[0]) + r'/{}'.format(tabwidgetName.text) + r'/{}/{}.html'.format(self.tabcontents, self.tabcontents), 'w') as file:
+                        file.write(self.stackTab.widget(p).toHtml())
+                    file.close()
 
 
 
