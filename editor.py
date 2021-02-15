@@ -6,6 +6,7 @@ import os
 import sys
 import subprocess
 import markdown
+import html2text
 
 from PyQt5 import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont, QColor
@@ -39,6 +40,8 @@ class NotesEditing(Notes):
         self.tabchanges = []
 
         self.status = True
+
+        self.mdStatus = False # this is the default status for qtextedit
 
         self.example = 'ExampleNotebook' #may not need the extension
 
@@ -107,6 +110,7 @@ class NotesEditing(Notes):
         self.fontBackgroundAction.triggered.connect(self.fontBackground)
         self.fontAction.triggered.connect(self.selectFont)
         self.HRAction.triggered.connect(self.insertHR)
+        self.markdownEditToggle.triggered.connect(self.markdownToggleMode)
 
 
 
@@ -204,6 +208,60 @@ class NotesEditing(Notes):
         self.tab_currWid = self.tab_currWid
         self.activeEdit = self.tab_currWid
         return self.activeEdit
+
+
+
+
+
+    def markdownToggleMode(self):
+
+        print('current edit obj name : ' ,self.currentEdit().objectName())
+
+        if '--Markdown' in str(self.currentEdit().objectName()):
+
+            print('hahahahahehehehehe')
+
+            if self.mdStatus == False:
+                self.currentEdit().setReadOnly(True)
+
+
+                self.currentEditContent = self.currentEdit().toHtml()
+
+                print("curr edd contnt HTML :" ,self.currentEditContent)
+
+                self.currentEdit().clear()
+
+
+                html2md = html2text.html2text(self.currentEditContent)
+
+
+                print('This should be markdown :' ,html2md)
+
+                self.currentEdit().setText(html2md)
+
+                self.mdStatus = True
+            else:
+                self.currentEdit().setReadOnly(False)
+
+                self.currentEditContent = self.currentEdit().toHtml()
+
+                md2html = markdown.markdown(self.currentEditContent)
+                self.currentEdit().setText(md2html)
+
+
+                self.currentEdit().clear()
+
+                self.currentEdit().setText(md2html)
+
+                self.mdStatus = False
+
+        else:
+            print('passed over')
+            pass
+
+
+
+
 
 
 
@@ -1376,6 +1434,7 @@ class NotesEditing(Notes):
                         with open(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), tabnameTag, tabnameTag), 'r') as file:
                             md2html = markdown.markdown(file.read())
                             tE.setText(md2html)
+                            tE.setReadOnly(True)
                         file.close()
                         self.id.addTab(tE, self.tabico, tabname.text)                        
 
