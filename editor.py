@@ -41,7 +41,7 @@ class NotesEditing(Notes):
 
         self.status = True
 
-        self.mdStatus = False # this is the default status for qtextedit
+        self.mdStatus = True
 
         self.example = 'ExampleNotebook' #may not need the extension
 
@@ -221,8 +221,8 @@ class NotesEditing(Notes):
 
             print('hahahahahehehehehe')
 
-            if self.mdStatus == False:
-                self.currentEdit().setReadOnly(True)
+            if self.mdStatus == True:
+                self.currentEdit().setReadOnly(False)
 
 
                 self.currentEditContent = self.currentEdit().toHtml()
@@ -239,21 +239,21 @@ class NotesEditing(Notes):
 
                 self.currentEdit().setText(html2md)
 
-                self.mdStatus = True
+                self.mdStatus = False
             else:
-                self.currentEdit().setReadOnly(False)
+                self.currentEdit().setReadOnly(True)
 
-                self.currentEditContent = self.currentEdit().toHtml()
+                self.currentEditContent = self.currentEdit().toPlainText()
 
                 md2html = markdown.markdown(self.currentEditContent)
-                self.currentEdit().setText(md2html)
+                # self.currentEdit().setText(md2html)
 
 
                 self.currentEdit().clear()
 
                 self.currentEdit().setText(md2html)
 
-                self.mdStatus = False
+                self.mdStatus = True
 
         else:
             print('passed over')
