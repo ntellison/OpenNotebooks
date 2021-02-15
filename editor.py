@@ -8,7 +8,7 @@ import subprocess
 import markdown
 
 from PyQt5 import Qt
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont
+from PyQt5.QtGui import QIcon, QPixmap, QImage, QTextTable , QTextTableFormat, QTextListFormat, QFont, QColor
 from PyQt5.QtCore import QEvent, Qt, QSize, QSettings, QDate, QTime
 from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFormLayout, QLineEdit, QTabWidget, QWidget, QPushButton, QListWidgetItem, QTextEdit,
@@ -627,6 +627,8 @@ class NotesEditing(Notes):
             self.item = self.list.currentItem()
             self.curr_tab_wid = self.stack.findChild(QTabWidget, self.item.text())
             self.newtabname_textedit = QTextEdit()
+
+            self.newtabname_textedit.setTextColor(QColor('white'))
 
             self.newtabname_textedit.textChanged.connect(self.notebookstatus)
 
