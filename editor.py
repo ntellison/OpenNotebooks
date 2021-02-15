@@ -1137,6 +1137,8 @@ class NotesEditing(Notes):
                 tabName = ET.SubElement(tabwidgetName, 'tabName')
                 tabName.set('content', str(self.tabcontents))
                 tabName.set('tabIcon', self.ticon)
+                # write xml attribute for self.stackTab.widget(p).objectName() so that the --markdown can be set as the object name in the load() function
+                tabName.set('objName', str(self.stackTab.widget(p).objectName())) # object name of the text edit that has the same name as the tab widget except if it has --markdown
                 tabName.text = self.tabtext
 
         tree.write(open(self.saveFile + '/config.xml', 'wb'))
@@ -1340,7 +1342,7 @@ class NotesEditing(Notes):
 
         for tabwidget in filename.iter('tabwid_name'):
             self.tab_widget = QTabWidget()
-            self.tab_widget.setObjectName(tabwidget.text)
+            self.tab_widget.setObjectName(tabwidget.text) 
             self.tab_widget.setMovable(True)
             self.stack.addWidget(self.tab_widget)
             self.tabwidget_icons_dict[tabwidget.text] = {}
@@ -1349,7 +1351,11 @@ class NotesEditing(Notes):
                 self.tab_icon = tabname.get('tabIcon')
                 self.tabico = QIcon(self.tab_icon)
                 self.tabwidget_icons_dict[tabwidget.text].update({tabname.text : self.tab_icon})
-                content = tabname.get('content')
+
+                # content = tabname.get('content') # fucking up here needs to set object name from xml tag attribute
+                content = tabname.get('objName')
+                tabnameTag = tabname.text
+                print('tab name => ', tabnameTag)
 
 
 
@@ -1358,23 +1364,23 @@ class NotesEditing(Notes):
 
 
                     tE = QTextEdit()
-                    tE.setObjectName(content)
+                    tE.setObjectName(content) #Rich Text or Markdown
                     tE.textChanged.connect(self.notebookstatus)
                     
 
 
-                    if os.path.exists(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content)):
+                    if os.path.exists(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), tabnameTag, tabnameTag)):
 
-                        with open(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                        with open(r'{}/{}/{}/{}.md'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), tabnameTag, tabnameTag), 'r') as file:
                             md2html = markdown.markdown(file.read())
                             tE.setText(md2html)
                         file.close()
                         self.id.addTab(tE, self.tabico, tabname.text)                        
 
 
-                    elif os.path.exists(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content)):
+                    elif os.path.exists(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), tabnameTag, tabnameTag)):
 
-                        with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), content, content), 'r') as file:
+                        with open(r'{}/{}/{}/{}.html'.format(os.path.splitext(x)[0] , self.tab_widget.objectName(), tabnameTag, tabnameTag), 'r') as file:
                             tE.setText(file.read())
                         file.close()
                         self.id.addTab(tE, self.tabico, tabname.text)
