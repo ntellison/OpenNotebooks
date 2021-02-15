@@ -280,6 +280,13 @@ class Notes(object):
 
         self.toolbar.addAction(self.HRAction)
 
+        # start markdown section of toolbar
+
+        self.toolbar.addSeparator()
+
+        self.markdownEditToggle = QAction(QIcon("icons/hr.png"), "Toggle Markdown Modes", MainWindow)
+
+        self.toolbar.addAction(self.markdownEditToggle)
 
         
         self.central_widget = QWidget(MainWindow)
